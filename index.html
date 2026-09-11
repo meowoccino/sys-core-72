@@ -56,18 +56,33 @@
       overflow-y: scroll;
       -webkit-overflow-scrolling: touch;
       overscroll-behavior-y: contain;
-      padding: 16px 14px 18px;
+      padding: 16px 12px 20px;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 20px;
     }
 
-    /* Mathew: Pushed right */
+    /* ChatterUI Style Alignment: Ashley on LEFT with Avatar on the RIGHT side of her bubble */
+    .msg-group.ashley {
+      display: flex;
+      justify-content: flex-start;
+      width: 100%;
+      padding-right: 2%;
+    }
+    .msg-group.ashley .ashley-wrapper {
+      max-width: 96%;
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    /* Mathew: Anchored cleanly to the RIGHT side */
     .msg-group.user {
       display: flex;
       justify-content: flex-end;
       width: 100%;
-      padding-left: 10%;
+      padding-left: 14%;
     }
     .msg-group.user .user-wrapper {
       width: 100%;
@@ -76,23 +91,9 @@
       align-items: flex-end;
     }
 
-    /* Ashley: Left-anchored */
-    .msg-group.ashley {
-      display: flex;
-      justify-content: flex-start;
-      width: 100%;
-      padding-right: 6%;
-    }
-    .msg-group.ashley .ashley-wrapper {
-      width: 100%;
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-    }
-
     .ashley-msg-avatar {
-      width: 36px;
-      height: 36px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
       object-fit: cover;
       border: 1.5px solid var(--gold-accent);
@@ -104,7 +105,7 @@
     .bubble-wrapper {
       display: flex;
       flex-direction: column;
-      width: 100%;
+      flex: 1;
     }
 
     .glass-bubble {
@@ -117,8 +118,17 @@
       font-size: 0.95rem;
       line-height: 1.62;
     }
-    .ashley .glass-bubble { background: var(--char-bubble); border: 1px solid var(--char-border); border-top-left-radius: 4px; }
-    .user .glass-bubble { background: var(--user-bubble); border: 1px solid var(--user-border); border-top-right-radius: 4px; }
+    .ashley .glass-bubble {
+      background: var(--char-bubble);
+      border: 1px solid var(--char-border);
+      border-top-right-radius: 4px;
+      border-top-left-radius: 18px;
+    }
+    .user .glass-bubble {
+      background: var(--user-bubble);
+      border: 1px solid var(--user-border);
+      border-top-right-radius: 4px;
+    }
 
     .action {
       display: block;
@@ -135,13 +145,14 @@
     }
     .action:last-child, .speech:last-child { margin-bottom: 0; }
 
+    /* Metadata Bar below Bubbles */
     .meta-time-row {
       display: inline-flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       font-size: 0.72rem;
       margin-top: 6px;
-      padding: 0 8px;
+      padding: 0 4px;
       color: var(--text-dim);
     }
     .meta-time-row svg { width: 12px; height: 12px; fill: currentColor; }
@@ -154,29 +165,53 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 3px 6px;
-      border-radius: 6px;
+      padding: 3px 5px;
+      border-radius: 4px;
     }
     .msg-action-btn:active { color: var(--gold-accent); }
     .msg-action-btn.delete-btn:active { color: var(--danger-color); }
     .msg-action-btn svg { width: 13px; height: 13px; }
 
-    .typing-indicator { display: inline-flex; align-items: center; gap: 6px; padding: 6px 4px; }
-    .typing-dot {
+    /* Clean Floating Thinking Indicator (No Box) */
+    .thinking-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 14px;
+      animation: fadeIn 0.3s ease;
+    }
+    .thinking-dots {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .thinking-dot {
       width: 6px;
       height: 6px;
       background: var(--gold-accent);
       border-radius: 50%;
-      opacity: 0.4;
+      opacity: 0.35;
       animation: pulseDot 1.4s infinite ease-in-out;
     }
-    .typing-dot:nth-child(1) { animation-delay: 0s; }
-    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    .thinking-dot:nth-child(1) { animation-delay: 0s; }
+    .thinking-dot:nth-child(2) { animation-delay: 0.2s; }
+    .thinking-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    .thinking-status-text {
+      font-size: 0.76rem;
+      color: var(--text-dim);
+      letter-spacing: 0.3px;
+      font-style: italic;
+    }
 
     @keyframes pulseDot {
       0%, 80%, 100% { opacity: 0.3; transform: scale(0.85); }
-      40% { opacity: 1; transform: scale(1.15); }
+      40% { opacity: 1; transform: scale(1.18); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     /* Input Footer */
@@ -309,7 +344,7 @@
     </footer>
   </div>
 
-  <!-- Fullscreen Avatar Lightbox (No text label) -->
+  <!-- Fullscreen Avatar Lightbox (Pure image) -->
   <div id="avatar-lightbox" onclick="closeLightbox()">
     <div class="lightbox-frame" onclick="event.stopPropagation()">
       <img src="./ashley.png" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80'" alt="">
@@ -317,7 +352,6 @@
   </div>
 
   <script>
-    // --- Hardcoded Core Configuration ---
     var HARDCODED_API_KEY = "1RphVxqX2XNRZnbc-uRgwQ";
     var HARDCODED_MODEL = "aphrodite/TheDrummer/Behemoth-X-123B-v2.1";
     var HARDCODED_MAX_TOKENS = 500;
@@ -505,30 +539,37 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
             '</div>';
         }
 
-        html = '<div class="msg-group ashley" id="msg-' + idx + '"><div class="ashley-wrapper"><img class="ashley-msg-avatar" src="./ashley.png" onclick="openLightbox()" onerror="this.src=\'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80\'"><div class="bubble-wrapper"><div class="glass-bubble">' +
-          parseMessage(text) + '</div>' + footerContent + '</div></div></div>';
+        // Avatar rendered to the right of her bubble
+        html = '<div class="msg-group ashley" id="msg-' + idx + '"><div class="ashley-wrapper">' +
+          '<div class="bubble-wrapper"><div class="glass-bubble">' + parseMessage(text) + '</div>' + footerContent + '</div>' +
+          '<img class="ashley-msg-avatar" src="./ashley.png" onclick="openLightbox()" onerror="this.src=\'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80\'">' +
+          '</div></div>';
       }
       stream.insertAdjacentHTML('beforeend', html);
       stream.scrollTop = stream.scrollHeight;
     }
 
+    /* Clean Floating Indicator Without A Box */
     function showTypingIndicator() {
-      if (document.getElementById('typing-bubble')) return;
+      if (document.getElementById('floating-thinking-row')) return;
       var stream = document.getElementById('chat-stream');
-      var html = '<div class="msg-group ashley" id="typing-bubble"><div class="ashley-wrapper"><img class="ashley-msg-avatar" src="./ashley.png" onclick="openLightbox()" onerror="this.src=\'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80\'"><div class="bubble-wrapper"><div class="glass-bubble"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div><div class="meta-time-row" id="typing-status"><span>Contacting Horde...</span></div></div></div></div>';
+      var html = '<div class="thinking-row" id="floating-thinking-row">' +
+        '<div class="thinking-dots"><div class="thinking-dot"></div><div class="thinking-dot"></div><div class="thinking-dot"></div></div>' +
+        '<span class="thinking-status-text" id="thinking-status-label">Contacting Horde...</span>' +
+        '</div>';
       stream.insertAdjacentHTML('beforeend', html);
       stream.scrollTop = stream.scrollHeight;
     }
 
     function removeTypingIndicator() {
-      var elem = document.getElementById('typing-bubble');
+      var elem = document.getElementById('floating-thinking-row');
       if (elem) elem.remove();
     }
 
     function updateTypingStatus(text) {
-      var statusElem = document.getElementById('typing-status');
+      var statusElem = document.getElementById('thinking-status-label');
       if (statusElem) {
-        statusElem.innerHTML = '<span>' + text + '</span>';
+        statusElem.innerText = text;
       }
     }
 
@@ -657,9 +698,9 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
           var checkData = await checkRes.json();
 
           if (checkData.wait_time) {
-            updateTypingStatus("In queue (~" + checkData.wait_time + "s)...");
+            updateTypingStatus("Waiting in queue (~" + checkData.wait_time + "s)...");
           } else if (checkData.processing) {
-            updateTypingStatus("Ashley is writing...");
+            updateTypingStatus("Ashley is typing...");
           }
 
           if (checkData.done) {
@@ -827,7 +868,7 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       }, 250);
     });
 
-    // --- Subtle, Non-Distracting Background Ambiance ---
+    // Subtle, calm background particles
     var canvas = document.getElementById('ambient-canvas');
     var ctx = canvas.getContext('2d');
     var width = canvas.width = window.innerWidth;
