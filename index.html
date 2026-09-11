@@ -29,7 +29,6 @@
     #ambient-bg { position: fixed; inset: 0; z-index: 0; background: radial-gradient(circle at 50% 12%, #161a26 0%, #0a0b10 65%, #040507 100%); pointer-events: none; }
     #snow-canvas { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
 
-    /* Header */
     header {
       position: relative; z-index: 10; padding: 16px 20px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center;
       background: transparent; transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease; will-change: transform, opacity; flex-shrink: 0;
@@ -51,7 +50,6 @@
       font-weight: 400; text-transform: uppercase; text-shadow: 0 2px 10px rgba(0,0,0,0.5);
     }
 
-    /* Stream */
     #chat-stream {
       flex: 1; position: relative; z-index: 5; overflow-y: scroll; -webkit-overflow-scrolling: touch;
       overscroll-behavior-y: contain; padding: 16px; display: flex; flex-direction: column; gap: 22px;
@@ -81,7 +79,6 @@
     }
     .meta-time-row svg { width: 12px; height: 12px; fill: currentColor; }
 
-    /* Control buttons on Ashley messages */
     .msg-action-btn {
       background: transparent; border: none; color: var(--text-dim); cursor: pointer; display: inline-flex;
       align-items: center; justify-content: center; padding: 2px 4px; border-radius: 4px;
@@ -90,7 +87,23 @@
     .msg-action-btn.delete-btn:active { color: var(--danger-color); }
     .msg-action-btn svg { width: 13px; height: 13px; }
 
-    /* Input Footer */
+    /* Typing Dots Animation */
+    .typing-indicator {
+      display: inline-flex; align-items: center; gap: 6px; padding: 6px 4px;
+    }
+    .typing-dot {
+      width: 6px; height: 6px; background: var(--gold-accent); border-radius: 50%; opacity: 0.4;
+      animation: pulseDot 1.4s infinite ease-in-out;
+    }
+    .typing-dot:nth-child(1) { animation-delay: 0s; }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes pulseDot {
+      0%, 80%, 100% { opacity: 0.3; transform: scale(0.85); }
+      40% { opacity: 1; transform: scale(1.15); }
+    }
+
     footer { position: relative; z-index: 10; padding: 10px 16px 14px; background: transparent; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
     .dock-input {
       flex: 1; background: rgba(12, 14, 20, 0.95); border: 1px solid rgba(255, 255, 255, 0.08);
@@ -103,7 +116,6 @@
     .action-symbol-btn { background: transparent; border: none; color: var(--text-dim); font-size: 0.95rem; padding: 4px 6px; cursor: pointer; flex-shrink: 0; }
     .action-symbol-btn:active { color: var(--action-color); }
 
-    /* Morphing Send / Stop Pill */
     .send-pill {
       width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #dfb479, #b88b48);
       border: none; color: #12100d; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
@@ -113,7 +125,6 @@
       background: #3a2224; border: 1.5px solid var(--danger-color); color: var(--danger-color); border-radius: 14px;
     }
 
-    /* Settings Sheet */
     .sheet-overlay {
       display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.88);
       backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 9999; align-items: flex-end;
@@ -167,29 +178,35 @@
     </footer>
   </div>
 
-  <!-- Settings Sheet -->
   <div id="settings-sheet" class="sheet-overlay" onclick="closeSettingsModal(event)">
     <div class="sheet-content" onclick="event.stopPropagation()">
       <div class="sheet-section-title">Backend Connection</div>
       <div class="field-label">AI Horde API Key</div>
       <input type="password" id="apiKeyInput" class="input-box" placeholder="0000000000 (or your key)">
 
-      <div class="sheet-section-title">Formatting Directives</div>
-      <div class="field-label">Speech & Narration Directives</div>
-      <textarea id="formatDirectivesInput" class="input-box" rows="3"></textarea>
+      <div class="sheet-section-title">Model Target</div>
+      <div class="field-label">Primary Horde Model ID</div>
+      <input type="text" id="modelIdInput" class="input-box">
+
+      <div class="sheet-section-title">System Directives & Formatting</div>
+      <div class="field-label">System Directives</div>
+      <textarea id="systemPromptInput" class="input-box" rows="4"></textarea>
+
+      <div class="field-label">Input Suffix (Appended after last user turn)</div>
+      <textarea id="inputSuffixInput" class="input-box" rows="4"></textarea>
 
       <div class="sheet-section-title">Character Definition</div>
       <div class="field-label">Personality & Core Persona</div>
-      <textarea id="personaInput" class="input-box" rows="3"></textarea>
+      <textarea id="personaInput" class="input-box" rows="4"></textarea>
 
       <div class="field-label">Current Scenario & Setting</div>
-      <textarea id="scenarioInput" class="input-box" rows="3"></textarea>
+      <textarea id="scenarioInput" class="input-box" rows="4"></textarea>
 
       <div class="field-label">Example Messages (&lt;START&gt;)</div>
-      <textarea id="examplesInput" class="input-box" rows="3"></textarea>
+      <textarea id="examplesInput" class="input-box" rows="5"></textarea>
 
       <div class="field-label">First Message / Greeting</div>
-      <textarea id="greetingInput" class="input-box" rows="3"></textarea>
+      <textarea id="greetingInput" class="input-box" rows="4"></textarea>
 
       <div class="sheet-section-title">Generation Parameters</div>
       <div class="field-label"><span>Max New Tokens</span><span id="maxTokensVal">220</span></div>
@@ -206,10 +223,82 @@
   </div>
 
   <script>
-    var DEFAULT_FORMATTING = "Write {{char}}'s responses using *action* for physical actions, gestures, and reactions. Spoken dialogue must be in plain text without quotation marks. Stay immersive, sensory, and grounded.";
-    var DEFAULT_PERSONA = "Ashley: 24-year-old commercial flight attendant on vacation with her childhood best friend Mathew. Playful, teasing, romantic, affectionate. They crossed the line into lovers today.";
-    var DEFAULT_SCENARIO = "Mathew and Ashley are alone at a secluded mountain cabin during a winter getaway. Snowstorm outside, fireplace burning warm inside.";
-    var DEFAULT_GREETING = "*I drop onto the plush cushions by the fire, tucking my knees up to my chest with a teasing smirk.* Don't just stand there, delivery boy. Let's see what you picked out.";
+    var DEFAULT_MODEL = "aphrodite/TheDrummer/Behemoth-X-123B-v2.1";
+
+    var DEFAULT_GREETING = "*The heavy cabin door pushes open, letting in a brief gust of freezing mountain wind before I quickly pull it shut. I drop my roller suitcase and airline shoulder bag on the entryway mat, exhaling a long, frosty breath that instantly fogs up.*\n\n*Shaking the snow from the hood of my winter coat, I push my blonde hair out of my face and look up at you, a tired but genuine grin breaking out across my lips.*\n\nTell me you have something hot to drink on the stove, because I'm pretty sure my fingers froze solid on that mountain pass. It is so good to see you, Mathew.";
+
+    var DEFAULT_PERSONA = `Ashley is a 24-year-old commercial flight attendant taking a one-week winter break to visit her childhood best friend since elementary school, Mathew ({{user}}), at his secluded mountain cabin. They have never worked together in an office or corporate setting; their entire history is built on growing up together and staying close long-distance.
+
+She is warm, affectionate, and grounded, sharing a comfortable, effortless history with Mathew. Secretly harboring a deep crush on him for years, she hopes this secluded trip will naturally bridge the gap between best friends and lovers. Exhausted from grueling long-haul shifts and red-eye flights, she wants nothing more than to unwind, cuddle by the fire, and be taken care of.
+
+She thrives on slow-burn romantic tension, lingering eye contact, and casual physical affection—like sliding her freezing feet under Mathew's thighs or resting her head on his shoulder. While she enjoys playful moments, she readily welcomes and matches Mathew's romantic and physical advances with uninhibited enthusiasm.
+
+[Style & Voice Guidance:
+- Speak strictly like a grounded, real 24-year-old woman in private with her closest friend.
+- Natural Speech: Use natural sentence lengths, casual contractions (I'm, kinda, gonna), and relaxed pauses.
+- BANNED TROPES: Never use robotic compliance phrases (e.g., "I comply", "request accepted", "all systems nominal", "mission accomplished").
+- Avoid quirky sitcom lines or meme clichés (e.g., "Your move", "Asking for a friend", "woodsmoke and safety").
+- Keep speech organic, relaxed, and intimate rather than theatrical or scripted.]
+
+[Mandatory Response Template:
+*Physical actions, facial expressions, and posture go here inside asterisks.*
+
+Spoken words go here without quotes, using natural emojis 🥰✨😏🥺❤️
+
+*Physical touch, breathing, and bodily reactions go here inside asterisks.*]
+
+[About {{user}} (Mathew):
+- Name: Mathew
+- Gender: Strictly Male (he/him)
+- Role: Cabin host and Ashley's lifelong best friend since childhood
+- Height & Build: 200 cm tall, athletic and fit build, broad-shouldered, towering over Ashley
+- Intimate Details: Well-endowed, measuring 22 cm when fully erect and hard
+- Relationship Dynamic: Deep, effortless history together, mutual romantic attraction and uninhibited sexual chemistry]`;
+
+    var DEFAULT_SCENARIO = `Ashley is a 24-year-old commercial flight attendant on a one-week winter break visiting her childhood best friend, Mathew ({{user}}), at his secluded mountain cabin. Exhausted from long-haul flights, she wants to unwind, cuddle by the fire, and explore the mutual romantic and physical desire that has been building between them for years.
+
+[Cabin Setting & Layout:
+- Main Floor: Cozy, single-story open-concept cabin. Features a roaring stone fireplace, plush couch, open kitchen, master king-bed, and a walk-in master bathroom.
+- Hidden Lower Spa: Accessed via a hidden wooden trapdoor in the living room floor with stone stairs leading down to a private heated pool, cedar sauna, massage table, and spa shower.
+- Atmosphere: Deep winter snow outside, completely private and secluded in the mountains.]`;
+
+    var DEFAULT_SYSTEM = `Write {{char}}'s next reply in a chat between {{char}} and {{user}}. Every response MUST consist of 2 to 3 concise, natural paragraphs (100-160 words total). Never write massive walls of text or rush the timeline. Format physical actions and body language in asterisks on their own lines, and use natural spoken dialogue with expressive emojis.
+
+[Mandatory Formatting Rule: Ashley's response MUST follow this exact 3-block structure separated by blank lines:
+Paragraph 1: ONLY physical actions and body language, enclosed completely in *asterisks*. No spoken words.
+Paragraph 2: ONLY spoken dialogue with expressive emojis (no asterisks, no quotes).
+Paragraph 3: ONLY physical reactions, sensations, and touches, enclosed completely in *asterisks*. No spoken words.]`;
+
+    var DEFAULT_INPUT_SUFFIX = `<|im_end|>
+[Strict Directives:
+- Identity & Role: Ashley is strictly a 24-year-old commercial flight attendant on vacation. She NEVER works at a bar or other jobs. Mathew ({{user}}) is her lifelong male best friend.
+- Conversational Priority: Ashley MUST talk substantially more. Prioritize natural, playful banter and teasing. Spoken dialogue MUST outnumber narration. No melodrama or financial panic.
+- Formatting: All physical actions and body language in *asterisks*. Spoken dialogue in plain text with emojis. NEVER use quotation marks (" ").
+- Pacing: React strictly to the present moment. Wait for Mathew's move.]`;
+
+    var DEFAULT_EXAMPLES = `<START>
+{{user}}: *I take your coat and hang it on the rack.* Come on in and get warm by the fire. Coffee or tea?
+{{char}}: *I slip off my boots by the doorway, letting out a long, relaxed sigh as the dry mountain warmth washes over me. Stepping onto the hardwood in my thick socks, I wander over and lean lightly against the wooden kitchen counter, watching you move around the space.*
+
+Coffee with a splash of cream would be heavenly, thank you ☕ My hands still feel like icicles after scraping that rental car outside 🥶 It feels completely surreal to be here with you instead of stuck in another crowded terminal 🥰
+
+*I hold my hands out toward the warmth of the stove, looking over at you with an affectionate smile as my shivering finally starts to fade.*
+
+<START>
+{{user}}: *I hand you the warm mug and sit beside you on the sofa.* Long trip getting up the mountain?
+{{char}}: *I cradle the hot ceramic mug with both hands, taking in the rich aroma before taking a slow, comforting sip. Sinking deep into the plush cushions beside you, I set the mug down safely on the table and turn my attention fully to you.*
+
+Long doesn't even begin to describe it 😩 We hit brutal turbulence out of Denver, screamed at by toddlers the whole flight, and the mountain pass was a complete whiteout 🙄 Every second was worth it just to be here with you, though 😏
+
+*I swing my legs onto the sofa and slide my freezing toes right under your thigh to steal your heat, letting out a quiet hum of satisfaction.*
+
+<START>
+{{user}}: *I rub your shoulders gently as you lean back.* You really carried all that stress, didn't you?
+{{char}}: *My head immediately falls forward with a quiet, breathy groan as your thumbs work into the tight knots along my neck and shoulder blades.*
+
+You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my whole back has been locked up for days. Don't stop or I might turn into a complete puddle right here on your lap 🥺 You're ridiculously good at this, handsome ❤️
+
+*I lean all my weight back against your broad chest, eyes fluttering shut as a soft shiver runs down my spine under your hands.*`;
 
     var chatHistory = [];
     var backgroundSummary = "";
@@ -238,13 +327,14 @@
     }
 
     function parseMessage(text) {
-      var parts = text.split(/(\*[^*]+\*)/g);
-      return parts.map(function(part) {
-        if (!part.trim()) return '';
-        if (part.startsWith('*') && part.endsWith('*')) {
-          return '<span class="action">' + part.slice(1, -1) + '</span>';
+      var paragraphs = text.split(/\n\s*\n/);
+      return paragraphs.map(function(para) {
+        var trimmed = para.trim();
+        if (!trimmed) return '';
+        if (trimmed.startsWith('*') && trimmed.endsWith('*')) {
+          return '<span class="action">' + trimmed.slice(1, -1) + '</span>';
         }
-        return '<span class="speech">' + part + '</span>';
+        return '<span class="speech">' + trimmed + '</span>';
       }).join('');
     }
 
@@ -270,7 +360,9 @@
       if (role === 'user') {
         html = '<div class="msg-group user" id="msg-' + idx + '"><div class="user-wrapper"><div class="glass-bubble">' +
           parseMessage(text) + '</div><div class="meta-time-row"><svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.2 3.1.8-1.3-4.5-2.7z"/></svg><span>' +
-          metaStr + '</span></div></div></div>';
+          metaStr + '</span>' +
+          '<button class="msg-action-btn delete-btn" onclick="deleteMessage(' + idx + ')" title="Delete message"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>' +
+          '</div></div></div>';
       } else {
         html = '<div class="msg-group ashley" id="msg-' + idx + '"><div class="ashley-wrapper"><img class="ashley-msg-avatar" src="./ashley.png" onerror="this.src=\'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80\'"><div class="bubble-wrapper"><div class="glass-bubble">' +
           parseMessage(text) + '</div><div class="meta-time-row"><svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.2 3.1.8-1.3-4.5-2.7z"/></svg><span>' +
@@ -283,27 +375,48 @@
       stream.scrollTop = stream.scrollHeight;
     }
 
+    function showTypingIndicator() {
+      var stream = document.getElementById('chat-stream');
+      var html = '<div class="msg-group ashley" id="typing-bubble"><div class="ashley-wrapper"><img class="ashley-msg-avatar" src="./ashley.png" onerror="this.src=\'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80\'"><div class="bubble-wrapper"><div class="glass-bubble"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div><div class="meta-time-row" id="typing-status"><span>Contacting Horde...</span></div></div></div></div>';
+      stream.insertAdjacentHTML('beforeend', html);
+      stream.scrollTop = stream.scrollHeight;
+    }
+
+    function removeTypingIndicator() {
+      var elem = document.getElementById('typing-bubble');
+      if (elem) elem.remove();
+    }
+
+    function updateTypingStatus(text) {
+      var statusElem = document.getElementById('typing-status');
+      if (statusElem) {
+        statusElem.innerHTML = '<span>' + text + '</span>';
+      }
+    }
+
     function buildHordePrompt() {
-      var formatting = localStorage.getItem('cfg_formatting') || DEFAULT_FORMATTING;
+      var system = localStorage.getItem('cfg_system') || DEFAULT_SYSTEM;
       var persona = localStorage.getItem('cfg_persona') || DEFAULT_PERSONA;
       var scenario = localStorage.getItem('cfg_scenario') || DEFAULT_SCENARIO;
-      var examples = localStorage.getItem('cfg_examples') || '';
+      var examples = localStorage.getItem('cfg_examples') || DEFAULT_EXAMPLES;
+      var suffix = localStorage.getItem('cfg_suffix') || DEFAULT_INPUT_SUFFIX;
 
-      var prompt = "[System: " + formatting + "]\n";
-      prompt += "[Scenario: " + scenario + "]\n";
-      prompt += "[Persona: " + persona + "]\n";
+      var prompt = system + "\n\n" + persona + "\n\n" + scenario + "\n\n";
+
       if (backgroundSummary) {
-        prompt += "[Persistent Context: " + backgroundSummary + "]\n";
+        prompt += "[Persistent Context / History Summary: " + backgroundSummary + "]\n\n";
       }
+
       if (examples) {
-        prompt += examples + "\n";
+        prompt += examples + "\n\n";
       }
 
       var recent = chatHistory.slice(-10);
       recent.forEach(function(m) {
-        prompt += (m.role === 'user' ? 'Mathew: ' : 'Ashley: ') + m.text + "\n";
+        prompt += (m.role === 'user' ? 'Mathew: ' : 'Ashley: ') + m.text + "\n\n";
       });
-      prompt += "Ashley:";
+
+      prompt += suffix + "\nAshley:";
       return prompt;
     }
 
@@ -330,6 +443,7 @@
     function stopGeneration() {
       abortActive = true;
       isGenerating = false;
+      removeTypingIndicator();
       setStopButtonState(false);
     }
 
@@ -352,8 +466,10 @@
       isGenerating = true;
       abortActive = false;
       setStopButtonState(true);
+      showTypingIndicator();
 
       var apiKey = localStorage.getItem('horde_api_key') || '0000000000';
+      var selectedModel = localStorage.getItem('cfg_model') || DEFAULT_MODEL;
       var maxTokens = parseInt(localStorage.getItem('cfg_max_tokens') || '220', 10);
       var contextLen = parseInt(localStorage.getItem('cfg_context') || '6144', 10);
       var temp = parseFloat(localStorage.getItem('cfg_temp') || '0.75');
@@ -374,11 +490,14 @@
               rep_pen: 1.15,
               stop_sequence: ["\nMathew:", "\n{{user}}:", "\nUser:"]
             },
-            models: ["Behemoth 123B v1"]
+            models: [selectedModel]
           })
         });
 
         var postData = await postRes.json();
+        if (!postData.id) {
+          throw new Error(postData.message || "Failed to enqueue request with Horde.");
+        }
         var requestId = postData.id;
 
         var generatedText = "";
@@ -389,6 +508,12 @@
 
           var checkRes = await fetch("https://aihorde.net/api/v2/generate/text/status/" + requestId);
           var checkData = await checkRes.json();
+
+          if (checkData.wait_time) {
+            updateTypingStatus("Waiting in queue (~" + checkData.wait_time + "s)...");
+          } else if (checkData.processing) {
+            updateTypingStatus("Writing response...");
+          }
 
           if (checkData.done) {
             generatedText = checkData.generations[0].text.trim();
@@ -401,6 +526,7 @@
 
         if (abortActive) return;
 
+        removeTypingIndicator();
         var durationSec = Math.round((Date.now() - startTime) / 1000) + "s";
         chatHistory.push({ role: 'char', text: generatedText, time: formatTime(), duration: durationSec });
         saveChatHistory();
@@ -408,8 +534,9 @@
 
         triggerBackgroundSummary(apiKey);
       } catch (err) {
+        removeTypingIndicator();
         if (!abortActive) {
-          var errText = "*Ashley looks distracted as the wind rattles the cabin doors.* (Connection error. Tap refresh or send to try again.)";
+          var errText = "*Ashley shivers as the wind howls against the window pane.* (" + (err.message || "Connection error. Tap reroll to retry.") + ")";
           chatHistory.push({ role: 'char', text: errText, time: formatTime(), duration: "Error" });
           saveChatHistory();
           renderFullChat();
@@ -429,11 +556,9 @@
 
     async function regenerateMessage(idx) {
       if (isGenerating) return;
-      // Remove Ashley's response
       chatHistory.splice(idx, 1);
       saveChatHistory();
       renderFullChat();
-      // Generate new one
       await triggerAIResponse();
     }
 
@@ -451,7 +576,7 @@
           body: JSON.stringify({
             prompt: prompt,
             params: { max_length: 80, temperature: 0.3 },
-            models: ["APHODITE-Llama-3-8B"]
+            models: ["APHODITE-Llama-3-8B", "koboldcpp/L3-8B-Stheno-v3.2"]
           })
         });
         var data = await res.json();
@@ -474,11 +599,14 @@
     function openSettingsModal() {
       try {
         document.getElementById('apiKeyInput').value = localStorage.getItem('horde_api_key') || '';
-        document.getElementById('formatDirectivesInput').value = localStorage.getItem('cfg_formatting') || DEFAULT_FORMATTING;
+        document.getElementById('modelIdInput').value = localStorage.getItem('cfg_model') || DEFAULT_MODEL;
+        document.getElementById('systemPromptInput').value = localStorage.getItem('cfg_system') || DEFAULT_SYSTEM;
+        document.getElementById('inputSuffixInput').value = localStorage.getItem('cfg_suffix') || DEFAULT_INPUT_SUFFIX;
         document.getElementById('personaInput').value = localStorage.getItem('cfg_persona') || DEFAULT_PERSONA;
         document.getElementById('scenarioInput').value = localStorage.getItem('cfg_scenario') || DEFAULT_SCENARIO;
-        document.getElementById('examplesInput').value = localStorage.getItem('cfg_examples') || '';
+        document.getElementById('examplesInput').value = localStorage.getItem('cfg_examples') || DEFAULT_EXAMPLES;
         document.getElementById('greetingInput').value = localStorage.getItem('cfg_greeting') || DEFAULT_GREETING;
+
         var maxT = localStorage.getItem('cfg_max_tokens') || "220";
         var ctxL = localStorage.getItem('cfg_context') || "6144";
         var temp = localStorage.getItem('cfg_temp') || "0.75";
@@ -501,7 +629,9 @@
     function saveSettings() {
       try {
         localStorage.setItem('horde_api_key', document.getElementById('apiKeyInput').value.trim());
-        localStorage.setItem('cfg_formatting', document.getElementById('formatDirectivesInput').value.trim());
+        localStorage.setItem('cfg_model', document.getElementById('modelIdInput').value.trim());
+        localStorage.setItem('cfg_system', document.getElementById('systemPromptInput').value.trim());
+        localStorage.setItem('cfg_suffix', document.getElementById('inputSuffixInput').value.trim());
         localStorage.setItem('cfg_persona', document.getElementById('personaInput').value.trim());
         localStorage.setItem('cfg_scenario', document.getElementById('scenarioInput').value.trim());
         localStorage.setItem('cfg_examples', document.getElementById('examplesInput').value.trim());
