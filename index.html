@@ -70,8 +70,20 @@
     .ashley .glass-bubble { background: var(--char-bubble); border: 1px solid var(--char-border); border-top-left-radius: 4px; }
     .user .glass-bubble { background: var(--user-bubble); border: 1px solid var(--user-border); border-top-right-radius: 4px; }
 
-    .action { display: block; color: var(--action-color); font-style: italic; font-weight: 300; margin-bottom: 10px; }
-    .speech { display: block; color: var(--speech-text); font-weight: 400; margin-bottom: 10px; }
+    /* Actions: Stripped of raw asterisks, rendered in warm italic */
+    .action {
+      display: block;
+      color: var(--action-color);
+      font-style: italic;
+      font-weight: 300;
+      margin-bottom: 10px;
+    }
+    .speech {
+      display: block;
+      color: var(--speech-text);
+      font-weight: 400;
+      margin-bottom: 10px;
+    }
     .action:last-child, .speech:last-child { margin-bottom: 0; }
 
     .meta-time-row {
@@ -122,7 +134,6 @@
       background: #3a2224; border: 1.5px solid var(--danger-color); color: var(--danger-color); border-radius: 14px;
     }
 
-    /* Minimal Settings Modal */
     .sheet-overlay {
       display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.88);
       backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 9999; align-items: flex-end;
@@ -186,7 +197,6 @@
   </div>
 
   <script>
-    // --- Hardcoded System Configuration ---
     var HARDCODED_MODEL = "aphrodite/TheDrummer/Behemoth-X-123B-v2.1";
     var HARDCODED_TEMP = 0.95;
     var HARDCODED_CONTEXT = 6144;
@@ -291,16 +301,39 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       } catch (e) {}
     }
 
-    function parseMessage(text) {
-      var paragraphs = text.split(/\n\s*\n/);
-      return paragraphs.map(function(para) {
-        var trimmed = para.trim();
-        if (!trimmed) return '';
+    // --- Bulletproof Action vs Speech Parser ---
+    function parseMessage(rawText) {
+      if (!rawText) return '';
+      
+      // Split on empty lines to respect paragraph breaks
+      var blocks = rawText.split(/\n\s*\n/);
+      var outputHtml = '';
+
+      blocks.forEach(function(block) {
+        var trimmed = block.trim();
+        if (!trimmed) return;
+
+        // Check if the entire block is wrapped in asterisks (*Action*)
         if (trimmed.startsWith('*') && trimmed.endsWith('*')) {
-          return '<span class="action">' + trimmed.slice(1, -1) + '</span>';
+          var cleanAction = trimmed.replace(/^\*+|\*+$/g, '').trim();
+          outputHtml += '<span class="action">' + cleanAction + '</span>';
+        } else {
+          // If block contains mixed inline asterisks
+          var parts = trimmed.split(/(\*[^*]+\*)/g);
+          parts.forEach(function(part) {
+            var subTrim = part.trim();
+            if (!subTrim) return;
+            if (subTrim.startsWith('*') && subTrim.endsWith('*')) {
+              var cleanSub = subTrim.slice(1, -1).trim();
+              outputHtml += '<span class="action">' + cleanSub + '</span>';
+            } else {
+              outputHtml += '<span class="speech">' + subTrim + '</span>';
+            }
+          });
         }
-        return '<span class="speech">' + trimmed + '</span>';
-      }).join('');
+      });
+
+      return outputHtml;
     }
 
     function formatTime() {
@@ -329,12 +362,18 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
           '<button class="msg-action-btn delete-btn" onclick="deleteMessage(' + idx + ')" title="Delete message"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>' +
           '</div></div></div>';
       } else {
+        // Hide time, reroll, and delete on Ashley's initial arrival welcome message (idx === 0)
+        var footerContent = '';
+        if (idx > 0) {
+          footerContent = '<div class="meta-time-row"><svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.2 3.1.8-1.3-4.5-2.7z"/></svg><span>' +
+            metaStr + '</span>' +
+            '<button class="msg-action-btn" onclick="regenerateMessage(' + idx + ')" title="Reroll message"><svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg></button>' +
+            '<button class="msg-action-btn delete-btn" onclick="deleteMessage(' + idx + ')" title="Delete message"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>' +
+            '</div>';
+        }
+
         html = '<div class="msg-group ashley" id="msg-' + idx + '"><div class="ashley-wrapper"><img class="ashley-msg-avatar" src="./ashley.png" onerror="this.src=\'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80\'"><div class="bubble-wrapper"><div class="glass-bubble">' +
-          parseMessage(text) + '</div><div class="meta-time-row"><svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.2 3.1.8-1.3-4.5-2.7z"/></svg><span>' +
-          metaStr + '</span>' +
-          '<button class="msg-action-btn" onclick="regenerateMessage(' + idx + ')" title="Reroll message"><svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg></button>' +
-          '<button class="msg-action-btn delete-btn" onclick="deleteMessage(' + idx + ')" title="Delete message"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>' +
-          '</div></div></div></div>';
+          parseMessage(text) + '</div>' + footerContent + '</div></div></div>';
       }
       stream.insertAdjacentHTML('beforeend', html);
       stream.scrollTop = stream.scrollHeight;
