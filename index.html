@@ -37,39 +37,15 @@
       position: fixed;
       inset: 0;
       z-index: 0;
-      background: radial-gradient(circle at 50% 12%, #161a26 0%, #0a0b10 65%, #040507 100%);
+      background: radial-gradient(circle at 50% 12%, #141722 0%, #090a0f 65%, #040507 100%);
       pointer-events: none;
     }
 
-    #snow-canvas {
+    #ambient-canvas {
       position: fixed;
       inset: 0;
       z-index: 1;
       pointer-events: none;
-    }
-
-    /* Dedicated top utility bar: Prevents overlaying message bubbles */
-    .top-utility-bar {
-      position: relative;
-      z-index: 10;
-      height: 38px;
-      padding: 0 16px;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      flex-shrink: 0;
-    }
-
-    .settings-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-dim);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 32px;
-      height: 32px;
     }
 
     /* Full-height chat stream */
@@ -80,13 +56,13 @@
       overflow-y: scroll;
       -webkit-overflow-scrolling: touch;
       overscroll-behavior-y: contain;
-      padding: 6px 14px 18px;
+      padding: 16px 14px 18px;
       display: flex;
       flex-direction: column;
       gap: 18px;
     }
 
-    /* Mathew: Pushed right with safe padding */
+    /* Mathew: Pushed right */
     .msg-group.user {
       display: flex;
       justify-content: flex-end;
@@ -159,7 +135,6 @@
     }
     .action:last-child, .speech:last-child { margin-bottom: 0; }
 
-    /* Metadata Bar below Bubbles (Clean padding away from screen edge) */
     .meta-time-row {
       display: inline-flex;
       align-items: center;
@@ -186,7 +161,6 @@
     .msg-action-btn.delete-btn:active { color: var(--danger-color); }
     .msg-action-btn svg { width: 13px; height: 13px; }
 
-    /* Typing Dots Animation */
     .typing-indicator { display: inline-flex; align-items: center; gap: 6px; padding: 6px 4px; }
     .typing-dot {
       width: 6px;
@@ -280,97 +254,37 @@
       border-radius: 14px;
     }
 
-    /* Modal Sheet */
-    .sheet-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.88);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      z-index: 9999;
-      align-items: flex-end;
-    }
-
-    .sheet-content {
-      width: 100%;
-      max-height: 70vh;
-      background: #12141c;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 24px 24px 0 0;
-      padding: 22px 18px 34px;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .field-label {
-      font-size: 0.72rem;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 8px;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .input-box {
-      width: 100%;
-      background: rgba(0,0,0,0.5);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 12px;
-      border-radius: 12px;
-      color: #fff;
-      outline: none;
-      font-size: 0.9rem;
-      margin-bottom: 18px;
-      font-family: inherit;
-    }
-
-    .range-row { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
-    .range-row input { flex: 1; accent-color: var(--gold-accent); }
-    .save-btn { width: 100%; background: var(--gold-accent); border: none; padding: 14px; border-radius: 14px; color: #12100d; font-weight: 600; font-size: 0.95rem; cursor: pointer; }
-    .reset-btn { width: 100%; background: transparent; border: 1px solid rgba(224, 108, 117, 0.4); color: var(--danger-color); padding: 12px; border-radius: 14px; font-weight: 600; font-size: 0.9rem; cursor: pointer; margin-top: 12px; }
-
-    /* Lightbox Modal: Avatar Fullscreen View */
+    /* Lightbox Modal: Minimal image-only */
     #avatar-lightbox {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(4, 5, 8, 0.92);
+      background: rgba(4, 5, 8, 0.94);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       z-index: 10000;
       align-items: center;
       justify-content: center;
-      flex-direction: column;
-      padding: 24px;
+      padding: 20px;
     }
 
     .lightbox-frame {
-      max-width: 88vw;
-      max-height: 72vh;
-      border-radius: 24px;
+      max-width: 90vw;
+      max-height: 78vh;
+      border-radius: 20px;
       padding: 2px;
-      background: linear-gradient(135deg, var(--gold-accent), transparent 70%);
-      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+      background: linear-gradient(135deg, var(--gold-accent), transparent 75%);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.85);
       overflow: hidden;
     }
 
     .lightbox-frame img {
       width: 100%;
       height: 100%;
-      max-height: 70vh;
+      max-height: 76vh;
       object-fit: cover;
       display: block;
-      border-radius: 22px;
-    }
-
-    .lightbox-label {
-      margin-top: 16px;
-      font-size: 0.9rem;
-      color: var(--gold-accent);
-      letter-spacing: 1px;
-      font-weight: 500;
+      border-radius: 18px;
     }
 
     .icon { width: 20px; height: 20px; fill: currentColor; }
@@ -379,16 +293,9 @@
 <body>
 
   <div id="ambient-bg"></div>
-  <canvas id="snow-canvas"></canvas>
+  <canvas id="ambient-canvas"></canvas>
 
   <div id="app-container">
-    <!-- Slim top utility bar that never collides with chat bubbles -->
-    <div class="top-utility-bar">
-      <button type="button" class="settings-btn" onclick="openSettingsModal()" title="Settings">
-        <svg class="icon" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54A.48.48 0 0 0 13.92 2h-3.84a.48.48 0 0 0-.48.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.72 8.47a.48.48 0 0 0 .12.61l2.03 1.58c-.05.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.48-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6"/></svg>
-      </button>
-    </div>
-
     <main id="chat-stream"></main>
 
     <footer id="input-footer">
@@ -402,30 +309,18 @@
     </footer>
   </div>
 
-  <!-- Settings Sheet -->
-  <div id="settings-sheet" class="sheet-overlay" onclick="closeSettingsModal(event)">
-    <div class="sheet-content" onclick="event.stopPropagation()">
-      <div class="field-label">AI Horde API Key</div>
-      <input type="password" id="apiKeyInput" class="input-box" placeholder="0000000000 (or your key)">
-
-      <div class="field-label"><span>Max New Tokens</span><span id="maxTokensVal">220</span></div>
-      <div class="range-row"><input type="range" id="maxTokensRange" min="80" max="600" step="10" value="220" oninput="document.getElementById('maxTokensVal').innerText = this.value"></div>
-
-      <button type="button" class="save-btn" onclick="saveSettings()">Save</button>
-      <button type="button" class="reset-btn" onclick="resetChatHistory()">Reset Story to Start</button>
-    </div>
-  </div>
-
-  <!-- Fullscreen Avatar Lightbox -->
+  <!-- Fullscreen Avatar Lightbox (No text label) -->
   <div id="avatar-lightbox" onclick="closeLightbox()">
     <div class="lightbox-frame" onclick="event.stopPropagation()">
-      <img src="./ashley.png" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80'" alt="Ashley">
+      <img src="./ashley.png" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80'" alt="">
     </div>
-    <div class="lightbox-label">Ashley</div>
   </div>
 
   <script>
+    // --- Hardcoded Core Configuration ---
+    var HARDCODED_API_KEY = "1RphVxqX2XNRZnbc-uRgwQ";
     var HARDCODED_MODEL = "aphrodite/TheDrummer/Behemoth-X-123B-v2.1";
+    var HARDCODED_MAX_TOKENS = 500;
     var HARDCODED_TEMP = 0.95;
     var HARDCODED_CONTEXT = 6144;
 
@@ -707,20 +602,18 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       setStopButtonState(true);
       showTypingIndicator();
 
-      var apiKey = localStorage.getItem('horde_api_key') || '0000000000';
-      var maxTokens = parseInt(localStorage.getItem('cfg_max_tokens') || '220', 10);
       var promptPayload = buildHordePrompt();
       generationStartTime = Date.now();
 
       try {
         var postRes = await fetch("https://aihorde.net/api/v2/generate/text/async", {
           method: "POST",
-          headers: { "Content-Type": "application/json", "apikey": apiKey },
+          headers: { "Content-Type": "application/json", "apikey": HARDCODED_API_KEY },
           body: JSON.stringify({
             prompt: promptPayload,
             params: {
               max_context_length: HARDCODED_CONTEXT,
-              max_length: maxTokens,
+              max_length: HARDCODED_MAX_TOKENS,
               temperature: HARDCODED_TEMP,
               rep_pen: 1.15,
               stop_sequence: ["\nMathew:", "\n{{user}}:", "\nUser:"]
@@ -738,7 +631,7 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
         localStorage.setItem('pending_horde_id', activeHordeRequestId);
         localStorage.setItem('pending_horde_start', generationStartTime);
 
-        await pollHordeResult(activeHordeRequestId, apiKey);
+        await pollHordeResult(activeHordeRequestId);
       } catch (err) {
         handleGenerationError(err);
       }
@@ -749,11 +642,10 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       abortActive = false;
       setStopButtonState(true);
       showTypingIndicator();
-      var apiKey = localStorage.getItem('horde_api_key') || '0000000000';
-      await pollHordeResult(requestId, apiKey);
+      await pollHordeResult(requestId);
     }
 
-    async function pollHordeResult(requestId, apiKey) {
+    async function pollHordeResult(requestId) {
       try {
         var generatedText = "";
         while (true) {
@@ -791,7 +683,7 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
         localStorage.removeItem('pending_horde_start');
         activeHordeRequestId = null;
 
-        triggerBackgroundSummary(apiKey);
+        triggerBackgroundSummary();
       } catch (err) {
         handleGenerationError(err);
       } finally {
@@ -818,7 +710,6 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
 
     document.addEventListener('visibilitychange', function() {
       if (document.visibilityState === 'visible' && activeHordeRequestId && isGenerating) {
-        var apiKey = localStorage.getItem('horde_api_key') || '0000000000';
         fetch("https://aihorde.net/api/v2/generate/text/status/" + activeHordeRequestId)
           .then(function(res) { return res.json(); })
           .then(function(data) {
@@ -862,7 +753,6 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       autoExpandTextarea(input);
       input.focus();
 
-      // Remove this message and any subsequent messages so the story timeline stays clean
       chatHistory.splice(idx);
       saveChatHistory();
       renderFullChat();
@@ -876,7 +766,7 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       document.getElementById('avatar-lightbox').style.display = 'none';
     }
 
-    async function triggerBackgroundSummary(apiKey) {
+    async function triggerBackgroundSummary() {
       if (chatHistory.length < 14 || chatHistory.length % 10 !== 0) return;
       var olderSlice = chatHistory.slice(-14, -6);
       var textToSummarize = olderSlice.map(function(m) { return (m.role === 'user' ? 'Mathew' : 'Ashley') + ': ' + m.text; }).join('\n');
@@ -886,7 +776,7 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       try {
         var res = await fetch("https://aihorde.net/api/v2/generate/text/async", {
           method: "POST",
-          headers: { "Content-Type": "application/json", "apikey": apiKey },
+          headers: { "Content-Type": "application/json", "apikey": HARDCODED_API_KEY },
           body: JSON.stringify({
             prompt: prompt,
             params: { max_length: 80, temperature: 0.3 },
@@ -908,43 +798,6 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
           if (pollData.faulted) break;
         }
       } catch (e) {}
-    }
-
-    function openSettingsModal() {
-      try {
-        document.getElementById('apiKeyInput').value = localStorage.getItem('horde_api_key') || '';
-        var maxT = localStorage.getItem('cfg_max_tokens') || "220";
-        document.getElementById('maxTokensRange').value = maxT;
-        document.getElementById('maxTokensVal').innerText = maxT;
-      } catch (e) {}
-      document.getElementById('settings-sheet').style.display = 'flex';
-    }
-
-    function closeSettingsModal(e) {
-      if (e && e.target && e.target.id !== 'settings-sheet') return;
-      document.getElementById('settings-sheet').style.display = 'none';
-    }
-
-    function saveSettings() {
-      try {
-        localStorage.setItem('horde_api_key', document.getElementById('apiKeyInput').value.trim());
-        localStorage.setItem('cfg_max_tokens', document.getElementById('maxTokensRange').value);
-      } catch (e) {}
-      document.getElementById('settings-sheet').style.display = 'none';
-    }
-
-    function resetChatHistory() {
-      if (confirm("Reset the entire story back to Ashley's arrival?")) {
-        chatHistory = [{ role: 'char', text: HARDCODED_GREETING, time: formatTime() }];
-        backgroundSummary = "";
-        localStorage.removeItem('ashley_chat_history');
-        localStorage.removeItem('ashley_bg_summary');
-        localStorage.removeItem('pending_horde_id');
-        localStorage.removeItem('pending_horde_start');
-        saveChatHistory();
-        renderFullChat();
-        document.getElementById('settings-sheet').style.display = 'none';
-      }
     }
 
     var appContainer = document.getElementById('app-container');
@@ -974,7 +827,8 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       }, 250);
     });
 
-    var canvas = document.getElementById('snow-canvas');
+    // --- Subtle, Non-Distracting Background Ambiance ---
+    var canvas = document.getElementById('ambient-canvas');
     var ctx = canvas.getContext('2d');
     var width = canvas.width = window.innerWidth;
     var height = canvas.height = window.innerHeight;
@@ -984,33 +838,33 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       height = canvas.height = window.innerHeight;
     });
 
-    var flakes = [];
-    for (var i = 0; i < 40; i++) {
-      flakes.push({
+    var motes = [];
+    for (var i = 0; i < 18; i++) {
+      motes.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        r: Math.random() * 1.6 + 0.6,
-        speed: Math.random() * 0.6 + 0.3,
-        opacity: Math.random() * 0.35 + 0.2
+        r: Math.random() * 1.2 + 0.5,
+        speedY: (Math.random() * 0.15 + 0.05) * -1,
+        speedX: (Math.random() - 0.5) * 0.1,
+        opacity: Math.random() * 0.18 + 0.08
       });
     }
 
-    function drawSnow() {
+    function drawAmbiance() {
       ctx.clearRect(0, 0, width, height);
-      ctx.fillStyle = "#ffffff";
-      for (var j = 0; j < flakes.length; j++) {
-        var f = flakes[j];
+      for (var j = 0; j < motes.length; j++) {
+        var m = motes[j];
         ctx.beginPath();
-        ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
-        ctx.globalAlpha = f.opacity;
+        ctx.arc(m.x, m.y, m.r, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(212, 175, 122, " + m.opacity + ")";
         ctx.fill();
-        f.y += f.speed;
-        if (f.y > height) { f.y = -5; f.x = Math.random() * width; }
+        m.y += m.speedY;
+        m.x += m.speedX;
+        if (m.y < 0) { m.y = height + 5; m.x = Math.random() * width; }
       }
-      ctx.globalAlpha = 1.0;
-      requestAnimationFrame(drawSnow);
+      requestAnimationFrame(drawAmbiance);
     }
-    drawSnow();
+    drawAmbiance();
 
     function insertActionWrapper() {
       var start = promptInput.selectionStart;
@@ -1023,9 +877,10 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
     }
 
     promptInput.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
+      if (e.key === 'Enter') {
+        setTimeout(function() {
+          autoExpandTextarea(promptInput);
+        }, 10);
       }
     });
 
