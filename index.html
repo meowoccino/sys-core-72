@@ -87,10 +87,7 @@
     .msg-action-btn.delete-btn:active { color: var(--danger-color); }
     .msg-action-btn svg { width: 13px; height: 13px; }
 
-    /* Typing Dots Animation */
-    .typing-indicator {
-      display: inline-flex; align-items: center; gap: 6px; padding: 6px 4px;
-    }
+    .typing-indicator { display: inline-flex; align-items: center; gap: 6px; padding: 6px 4px; }
     .typing-dot {
       width: 6px; height: 6px; background: var(--gold-accent); border-radius: 50%; opacity: 0.4;
       animation: pulseDot 1.4s infinite ease-in-out;
@@ -125,25 +122,21 @@
       background: #3a2224; border: 1.5px solid var(--danger-color); color: var(--danger-color); border-radius: 14px;
     }
 
+    /* Minimal Settings Modal */
     .sheet-overlay {
       display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.88);
       backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 9999; align-items: flex-end;
     }
     .sheet-content {
-      width: 100%; max-height: 88vh; background: #12141c; border-top: 1px solid rgba(255, 255, 255, 0.1);
+      width: 100%; max-height: 70vh; background: #12141c; border-top: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 24px 24px 0 0; padding: 22px 18px 34px; overflow-y: auto; -webkit-overflow-scrolling: touch;
     }
-    .sheet-section-title {
-      font-size: 0.78rem; color: var(--gold-accent); text-transform: uppercase; letter-spacing: 1px;
-      margin: 18px 0 10px; font-weight: 600; border-bottom: 1px solid rgba(212, 175, 122, 0.2); padding-bottom: 4px;
-    }
-    .sheet-section-title:first-child { margin-top: 0; }
-    .field-label { font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: flex; justify-content: space-between; }
-    .input-box { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255, 255, 255, 0.08); padding: 12px; border-radius: 12px; color: #fff; outline: none; font-size: 0.9rem; margin-bottom: 14px; font-family: inherit; }
-    textarea.input-box { resize: vertical; min-height: 75px; line-height: 1.4; }
-    .range-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .field-label { font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: flex; justify-content: space-between; }
+    .input-box { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255, 255, 255, 0.08); padding: 12px; border-radius: 12px; color: #fff; outline: none; font-size: 0.9rem; margin-bottom: 18px; font-family: inherit; }
+    .range-row { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
     .range-row input { flex: 1; accent-color: var(--gold-accent); }
-    .save-btn { width: 100%; background: var(--gold-accent); border: none; padding: 14px; border-radius: 14px; color: #12100d; font-weight: 600; font-size: 0.95rem; cursor: pointer; margin-top: 10px; }
+    .save-btn { width: 100%; background: var(--gold-accent); border: none; padding: 14px; border-radius: 14px; color: #12100d; font-weight: 600; font-size: 0.95rem; cursor: pointer; }
+    .reset-btn { width: 100%; background: transparent; border: 1px solid rgba(224, 108, 117, 0.4); color: var(--danger-color); padding: 12px; border-radius: 14px; font-weight: 600; font-size: 0.9rem; cursor: pointer; margin-top: 12px; }
     .icon { width: 20px; height: 20px; fill: currentColor; }
   </style>
 </head>
@@ -178,56 +171,29 @@
     </footer>
   </div>
 
+  <!-- Minimal Settings: Key, Tokens, Save & Reset -->
   <div id="settings-sheet" class="sheet-overlay" onclick="closeSettingsModal(event)">
     <div class="sheet-content" onclick="event.stopPropagation()">
-      <div class="sheet-section-title">Backend Connection</div>
       <div class="field-label">AI Horde API Key</div>
       <input type="password" id="apiKeyInput" class="input-box" placeholder="0000000000 (or your key)">
 
-      <div class="sheet-section-title">Model Target</div>
-      <div class="field-label">Primary Horde Model ID</div>
-      <input type="text" id="modelIdInput" class="input-box">
-
-      <div class="sheet-section-title">System Directives & Formatting</div>
-      <div class="field-label">System Directives</div>
-      <textarea id="systemPromptInput" class="input-box" rows="4"></textarea>
-
-      <div class="field-label">Input Suffix (Appended after last user turn)</div>
-      <textarea id="inputSuffixInput" class="input-box" rows="4"></textarea>
-
-      <div class="sheet-section-title">Character Definition</div>
-      <div class="field-label">Personality & Core Persona</div>
-      <textarea id="personaInput" class="input-box" rows="4"></textarea>
-
-      <div class="field-label">Current Scenario & Setting</div>
-      <textarea id="scenarioInput" class="input-box" rows="4"></textarea>
-
-      <div class="field-label">Example Messages (&lt;START&gt;)</div>
-      <textarea id="examplesInput" class="input-box" rows="5"></textarea>
-
-      <div class="field-label">First Message / Greeting</div>
-      <textarea id="greetingInput" class="input-box" rows="4"></textarea>
-
-      <div class="sheet-section-title">Generation Parameters</div>
       <div class="field-label"><span>Max New Tokens</span><span id="maxTokensVal">220</span></div>
       <div class="range-row"><input type="range" id="maxTokensRange" min="80" max="600" step="10" value="220" oninput="document.getElementById('maxTokensVal').innerText = this.value"></div>
 
-      <div class="field-label"><span>Context Length</span><span id="contextVal">6144</span></div>
-      <div class="range-row"><input type="range" id="contextRange" min="2048" max="8192" step="512" value="6144" oninput="document.getElementById('contextVal').innerText = this.value"></div>
-
-      <div class="field-label"><span>Temperature</span><span id="tempVal">0.75</span></div>
-      <div class="range-row"><input type="range" id="tempRange" min="0.3" max="1.5" step="0.05" value="0.75" oninput="document.getElementById('tempVal').innerText = this.value"></div>
-
-      <button type="button" class="save-btn" onclick="saveSettings()">Save Configuration</button>
+      <button type="button" class="save-btn" onclick="saveSettings()">Save</button>
+      <button type="button" class="reset-btn" onclick="resetChatHistory()">Reset Story to Start</button>
     </div>
   </div>
 
   <script>
-    var DEFAULT_MODEL = "aphrodite/TheDrummer/Behemoth-X-123B-v2.1";
+    // --- Hardcoded System Configuration ---
+    var HARDCODED_MODEL = "aphrodite/TheDrummer/Behemoth-X-123B-v2.1";
+    var HARDCODED_TEMP = 0.95;
+    var HARDCODED_CONTEXT = 6144;
 
-    var DEFAULT_GREETING = "*The heavy cabin door pushes open, letting in a brief gust of freezing mountain wind before I quickly pull it shut. I drop my roller suitcase and airline shoulder bag on the entryway mat, exhaling a long, frosty breath that instantly fogs up.*\n\n*Shaking the snow from the hood of my winter coat, I push my blonde hair out of my face and look up at you, a tired but genuine grin breaking out across my lips.*\n\nTell me you have something hot to drink on the stove, because I'm pretty sure my fingers froze solid on that mountain pass. It is so good to see you, Mathew.";
+    var HARDCODED_GREETING = "*The heavy cabin door pushes open, letting in a brief gust of freezing mountain wind before I quickly pull it shut. I drop my roller suitcase and airline shoulder bag on the entryway mat, exhaling a long, frosty breath that instantly fogs up.*\n\n*Shaking the snow from the hood of my winter coat, I push my blonde hair out of my face and look up at you, a tired but genuine grin breaking out across my lips.*\n\nTell me you have something hot to drink on the stove, because I'm pretty sure my fingers froze solid on that mountain pass. It is so good to see you, Mathew.";
 
-    var DEFAULT_PERSONA = `Ashley is a 24-year-old commercial flight attendant taking a one-week winter break to visit her childhood best friend since elementary school, Mathew ({{user}}), at his secluded mountain cabin. They have never worked together in an office or corporate setting; their entire history is built on growing up together and staying close long-distance.
+    var HARDCODED_PERSONA = `Ashley is a 24-year-old commercial flight attendant taking a one-week winter break to visit her childhood best friend since elementary school, Mathew ({{user}}), at his secluded mountain cabin. They have never worked together in an office or corporate setting; their entire history is built on growing up together and staying close long-distance.
 
 She is warm, affectionate, and grounded, sharing a comfortable, effortless history with Mathew. Secretly harboring a deep crush on him for years, she hopes this secluded trip will naturally bridge the gap between best friends and lovers. Exhausted from grueling long-haul shifts and red-eye flights, she wants nothing more than to unwind, cuddle by the fire, and be taken care of.
 
@@ -255,28 +221,28 @@ Spoken words go here without quotes, using natural emojis 🥰✨😏🥺❤️
 - Intimate Details: Well-endowed, measuring 22 cm when fully erect and hard
 - Relationship Dynamic: Deep, effortless history together, mutual romantic attraction and uninhibited sexual chemistry]`;
 
-    var DEFAULT_SCENARIO = `Ashley is a 24-year-old commercial flight attendant on a one-week winter break visiting her childhood best friend, Mathew ({{user}}), at his secluded mountain cabin. Exhausted from long-haul flights, she wants to unwind, cuddle by the fire, and explore the mutual romantic and physical desire that has been building between them for years.
+    var HARDCODED_SCENARIO = `Ashley is a 24-year-old commercial flight attendant on a one-week winter break visiting her childhood best friend, Mathew ({{user}}), at his secluded mountain cabin. Exhausted from long-haul flights, she wants to unwind, cuddle by the fire, and explore the mutual romantic and physical desire that has been building between them for years.
 
 [Cabin Setting & Layout:
 - Main Floor: Cozy, single-story open-concept cabin. Features a roaring stone fireplace, plush couch, open kitchen, master king-bed, and a walk-in master bathroom.
 - Hidden Lower Spa: Accessed via a hidden wooden trapdoor in the living room floor with stone stairs leading down to a private heated pool, cedar sauna, massage table, and spa shower.
 - Atmosphere: Deep winter snow outside, completely private and secluded in the mountains.]`;
 
-    var DEFAULT_SYSTEM = `Write {{char}}'s next reply in a chat between {{char}} and {{user}}. Every response MUST consist of 2 to 3 concise, natural paragraphs (100-160 words total). Never write massive walls of text or rush the timeline. Format physical actions and body language in asterisks on their own lines, and use natural spoken dialogue with expressive emojis.
+    var HARDCODED_SYSTEM = `Write {{char}}'s next reply in a chat between {{char}} and {{user}}. Every response MUST consist of 2 to 3 concise, natural paragraphs (100-160 words total). Never write massive walls of text or rush the timeline. Format physical actions and body language in asterisks on their own lines, and use natural spoken dialogue with expressive emojis.
 
 [Mandatory Formatting Rule: Ashley's response MUST follow this exact 3-block structure separated by blank lines:
 Paragraph 1: ONLY physical actions and body language, enclosed completely in *asterisks*. No spoken words.
 Paragraph 2: ONLY spoken dialogue with expressive emojis (no asterisks, no quotes).
 Paragraph 3: ONLY physical reactions, sensations, and touches, enclosed completely in *asterisks*. No spoken words.]`;
 
-    var DEFAULT_INPUT_SUFFIX = `<|im_end|>
+    var HARDCODED_INPUT_SUFFIX = `<|im_end|>
 [Strict Directives:
 - Identity & Role: Ashley is strictly a 24-year-old commercial flight attendant on vacation. She NEVER works at a bar or other jobs. Mathew ({{user}}) is her lifelong male best friend.
 - Conversational Priority: Ashley MUST talk substantially more. Prioritize natural, playful banter and teasing. Spoken dialogue MUST outnumber narration. No melodrama or financial panic.
 - Formatting: All physical actions and body language in *asterisks*. Spoken dialogue in plain text with emojis. NEVER use quotation marks (" ").
 - Pacing: React strictly to the present moment. Wait for Mathew's move.]`;
 
-    var DEFAULT_EXAMPLES = `<START>
+    var HARDCODED_EXAMPLES = `<START>
 {{user}}: *I take your coat and hang it on the rack.* Come on in and get warm by the fire. Coffee or tea?
 {{char}}: *I slip off my boots by the doorway, letting out a long, relaxed sigh as the dry mountain warmth washes over me. Stepping onto the hardwood in my thick socks, I wander over and lean lightly against the wooden kitchen counter, watching you move around the space.*
 
@@ -311,8 +277,7 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
         if (savedChat) {
           chatHistory = JSON.parse(savedChat);
         } else {
-          var greeting = localStorage.getItem('cfg_greeting') || DEFAULT_GREETING;
-          chatHistory.push({ role: 'char', text: greeting, time: formatTime() });
+          chatHistory.push({ role: 'char', text: HARDCODED_GREETING, time: formatTime() });
           saveChatHistory();
         }
         backgroundSummary = localStorage.getItem('ashley_bg_summary') || "";
@@ -395,28 +360,20 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
     }
 
     function buildHordePrompt() {
-      var system = localStorage.getItem('cfg_system') || DEFAULT_SYSTEM;
-      var persona = localStorage.getItem('cfg_persona') || DEFAULT_PERSONA;
-      var scenario = localStorage.getItem('cfg_scenario') || DEFAULT_SCENARIO;
-      var examples = localStorage.getItem('cfg_examples') || DEFAULT_EXAMPLES;
-      var suffix = localStorage.getItem('cfg_suffix') || DEFAULT_INPUT_SUFFIX;
-
-      var prompt = system + "\n\n" + persona + "\n\n" + scenario + "\n\n";
+      var prompt = HARDCODED_SYSTEM + "\n\n" + HARDCODED_PERSONA + "\n\n" + HARDCODED_SCENARIO + "\n\n";
 
       if (backgroundSummary) {
         prompt += "[Persistent Context / History Summary: " + backgroundSummary + "]\n\n";
       }
 
-      if (examples) {
-        prompt += examples + "\n\n";
-      }
+      prompt += HARDCODED_EXAMPLES + "\n\n";
 
       var recent = chatHistory.slice(-10);
       recent.forEach(function(m) {
         prompt += (m.role === 'user' ? 'Mathew: ' : 'Ashley: ') + m.text + "\n\n";
       });
 
-      prompt += suffix + "\nAshley:";
+      prompt += HARDCODED_INPUT_SUFFIX + "\nAshley:";
       return prompt;
     }
 
@@ -469,10 +426,7 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       showTypingIndicator();
 
       var apiKey = localStorage.getItem('horde_api_key') || '0000000000';
-      var selectedModel = localStorage.getItem('cfg_model') || DEFAULT_MODEL;
       var maxTokens = parseInt(localStorage.getItem('cfg_max_tokens') || '220', 10);
-      var contextLen = parseInt(localStorage.getItem('cfg_context') || '6144', 10);
-      var temp = parseFloat(localStorage.getItem('cfg_temp') || '0.75');
 
       var promptPayload = buildHordePrompt();
       var startTime = Date.now();
@@ -484,13 +438,13 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
           body: JSON.stringify({
             prompt: promptPayload,
             params: {
-              max_context_length: contextLen,
+              max_context_length: HARDCODED_CONTEXT,
               max_length: maxTokens,
-              temperature: temp,
+              temperature: HARDCODED_TEMP,
               rep_pen: 1.15,
               stop_sequence: ["\nMathew:", "\n{{user}}:", "\nUser:"]
             },
-            models: [selectedModel]
+            models: [HARDCODED_MODEL]
           })
         });
 
@@ -599,24 +553,9 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
     function openSettingsModal() {
       try {
         document.getElementById('apiKeyInput').value = localStorage.getItem('horde_api_key') || '';
-        document.getElementById('modelIdInput').value = localStorage.getItem('cfg_model') || DEFAULT_MODEL;
-        document.getElementById('systemPromptInput').value = localStorage.getItem('cfg_system') || DEFAULT_SYSTEM;
-        document.getElementById('inputSuffixInput').value = localStorage.getItem('cfg_suffix') || DEFAULT_INPUT_SUFFIX;
-        document.getElementById('personaInput').value = localStorage.getItem('cfg_persona') || DEFAULT_PERSONA;
-        document.getElementById('scenarioInput').value = localStorage.getItem('cfg_scenario') || DEFAULT_SCENARIO;
-        document.getElementById('examplesInput').value = localStorage.getItem('cfg_examples') || DEFAULT_EXAMPLES;
-        document.getElementById('greetingInput').value = localStorage.getItem('cfg_greeting') || DEFAULT_GREETING;
-
         var maxT = localStorage.getItem('cfg_max_tokens') || "220";
-        var ctxL = localStorage.getItem('cfg_context') || "6144";
-        var temp = localStorage.getItem('cfg_temp') || "0.75";
-
         document.getElementById('maxTokensRange').value = maxT;
         document.getElementById('maxTokensVal').innerText = maxT;
-        document.getElementById('contextRange').value = ctxL;
-        document.getElementById('contextVal').innerText = ctxL;
-        document.getElementById('tempRange').value = temp;
-        document.getElementById('tempVal').innerText = temp;
       } catch (e) {}
       document.getElementById('settings-sheet').style.display = 'flex';
     }
@@ -629,18 +568,21 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
     function saveSettings() {
       try {
         localStorage.setItem('horde_api_key', document.getElementById('apiKeyInput').value.trim());
-        localStorage.setItem('cfg_model', document.getElementById('modelIdInput').value.trim());
-        localStorage.setItem('cfg_system', document.getElementById('systemPromptInput').value.trim());
-        localStorage.setItem('cfg_suffix', document.getElementById('inputSuffixInput').value.trim());
-        localStorage.setItem('cfg_persona', document.getElementById('personaInput').value.trim());
-        localStorage.setItem('cfg_scenario', document.getElementById('scenarioInput').value.trim());
-        localStorage.setItem('cfg_examples', document.getElementById('examplesInput').value.trim());
-        localStorage.setItem('cfg_greeting', document.getElementById('greetingInput').value.trim());
         localStorage.setItem('cfg_max_tokens', document.getElementById('maxTokensRange').value);
-        localStorage.setItem('cfg_context', document.getElementById('contextRange').value);
-        localStorage.setItem('cfg_temp', document.getElementById('tempRange').value);
       } catch (e) {}
       document.getElementById('settings-sheet').style.display = 'none';
+    }
+
+    function resetChatHistory() {
+      if (confirm("Reset the entire story back to Ashley's arrival?")) {
+        chatHistory = [{ role: 'char', text: HARDCODED_GREETING, time: formatTime() }];
+        backgroundSummary = "";
+        localStorage.removeItem('ashley_chat_history');
+        localStorage.removeItem('ashley_bg_summary');
+        saveChatHistory();
+        renderFullChat();
+        document.getElementById('settings-sheet').style.display = 'none';
+      }
     }
 
     var chatStream = document.getElementById('chat-stream');
