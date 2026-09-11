@@ -30,12 +30,12 @@
     #snow-canvas { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
 
     header {
-      position: relative; z-index: 10; padding: 16px 20px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      position: relative; z-index: 10; padding: 16px 16px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center;
       background: transparent; transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease; will-change: transform, opacity; flex-shrink: 0;
     }
     header.header-hidden { transform: translateY(-90px); opacity: 0; pointer-events: none; }
 
-    .top-bar-controls { width: 100%; display: flex; justify-content: flex-end; position: absolute; top: 14px; right: 18px; }
+    .top-bar-controls { width: 100%; display: flex; justify-content: flex-end; position: absolute; top: 14px; right: 16px; }
     .settings-btn { background: transparent; border: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #9ba2b3; cursor: pointer; }
 
     .avatar-wrapper {
@@ -50,27 +50,56 @@
       font-weight: 400; text-transform: uppercase; text-shadow: 0 2px 10px rgba(0,0,0,0.5);
     }
 
+    /* --- Chat Stream: Wide Layout (No Artificial Center Compression) --- */
     #chat-stream {
       flex: 1; position: relative; z-index: 5; overflow-y: scroll; -webkit-overflow-scrolling: touch;
-      overscroll-behavior-y: contain; padding: 16px; display: flex; flex-direction: column; gap: 22px;
+      overscroll-behavior-y: contain; padding: 12px 10px; display: flex; flex-direction: column; gap: 18px;
     }
 
-    .msg-group.user { display: flex; justify-content: flex-end; width: 100%; }
-    .msg-group.user .user-wrapper { max-width: 84%; display: flex; flex-direction: column; align-items: flex-end; }
-    .msg-group.ashley { display: flex; justify-content: flex-start; width: 100%; }
-    .msg-group.ashley .ashley-wrapper { max-width: 90%; display: flex; gap: 12px; align-items: flex-start; }
+    /* Mathew: Pushed Cleanly Against Right Edge */
+    .msg-group.user {
+      display: flex;
+      justify-content: flex-end;
+      width: 100%;
+      padding-left: 10%;
+    }
+    .msg-group.user .user-wrapper {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
 
-    .ashley-msg-avatar { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--gold-accent); flex-shrink: 0; margin-top: 4px; }
+    /* Ashley: Wide Left Anchor with Micro Avatar */
+    .msg-group.ashley {
+      display: flex;
+      justify-content: flex-start;
+      width: 100%;
+      padding-right: 6%;
+    }
+    .msg-group.ashley .ashley-wrapper {
+      width: 100%;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .ashley-msg-avatar { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--gold-accent); flex-shrink: 0; margin-top: 4px; }
     .bubble-wrapper { display: flex; flex-direction: column; width: 100%; }
 
     .glass-bubble {
-      padding: 16px 18px; border-radius: 20px; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4); font-size: 0.95rem; line-height: 1.62;
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 18px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+      font-size: 0.95rem;
+      line-height: 1.62;
     }
     .ashley .glass-bubble { background: var(--char-bubble); border: 1px solid var(--char-border); border-top-left-radius: 4px; }
     .user .glass-bubble { background: var(--user-bubble); border: 1px solid var(--user-border); border-top-right-radius: 4px; }
 
-    /* Actions: Stripped of raw asterisks, rendered in warm italic */
     .action {
       display: block;
       color: var(--action-color);
@@ -113,22 +142,32 @@
       40% { opacity: 1; transform: scale(1.15); }
     }
 
-    footer { position: relative; z-index: 10; padding: 10px 16px 14px; background: transparent; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    footer {
+      position: relative; z-index: 10; padding: 8px 12px 12px; background: transparent;
+      display: flex; align-items: flex-end; gap: 8px; flex-shrink: 0;
+    }
+
     .dock-input {
       flex: 1; background: rgba(12, 14, 20, 0.95); border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 22px; padding: 8px 14px; display: flex; align-items: center; gap: 8px;
+      border-radius: 22px; padding: 8px 14px; display: flex; align-items: flex-end; gap: 8px; min-height: 42px;
     }
+
     .dock-input textarea {
       flex: 1; background: transparent; border: none; outline: none; color: #fff;
-      font-family: inherit; font-size: 0.95rem; resize: none; max-height: 80px; line-height: 1.4;
+      font-family: inherit; font-size: 0.95rem; resize: none; height: 24px; max-height: 120px;
+      line-height: 1.4; padding: 2px 0; overflow-y: auto; display: block;
     }
-    .action-symbol-btn { background: transparent; border: none; color: var(--text-dim); font-size: 0.95rem; padding: 4px 6px; cursor: pointer; flex-shrink: 0; }
+
+    .action-symbol-btn {
+      background: transparent; border: none; color: var(--text-dim); font-size: 0.95rem;
+      padding: 4px 6px; cursor: pointer; flex-shrink: 0; margin-bottom: 2px;
+    }
     .action-symbol-btn:active { color: var(--action-color); }
 
     .send-pill {
       width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #dfb479, #b88b48);
-      border: none; color: #12100d; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
-      transition: background 0.2s ease, border-radius 0.2s ease;
+      border: none; color: #12100d; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; flex-shrink: 0; transition: background 0.2s ease, border-radius 0.2s ease;
     }
     .send-pill.is-stopping {
       background: #3a2224; border: 1.5px solid var(--danger-color); color: var(--danger-color); border-radius: 14px;
@@ -173,7 +212,7 @@
 
     <footer id="input-footer">
       <div class="dock-input">
-        <textarea id="promptInput" rows="1" placeholder="Type a message or action..."></textarea>
+        <textarea id="promptInput" rows="1" placeholder="Type a message or action..." oninput="autoExpandTextarea(this)"></textarea>
         <button type="button" class="action-symbol-btn" onclick="insertActionWrapper()">* *</button>
       </div>
       <button type="button" class="send-pill" id="actionBtn" onclick="handleActionClick()">
@@ -182,7 +221,6 @@
     </footer>
   </div>
 
-  <!-- Minimal Settings: Key, Tokens, Save & Reset -->
   <div id="settings-sheet" class="sheet-overlay" onclick="closeSettingsModal(event)">
     <div class="sheet-content" onclick="event.stopPropagation()">
       <div class="field-label">AI Horde API Key</div>
@@ -280,6 +318,8 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
     var backgroundSummary = "";
     var isGenerating = false;
     var abortActive = false;
+    var activeHordeRequestId = null;
+    var generationStartTime = null;
 
     function init() {
       try {
@@ -291,6 +331,14 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
           saveChatHistory();
         }
         backgroundSummary = localStorage.getItem('ashley_bg_summary') || "";
+
+        // Check if there was an in-flight request stored before browser slept
+        var pendingId = localStorage.getItem('pending_horde_id');
+        if (pendingId) {
+          activeHordeRequestId = pendingId;
+          generationStartTime = parseInt(localStorage.getItem('pending_horde_start') || Date.now());
+          resumePolling(pendingId);
+        }
       } catch (e) {}
       renderFullChat();
     }
@@ -301,11 +349,14 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       } catch (e) {}
     }
 
-    // --- Bulletproof Action vs Speech Parser ---
+    function autoExpandTextarea(el) {
+      el.style.height = 'auto';
+      var newHeight = Math.min(el.scrollHeight, 120);
+      el.style.height = (newHeight < 24 ? 24 : newHeight) + 'px';
+    }
+
     function parseMessage(rawText) {
       if (!rawText) return '';
-      
-      // Split on empty lines to respect paragraph breaks
       var blocks = rawText.split(/\n\s*\n/);
       var outputHtml = '';
 
@@ -313,12 +364,10 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
         var trimmed = block.trim();
         if (!trimmed) return;
 
-        // Check if the entire block is wrapped in asterisks (*Action*)
         if (trimmed.startsWith('*') && trimmed.endsWith('*')) {
           var cleanAction = trimmed.replace(/^\*+|\*+$/g, '').trim();
           outputHtml += '<span class="action">' + cleanAction + '</span>';
         } else {
-          // If block contains mixed inline asterisks
           var parts = trimmed.split(/(\*[^*]+\*)/g);
           parts.forEach(function(part) {
             var subTrim = part.trim();
@@ -362,7 +411,6 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
           '<button class="msg-action-btn delete-btn" onclick="deleteMessage(' + idx + ')" title="Delete message"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>' +
           '</div></div></div>';
       } else {
-        // Hide time, reroll, and delete on Ashley's initial arrival welcome message (idx === 0)
         var footerContent = '';
         if (idx > 0) {
           footerContent = '<div class="meta-time-row"><svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.2 3.1.8-1.3-4.5-2.7z"/></svg><span>' +
@@ -380,6 +428,7 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
     }
 
     function showTypingIndicator() {
+      if (document.getElementById('typing-bubble')) return;
       var stream = document.getElementById('chat-stream');
       var html = '<div class="msg-group ashley" id="typing-bubble"><div class="ashley-wrapper"><img class="ashley-msg-avatar" src="./ashley.png" onerror="this.src=\'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80\'"><div class="bubble-wrapper"><div class="glass-bubble"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div><div class="meta-time-row" id="typing-status"><span>Contacting Horde...</span></div></div></div></div>';
       stream.insertAdjacentHTML('beforeend', html);
@@ -439,6 +488,9 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
     function stopGeneration() {
       abortActive = true;
       isGenerating = false;
+      activeHordeRequestId = null;
+      localStorage.removeItem('pending_horde_id');
+      localStorage.removeItem('pending_horde_start');
       removeTypingIndicator();
       setStopButtonState(false);
     }
@@ -450,6 +502,7 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       if (!userText) return;
 
       input.value = '';
+      input.style.height = '24px';
       var userTime = formatTime();
       chatHistory.push({ role: 'user', text: userText, time: userTime });
       saveChatHistory();
@@ -466,9 +519,8 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
 
       var apiKey = localStorage.getItem('horde_api_key') || '0000000000';
       var maxTokens = parseInt(localStorage.getItem('cfg_max_tokens') || '220', 10);
-
       var promptPayload = buildHordePrompt();
-      var startTime = Date.now();
+      generationStartTime = Date.now();
 
       try {
         var postRes = await fetch("https://aihorde.net/api/v2/generate/text/async", {
@@ -491,8 +543,28 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
         if (!postData.id) {
           throw new Error(postData.message || "Failed to enqueue request with Horde.");
         }
-        var requestId = postData.id;
 
+        activeHordeRequestId = postData.id;
+        localStorage.setItem('pending_horde_id', activeHordeRequestId);
+        localStorage.setItem('pending_horde_start', generationStartTime);
+
+        await pollHordeResult(activeHordeRequestId, apiKey);
+      } catch (err) {
+        handleGenerationError(err);
+      }
+    }
+
+    async function resumePolling(requestId) {
+      isGenerating = true;
+      abortActive = false;
+      setStopButtonState(true);
+      showTypingIndicator();
+      var apiKey = localStorage.getItem('horde_api_key') || '0000000000';
+      await pollHordeResult(requestId, apiKey);
+    }
+
+    async function pollHordeResult(requestId, apiKey) {
+      try {
         var generatedText = "";
         while (true) {
           if (abortActive) return;
@@ -503,9 +575,9 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
           var checkData = await checkRes.json();
 
           if (checkData.wait_time) {
-            updateTypingStatus("Waiting in queue (~" + checkData.wait_time + "s)...");
+            updateTypingStatus("In queue (~" + checkData.wait_time + "s)...");
           } else if (checkData.processing) {
-            updateTypingStatus("Writing response...");
+            updateTypingStatus("Ashley is writing...");
           }
 
           if (checkData.done) {
@@ -513,32 +585,71 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
             break;
           }
           if (checkData.faulted) {
-            throw new Error("Worker faulted");
+            throw new Error("Horde worker faulted");
           }
         }
 
         if (abortActive) return;
 
         removeTypingIndicator();
-        var durationSec = Math.round((Date.now() - startTime) / 1000) + "s";
+        var durationSec = Math.round((Date.now() - (generationStartTime || Date.now())) / 1000) + "s";
         chatHistory.push({ role: 'char', text: generatedText, time: formatTime(), duration: durationSec });
         saveChatHistory();
         renderFullChat();
 
+        localStorage.removeItem('pending_horde_id');
+        localStorage.removeItem('pending_horde_start');
+        activeHordeRequestId = null;
+
         triggerBackgroundSummary(apiKey);
       } catch (err) {
-        removeTypingIndicator();
-        if (!abortActive) {
-          var errText = "*Ashley shivers as the wind howls against the window pane.* (" + (err.message || "Connection error. Tap reroll to retry.") + ")";
-          chatHistory.push({ role: 'char', text: errText, time: formatTime(), duration: "Error" });
-          saveChatHistory();
-          renderFullChat();
-        }
+        handleGenerationError(err);
       } finally {
         isGenerating = false;
         setStopButtonState(false);
       }
     }
+
+    function handleGenerationError(err) {
+      removeTypingIndicator();
+      localStorage.removeItem('pending_horde_id');
+      localStorage.removeItem('pending_horde_start');
+      activeHordeRequestId = null;
+
+      if (!abortActive) {
+        var errText = "*Ashley shivers as the wind howls against the window pane.* (" + (err.message || "Connection interrupted. Tap reroll to retry.") + ")";
+        chatHistory.push({ role: 'char', text: errText, time: formatTime(), duration: "Error" });
+        saveChatHistory();
+        renderFullChat();
+      }
+      isGenerating = false;
+      setStopButtonState(false);
+    }
+
+    // --- Page Visibility Handler: Prevents tab sleep from killing generation ---
+    document.addEventListener('visibilitychange', function() {
+      if (document.visibilityState === 'visible' && activeHordeRequestId && isGenerating) {
+        // Immediately ping status on waking up
+        var apiKey = localStorage.getItem('horde_api_key') || '0000000000';
+        fetch("https://aihorde.net/api/v2/generate/text/status/" + activeHordeRequestId)
+          .then(function(res) { return res.json(); })
+          .then(function(data) {
+            if (data.done) {
+              removeTypingIndicator();
+              var text = data.generations[0].text.trim();
+              var durationSec = Math.round((Date.now() - (generationStartTime || Date.now())) / 1000) + "s";
+              chatHistory.push({ role: 'char', text: text, time: formatTime(), duration: durationSec });
+              saveChatHistory();
+              renderFullChat();
+              localStorage.removeItem('pending_horde_id');
+              localStorage.removeItem('pending_horde_start');
+              activeHordeRequestId = null;
+              isGenerating = false;
+              setStopButtonState(false);
+            }
+          }).catch(function() {});
+      }
+    });
 
     function deleteMessage(idx) {
       if (isGenerating) return;
@@ -618,6 +729,8 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
         backgroundSummary = "";
         localStorage.removeItem('ashley_chat_history');
         localStorage.removeItem('ashley_bg_summary');
+        localStorage.removeItem('pending_horde_id');
+        localStorage.removeItem('pending_horde_start');
         saveChatHistory();
         renderFullChat();
         document.getElementById('settings-sheet').style.display = 'none';
@@ -716,6 +829,7 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       promptInput.value = val.substring(0, start) + "**" + val.substring(end);
       promptInput.focus();
       promptInput.setSelectionRange(start + 1, start + 1);
+      autoExpandTextarea(promptInput);
     }
 
     promptInput.addEventListener('keydown', function(e) {
