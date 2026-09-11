@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="robots" content="noindex, nofollow">
-  <title>Whisper</title>
+  <title>Ashley</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Italiana&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
@@ -19,6 +19,7 @@
       --action-color: #e2c4a2;
       --speech-text: #f5f2ed;
       --text-dim: #798091;
+      --danger-color: #e06c75;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -28,6 +29,7 @@
     #ambient-bg { position: fixed; inset: 0; z-index: 0; background: radial-gradient(circle at 50% 12%, #161a26 0%, #0a0b10 65%, #040507 100%); pointer-events: none; }
     #snow-canvas { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
 
+    /* Header */
     header {
       position: relative; z-index: 10; padding: 16px 20px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center;
       background: transparent; transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease; will-change: transform, opacity; flex-shrink: 0;
@@ -49,6 +51,7 @@
       font-weight: 400; text-transform: uppercase; text-shadow: 0 2px 10px rgba(0,0,0,0.5);
     }
 
+    /* Stream */
     #chat-stream {
       flex: 1; position: relative; z-index: 5; overflow-y: scroll; -webkit-overflow-scrolling: touch;
       overscroll-behavior-y: contain; padding: 16px; display: flex; flex-direction: column; gap: 22px;
@@ -73,9 +76,21 @@
     .speech { display: block; color: var(--speech-text); font-weight: 400; margin-bottom: 10px; }
     .action:last-child, .speech:last-child { margin-bottom: 0; }
 
-    .meta-time-row { display: inline-flex; align-items: center; gap: 5px; font-size: 0.72rem; margin-top: 6px; padding: 0 4px; color: var(--text-dim); }
+    .meta-time-row {
+      display: inline-flex; align-items: center; gap: 8px; font-size: 0.72rem; margin-top: 6px; padding: 0 4px; color: var(--text-dim);
+    }
     .meta-time-row svg { width: 12px; height: 12px; fill: currentColor; }
 
+    /* Control buttons on Ashley messages */
+    .msg-action-btn {
+      background: transparent; border: none; color: var(--text-dim); cursor: pointer; display: inline-flex;
+      align-items: center; justify-content: center; padding: 2px 4px; border-radius: 4px;
+    }
+    .msg-action-btn:active { color: var(--gold-accent); }
+    .msg-action-btn.delete-btn:active { color: var(--danger-color); }
+    .msg-action-btn svg { width: 13px; height: 13px; }
+
+    /* Input Footer */
     footer { position: relative; z-index: 10; padding: 10px 16px 14px; background: transparent; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
     .dock-input {
       flex: 1; background: rgba(12, 14, 20, 0.95); border: 1px solid rgba(255, 255, 255, 0.08);
@@ -88,12 +103,17 @@
     .action-symbol-btn { background: transparent; border: none; color: var(--text-dim); font-size: 0.95rem; padding: 4px 6px; cursor: pointer; flex-shrink: 0; }
     .action-symbol-btn:active { color: var(--action-color); }
 
+    /* Morphing Send / Stop Pill */
     .send-pill {
       width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #dfb479, #b88b48);
       border: none; color: #12100d; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
+      transition: background 0.2s ease, border-radius 0.2s ease;
     }
-    .send-pill:disabled { opacity: 0.4; filter: grayscale(1); }
+    .send-pill.is-stopping {
+      background: #3a2224; border: 1.5px solid var(--danger-color); color: var(--danger-color); border-radius: 14px;
+    }
 
+    /* Settings Sheet */
     .sheet-overlay {
       display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.88);
       backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 9999; align-items: flex-end;
@@ -141,23 +161,24 @@
         <textarea id="promptInput" rows="1" placeholder="Type a message or action..."></textarea>
         <button type="button" class="action-symbol-btn" onclick="insertActionWrapper()">* *</button>
       </div>
-      <button type="button" class="send-pill" id="sendBtn" onclick="sendMessage()">
-        <svg class="icon" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      <button type="button" class="send-pill" id="actionBtn" onclick="handleActionClick()">
+        <svg id="actionIcon" class="icon" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
       </button>
     </footer>
   </div>
 
+  <!-- Settings Sheet -->
   <div id="settings-sheet" class="sheet-overlay" onclick="closeSettingsModal(event)">
     <div class="sheet-content" onclick="event.stopPropagation()">
       <div class="sheet-section-title">Backend Connection</div>
       <div class="field-label">AI Horde API Key</div>
       <input type="password" id="apiKeyInput" class="input-box" placeholder="0000000000 (or your key)">
 
-      <div class="sheet-section-title">Formatting & System Instructions</div>
+      <div class="sheet-section-title">Formatting Directives</div>
       <div class="field-label">Speech & Narration Directives</div>
       <textarea id="formatDirectivesInput" class="input-box" rows="3"></textarea>
 
-      <div class="sheet-section-title">Character Card Definition</div>
+      <div class="sheet-section-title">Character Definition</div>
       <div class="field-label">Personality & Core Persona</div>
       <textarea id="personaInput" class="input-box" rows="3"></textarea>
 
@@ -188,11 +209,12 @@
     var DEFAULT_FORMATTING = "Write {{char}}'s responses using *action* for physical actions, gestures, and reactions. Spoken dialogue must be in plain text without quotation marks. Stay immersive, sensory, and grounded.";
     var DEFAULT_PERSONA = "Ashley: 24-year-old commercial flight attendant on vacation with her childhood best friend Mathew. Playful, teasing, romantic, affectionate. They crossed the line into lovers today.";
     var DEFAULT_SCENARIO = "Mathew and Ashley are alone at a secluded mountain cabin during a winter getaway. Snowstorm outside, fireplace burning warm inside.";
-    var DEFAULT_GREETING = "*I drop onto the plush cushions by the fire, tucking my knees up to my chest with a teasing smirk.* Don't just stand there, deliver boy. Let's see what you picked out.";
+    var DEFAULT_GREETING = "*I drop onto the plush cushions by the fire, tucking my knees up to my chest with a teasing smirk.* Don't just stand there, delivery boy. Let's see what you picked out.";
 
     var chatHistory = [];
     var backgroundSummary = "";
     var isGenerating = false;
+    var abortActive = false;
 
     function init() {
       try {
@@ -234,25 +256,28 @@
     function renderFullChat() {
       var stream = document.getElementById('chat-stream');
       stream.innerHTML = '';
-      chatHistory.forEach(function(msg) {
-        appendMessageDOM(msg.role, msg.text, msg.time, msg.duration);
+      chatHistory.forEach(function(msg, idx) {
+        appendMessageDOM(msg.role, msg.text, msg.time, msg.duration, idx);
       });
       stream.scrollTop = stream.scrollHeight;
     }
 
-    function appendMessageDOM(role, text, time, duration) {
+    function appendMessageDOM(role, text, time, duration, idx) {
       var stream = document.getElementById('chat-stream');
       var metaStr = duration ? duration : time;
       var html = '';
 
       if (role === 'user') {
-        html = '<div class="msg-group user"><div class="user-wrapper"><div class="glass-bubble">' +
+        html = '<div class="msg-group user" id="msg-' + idx + '"><div class="user-wrapper"><div class="glass-bubble">' +
           parseMessage(text) + '</div><div class="meta-time-row"><svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.2 3.1.8-1.3-4.5-2.7z"/></svg><span>' +
           metaStr + '</span></div></div></div>';
       } else {
-        html = '<div class="msg-group ashley"><div class="ashley-wrapper"><img class="ashley-msg-avatar" src="./ashley.png" onerror="this.src=\'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80\'"><div class="bubble-wrapper"><div class="glass-bubble">' +
+        html = '<div class="msg-group ashley" id="msg-' + idx + '"><div class="ashley-wrapper"><img class="ashley-msg-avatar" src="./ashley.png" onerror="this.src=\'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80\'"><div class="bubble-wrapper"><div class="glass-bubble">' +
           parseMessage(text) + '</div><div class="meta-time-row"><svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.2 3.1.8-1.3-4.5-2.7z"/></svg><span>' +
-          metaStr + '</span></div></div></div></div>';
+          metaStr + '</span>' +
+          '<button class="msg-action-btn" onclick="regenerateMessage(' + idx + ')" title="Reroll message"><svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg></button>' +
+          '<button class="msg-action-btn delete-btn" onclick="deleteMessage(' + idx + ')" title="Delete message"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>' +
+          '</div></div></div></div>';
       }
       stream.insertAdjacentHTML('beforeend', html);
       stream.scrollTop = stream.scrollHeight;
@@ -282,6 +307,32 @@
       return prompt;
     }
 
+    function handleActionClick() {
+      if (isGenerating) {
+        stopGeneration();
+      } else {
+        sendMessage();
+      }
+    }
+
+    function setStopButtonState(stopping) {
+      var btn = document.getElementById('actionBtn');
+      var icon = document.getElementById('actionIcon');
+      if (stopping) {
+        btn.classList.add('is-stopping');
+        icon.innerHTML = '<path d="M6 6h12v12H6z"/>';
+      } else {
+        btn.classList.remove('is-stopping');
+        icon.innerHTML = '<path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>';
+      }
+    }
+
+    function stopGeneration() {
+      abortActive = true;
+      isGenerating = false;
+      setStopButtonState(false);
+    }
+
     async function sendMessage() {
       if (isGenerating) return;
       var input = document.getElementById('promptInput');
@@ -292,10 +343,15 @@
       var userTime = formatTime();
       chatHistory.push({ role: 'user', text: userText, time: userTime });
       saveChatHistory();
-      appendMessageDOM('user', userText, userTime);
+      renderFullChat();
 
+      await triggerAIResponse();
+    }
+
+    async function triggerAIResponse() {
       isGenerating = true;
-      document.getElementById('sendBtn').disabled = true;
+      abortActive = false;
+      setStopButtonState(true);
 
       var apiKey = localStorage.getItem('horde_api_key') || '0000000000';
       var maxTokens = parseInt(localStorage.getItem('cfg_max_tokens') || '220', 10);
@@ -327,7 +383,10 @@
 
         var generatedText = "";
         while (true) {
+          if (abortActive) return;
           await new Promise(function(r) { setTimeout(r, 2000); });
+          if (abortActive) return;
+
           var checkRes = await fetch("https://aihorde.net/api/v2/generate/text/status/" + requestId);
           var checkData = await checkRes.json();
 
@@ -340,19 +399,42 @@
           }
         }
 
+        if (abortActive) return;
+
         var durationSec = Math.round((Date.now() - startTime) / 1000) + "s";
         chatHistory.push({ role: 'char', text: generatedText, time: formatTime(), duration: durationSec });
         saveChatHistory();
-        appendMessageDOM('char', generatedText, formatTime(), durationSec);
+        renderFullChat();
 
         triggerBackgroundSummary(apiKey);
       } catch (err) {
-        var errText = "*Ashley looks distracted as the wind rattles the cabin doors.* (Connection error with Horde. Please tap send to try again.)";
-        appendMessageDOM('char', errText, formatTime(), "Error");
+        if (!abortActive) {
+          var errText = "*Ashley looks distracted as the wind rattles the cabin doors.* (Connection error. Tap refresh or send to try again.)";
+          chatHistory.push({ role: 'char', text: errText, time: formatTime(), duration: "Error" });
+          saveChatHistory();
+          renderFullChat();
+        }
       } finally {
         isGenerating = false;
-        document.getElementById('sendBtn').disabled = false;
+        setStopButtonState(false);
       }
+    }
+
+    function deleteMessage(idx) {
+      if (isGenerating) return;
+      chatHistory.splice(idx, 1);
+      saveChatHistory();
+      renderFullChat();
+    }
+
+    async function regenerateMessage(idx) {
+      if (isGenerating) return;
+      // Remove Ashley's response
+      chatHistory.splice(idx, 1);
+      saveChatHistory();
+      renderFullChat();
+      // Generate new one
+      await triggerAIResponse();
     }
 
     async function triggerBackgroundSummary(apiKey) {
