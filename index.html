@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="robots" content="noindex, nofollow">
-  <title>Ashley</title>
+  <title>Whisper</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
@@ -18,7 +18,7 @@
       --gold-accent: #d4af7a;
       --action-color: #e2c4a2;
       --speech-text: #f5f2ed;
-      --text-dim: #798091;
+      --text-dim: #8b92a2;
       --danger-color: #e06c75;
     }
 
@@ -48,27 +48,28 @@
       pointer-events: none;
     }
 
-    /* Floating discrete settings button: zero layout space taken */
-    .top-settings-anchor {
-      position: absolute;
-      top: 10px;
-      right: 12px;
-      z-index: 30;
+    /* Dedicated top utility bar: Prevents overlaying message bubbles */
+    .top-utility-bar {
+      position: relative;
+      z-index: 10;
+      height: 38px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-shrink: 0;
     }
 
     .settings-btn {
-      background: rgba(18, 22, 32, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #9ba2b3;
-      cursor: pointer;
+      width: 32px;
+      height: 32px;
     }
 
     /* Full-height chat stream */
@@ -79,13 +80,13 @@
       overflow-y: scroll;
       -webkit-overflow-scrolling: touch;
       overscroll-behavior-y: contain;
-      padding: 12px 10px 18px;
+      padding: 6px 14px 18px;
       display: flex;
       flex-direction: column;
       gap: 18px;
     }
 
-    /* Mathew: pinned to the right edge */
+    /* Mathew: Pushed right with safe padding */
     .msg-group.user {
       display: flex;
       justify-content: flex-end;
@@ -99,7 +100,7 @@
       align-items: flex-end;
     }
 
-    /* Ashley: wide narrative block anchored to the left */
+    /* Ashley: Left-anchored */
     .msg-group.ashley {
       display: flex;
       justify-content: flex-start;
@@ -114,13 +115,14 @@
     }
 
     .ashley-msg-avatar {
-      width: 34px;
-      height: 34px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       object-fit: cover;
       border: 1.5px solid var(--gold-accent);
       flex-shrink: 0;
       margin-top: 4px;
+      cursor: pointer;
     }
 
     .bubble-wrapper {
@@ -139,18 +141,8 @@
       font-size: 0.95rem;
       line-height: 1.62;
     }
-
-    .ashley .glass-bubble {
-      background: var(--char-bubble);
-      border: 1px solid var(--char-border);
-      border-top-left-radius: 4px;
-    }
-
-    .user .glass-bubble {
-      background: var(--user-bubble);
-      border: 1px solid var(--user-border);
-      border-top-right-radius: 4px;
-    }
+    .ashley .glass-bubble { background: var(--char-bubble); border: 1px solid var(--char-border); border-top-left-radius: 4px; }
+    .user .glass-bubble { background: var(--user-bubble); border: 1px solid var(--user-border); border-top-right-radius: 4px; }
 
     .action {
       display: block;
@@ -159,33 +151,25 @@
       font-weight: 300;
       margin-bottom: 10px;
     }
-
     .speech {
       display: block;
       color: var(--speech-text);
       font-weight: 400;
       margin-bottom: 10px;
     }
+    .action:last-child, .speech:last-child { margin-bottom: 0; }
 
-    .action:last-child, .speech:last-child {
-      margin-bottom: 0;
-    }
-
+    /* Metadata Bar below Bubbles (Clean padding away from screen edge) */
     .meta-time-row {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       font-size: 0.72rem;
       margin-top: 6px;
-      padding: 0 4px;
+      padding: 0 8px;
       color: var(--text-dim);
     }
-
-    .meta-time-row svg {
-      width: 12px;
-      height: 12px;
-      fill: currentColor;
-    }
+    .meta-time-row svg { width: 12px; height: 12px; fill: currentColor; }
 
     .msg-action-btn {
       background: transparent;
@@ -195,14 +179,14 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 2px 4px;
-      border-radius: 4px;
+      padding: 3px 6px;
+      border-radius: 6px;
     }
-
     .msg-action-btn:active { color: var(--gold-accent); }
     .msg-action-btn.delete-btn:active { color: var(--danger-color); }
     .msg-action-btn svg { width: 13px; height: 13px; }
 
+    /* Typing Dots Animation */
     .typing-indicator { display: inline-flex; align-items: center; gap: 6px; padding: 6px 4px; }
     .typing-dot {
       width: 6px;
@@ -221,10 +205,11 @@
       40% { opacity: 1; transform: scale(1.15); }
     }
 
+    /* Input Footer */
     footer {
       position: relative;
       z-index: 10;
-      padding: 8px 12px 12px;
+      padding: 8px 12px 14px;
       background: transparent;
       display: flex;
       align-items: flex-end;
@@ -295,6 +280,7 @@
       border-radius: 14px;
     }
 
+    /* Modal Sheet */
     .sheet-overlay {
       display: none;
       position: fixed;
@@ -340,48 +326,54 @@
       font-family: inherit;
     }
 
-    .range-row {
-      display: flex;
+    .range-row { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+    .range-row input { flex: 1; accent-color: var(--gold-accent); }
+    .save-btn { width: 100%; background: var(--gold-accent); border: none; padding: 14px; border-radius: 14px; color: #12100d; font-weight: 600; font-size: 0.95rem; cursor: pointer; }
+    .reset-btn { width: 100%; background: transparent; border: 1px solid rgba(224, 108, 117, 0.4); color: var(--danger-color); padding: 12px; border-radius: 14px; font-weight: 600; font-size: 0.9rem; cursor: pointer; margin-top: 12px; }
+
+    /* Lightbox Modal: Avatar Fullscreen View */
+    #avatar-lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 5, 8, 0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      z-index: 10000;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 24px;
+      justify-content: center;
+      flex-direction: column;
+      padding: 24px;
     }
 
-    .range-row input {
-      flex: 1;
-      accent-color: var(--gold-accent);
+    .lightbox-frame {
+      max-width: 88vw;
+      max-height: 72vh;
+      border-radius: 24px;
+      padding: 2px;
+      background: linear-gradient(135deg, var(--gold-accent), transparent 70%);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+      overflow: hidden;
     }
 
-    .save-btn {
+    .lightbox-frame img {
       width: 100%;
-      background: var(--gold-accent);
-      border: none;
-      padding: 14px;
-      border-radius: 14px;
-      color: #12100d;
-      font-weight: 600;
-      font-size: 0.95rem;
-      cursor: pointer;
+      height: 100%;
+      max-height: 70vh;
+      object-fit: cover;
+      display: block;
+      border-radius: 22px;
     }
 
-    .reset-btn {
-      width: 100%;
-      background: transparent;
-      border: 1px solid rgba(224, 108, 117, 0.4);
-      color: var(--danger-color);
-      padding: 12px;
-      border-radius: 14px;
-      font-weight: 600;
+    .lightbox-label {
+      margin-top: 16px;
       font-size: 0.9rem;
-      cursor: pointer;
-      margin-top: 12px;
+      color: var(--gold-accent);
+      letter-spacing: 1px;
+      font-weight: 500;
     }
 
-    .icon {
-      width: 20px;
-      height: 20px;
-      fill: currentColor;
-    }
+    .icon { width: 20px; height: 20px; fill: currentColor; }
   </style>
 </head>
 <body>
@@ -390,7 +382,8 @@
   <canvas id="snow-canvas"></canvas>
 
   <div id="app-container">
-    <div class="top-settings-anchor">
+    <!-- Slim top utility bar that never collides with chat bubbles -->
+    <div class="top-utility-bar">
       <button type="button" class="settings-btn" onclick="openSettingsModal()" title="Settings">
         <svg class="icon" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54A.48.48 0 0 0 13.92 2h-3.84a.48.48 0 0 0-.48.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.72 8.47a.48.48 0 0 0 .12.61l2.03 1.58c-.05.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.48-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6"/></svg>
       </button>
@@ -421,6 +414,14 @@
       <button type="button" class="save-btn" onclick="saveSettings()">Save</button>
       <button type="button" class="reset-btn" onclick="resetChatHistory()">Reset Story to Start</button>
     </div>
+  </div>
+
+  <!-- Fullscreen Avatar Lightbox -->
+  <div id="avatar-lightbox" onclick="closeLightbox()">
+    <div class="lightbox-frame" onclick="event.stopPropagation()">
+      <img src="./ashley.png" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80'" alt="Ashley">
+    </div>
+    <div class="lightbox-label">Ashley</div>
   </div>
 
   <script>
@@ -596,6 +597,7 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
         html = '<div class="msg-group user" id="msg-' + idx + '"><div class="user-wrapper"><div class="glass-bubble">' +
           parseMessage(text) + '</div><div class="meta-time-row"><svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.2 3.1.8-1.3-4.5-2.7z"/></svg><span>' +
           metaStr + '</span>' +
+          '<button class="msg-action-btn" onclick="resendUserTurn(' + idx + ')" title="Edit and Resend"><svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg></button>' +
           '<button class="msg-action-btn delete-btn" onclick="deleteMessage(' + idx + ')" title="Delete message"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>' +
           '</div></div></div>';
       } else {
@@ -608,7 +610,7 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
             '</div>';
         }
 
-        html = '<div class="msg-group ashley" id="msg-' + idx + '"><div class="ashley-wrapper"><img class="ashley-msg-avatar" src="./ashley.png" onerror="this.src=\'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80\'"><div class="bubble-wrapper"><div class="glass-bubble">' +
+        html = '<div class="msg-group ashley" id="msg-' + idx + '"><div class="ashley-wrapper"><img class="ashley-msg-avatar" src="./ashley.png" onclick="openLightbox()" onerror="this.src=\'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80\'"><div class="bubble-wrapper"><div class="glass-bubble">' +
           parseMessage(text) + '</div>' + footerContent + '</div></div></div>';
       }
       stream.insertAdjacentHTML('beforeend', html);
@@ -618,7 +620,7 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
     function showTypingIndicator() {
       if (document.getElementById('typing-bubble')) return;
       var stream = document.getElementById('chat-stream');
-      var html = '<div class="msg-group ashley" id="typing-bubble"><div class="ashley-wrapper"><img class="ashley-msg-avatar" src="./ashley.png" onerror="this.src=\'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80\'"><div class="bubble-wrapper"><div class="glass-bubble"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div><div class="meta-time-row" id="typing-status"><span>Contacting Horde...</span></div></div></div></div>';
+      var html = '<div class="msg-group ashley" id="typing-bubble"><div class="ashley-wrapper"><img class="ashley-msg-avatar" src="./ashley.png" onclick="openLightbox()" onerror="this.src=\'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80\'"><div class="bubble-wrapper"><div class="glass-bubble"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div><div class="meta-time-row" id="typing-status"><span>Contacting Horde...</span></div></div></div></div>';
       stream.insertAdjacentHTML('beforeend', html);
       stream.scrollTop = stream.scrollHeight;
     }
@@ -850,6 +852,28 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       saveChatHistory();
       renderFullChat();
       await triggerAIResponse();
+    }
+
+    function resendUserTurn(idx) {
+      if (isGenerating) return;
+      var msg = chatHistory[idx];
+      var input = document.getElementById('promptInput');
+      input.value = msg.text;
+      autoExpandTextarea(input);
+      input.focus();
+
+      // Remove this message and any subsequent messages so the story timeline stays clean
+      chatHistory.splice(idx);
+      saveChatHistory();
+      renderFullChat();
+    }
+
+    function openLightbox() {
+      document.getElementById('avatar-lightbox').style.display = 'flex';
+    }
+
+    function closeLightbox() {
+      document.getElementById('avatar-lightbox').style.display = 'none';
     }
 
     async function triggerBackgroundSummary(apiKey) {
