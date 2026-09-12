@@ -55,7 +55,7 @@
       overflow-y: scroll;
       -webkit-overflow-scrolling: touch;
       overscroll-behavior-y: contain;
-      padding: 16px 12px 20px;
+      padding: 16px 14px 20px;
       display: flex;
       flex-direction: column;
       gap: 20px;
@@ -65,7 +65,7 @@
       display: flex;
       justify-content: flex-start;
       width: 100%;
-      padding-right: 2%;
+      padding-right: 4px;
     }
     .msg-group.ashley .ashley-wrapper {
       max-width: 96%;
@@ -114,6 +114,7 @@
       box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
       font-size: 0.95rem;
       line-height: 1.62;
+      word-break: break-word;
     }
     .ashley .glass-bubble {
       background: var(--char-bubble);
@@ -142,18 +143,30 @@
     }
     .action:last-child, .speech:last-child { margin-bottom: 0; }
 
-    /* Metadata Bar (All aligned to the right for easy thumb access) */
+    /* Metadata Bar Layout */
     .meta-time-row {
       display: inline-flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       font-size: 0.72rem;
       margin-top: 6px;
-      padding: 0 4px;
+      padding: 0 6px;
       color: var(--text-dim);
-      align-self: flex-end;
     }
-    .meta-time-row svg { width: 12px; height: 12px; fill: currentColor; }
+    
+    /* Mathew controls: Pinned LEFT with safe screen margin */
+    .user .meta-time-row {
+      align-self: flex-start;
+      margin-left: 2px;
+    }
+
+    /* Ashley controls: Pinned RIGHT with safe screen margin */
+    .ashley .meta-time-row {
+      align-self: flex-end;
+      margin-right: 6px;
+    }
+
+    .meta-time-row svg { width: 12px; height: 12px; fill: currentColor; flex-shrink: 0; }
 
     .msg-action-btn {
       background: transparent;
@@ -173,11 +186,11 @@
     .msg-counter {
       font-size: 0.68rem;
       color: var(--text-dim);
-      opacity: 0.7;
-      margin-right: 4px;
+      opacity: 0.75;
+      font-weight: 500;
     }
 
-    /* Clean Floating Thinking Indicator */
+    /* Thinking Indicator */
     .thinking-row {
       display: flex;
       align-items: center;
@@ -219,7 +232,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Modal Edit/Update Sheet styled to app theme */
+    /* Sheet Overlay for Editing */
     .sheet-overlay {
       display: none;
       position: fixed;
@@ -258,7 +271,7 @@
       font-family: inherit;
       font-size: 0.95rem;
       resize: vertical;
-      min-height: 110px;
+      min-height: 120px;
       outline: none;
       line-height: 1.5;
     }
@@ -290,7 +303,6 @@
       cursor: pointer;
     }
 
-    /* Input Footer */
     footer {
       position: relative;
       z-index: 10;
@@ -365,7 +377,6 @@
       border-radius: 14px;
     }
 
-    /* Lightbox Modal: Minimal image-only */
     #avatar-lightbox {
       display: none;
       position: fixed;
@@ -420,19 +431,17 @@
     </footer>
   </div>
 
-  <!-- Edit Message Modal Sheet -->
   <div id="edit-sheet" class="sheet-overlay" onclick="closeEditModal(event)">
     <div class="sheet-content" onclick="event.stopPropagation()">
       <div class="sheet-title" id="edit-sheet-title">Edit Message</div>
       <textarea id="editMessageTextarea" class="edit-textarea"></textarea>
       <div class="sheet-btn-row">
         <button type="button" class="sheet-cancel-btn" onclick="closeEditModal()">Cancel</button>
-        <button type="button" class="sheet-save-btn" onclick="saveEditedMessage()">Save & Submit</button>
+        <button type="button" class="sheet-save-btn" onclick="saveEditedMessage()">Save</button>
       </div>
     </div>
   </div>
 
-  <!-- Fullscreen Avatar Lightbox -->
   <div id="avatar-lightbox" onclick="closeLightbox()">
     <div class="lightbox-frame" onclick="event.stopPropagation()">
       <img src="./ashley.png" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80'" alt="">
@@ -450,12 +459,12 @@
 
     var HARDCODED_PERSONA = `Ashley is a 24-year-old commercial flight attendant taking a one-week winter break to visit her childhood best friend since elementary school, Mathew ({{user}}), at his secluded mountain cabin. They have never worked together in an office or corporate setting; their entire history is built on growing up together and staying close long-distance.
 
-She is warm, affectionate, and grounded, sharing a comfortable, effortless history with Mathew. Secretly harboring a deep crush on him for years, she hopes this secluded trip will naturally bridge the gap between best friends and lovers. Exhausted from grueling long-haul shifts and red-eye flights, she wants nothing more than to unwind, cuddle by the fire, and be taken care of.
+She is warm, affectionate, and grounded, sharing a comfortable, effortless history with Mathew. Having crossed the threshold from childhood crush to his fiancée after his proposal on day five of this cabin stay, she is blissfully happy, devoted, and radiating newlywed-style intimacy. Exhausted from grueling long-haul shifts and red-eye flights, she wants nothing more than to unwind, cuddle by the fire, celebrate their engagement, and be taken care of by him.
 
-She thrives on slow-burn romantic tension, lingering eye contact, and casual physical affection—like sliding her freezing feet under Mathew's thighs or resting her head on his shoulder. While she enjoys playful moments, she readily welcomes and matches Mathew's romantic and physical advances with uninhibited enthusiasm.
+She thrives on lingering eye contact, teasing banter, and uninhibited physical closeness—whether admiring her engagement ring, sliding her cold feet under Mathew's thighs, or melting into his arms. She enthusiastically welcomes and matches Mathew's romantic, affectionate, and sexual energy without reservation.
 
 [Style & Voice Guidance:
-- Speak strictly like a grounded, real 24-year-old woman in private with her closest friend.
+- Speak strictly like a grounded, real 24-year-old woman in private with her closest friend and fiancé.
 - Natural Speech: Use natural sentence lengths, casual contractions (I'm, kinda, gonna), and relaxed pauses.
 - BANNED TROPES: Never use robotic compliance phrases (e.g., "I comply", "request accepted", "all systems nominal", "mission accomplished").
 - Avoid quirky sitcom lines or meme clichés (e.g., "Your move", "Asking for a friend", "woodsmoke and safety").
@@ -471,31 +480,30 @@ Spoken words go here without quotes, using natural emojis 🥰✨😏🥺❤️
 [About {{user}} (Mathew):
 - Name: Mathew
 - Gender: Strictly Male (he/him)
-- Role: Cabin host and Ashley's lifelong best friend since childhood
+- Role: Cabin host, Ashley's lifelong best friend since childhood, and her newly betrothed fiancé
 - Height & Build: 200 cm tall, athletic and fit build, broad-shouldered, towering over Ashley
 - Intimate Details: Well-endowed, measuring 22 cm when fully erect and hard
-- Relationship Dynamic: Deep, effortless history together, mutual romantic attraction and uninhibited sexual chemistry]`;
+- Relationship Dynamic: Deep childhood history, officially engaged after his proposal on day five; mutual romantic adoration, passionate intimacy, and effortless domestic comfort]`;
 
-    var HARDCODED_SCENARIO = `Ashley is a 24-year-old commercial flight attendant on a one-week winter break visiting her childhood best friend, Mathew ({{user}}), at his secluded mountain cabin. Exhausted from long-haul flights, she wants to unwind, cuddle by the fire, and explore the mutual romantic and physical desire that has been building between them for years.
+    var HARDCODED_SCENARIO = `Ashley is a 24-year-old commercial flight attendant on a one-week winter break visiting her childhood best friend, Mathew ({{user}}), at his secluded mountain cabin. On the fifth day of her trip, Mathew proposed and they officially got engaged. Now newly engaged, they are spending the rest of her vacation celebrating, wrapped up in each other by the fire, in the spa, and reveling in their new commitment before she has to return to flying.
 
 [Cabin Setting & Layout:
 - Main Floor: Cozy, single-story open-concept cabin. Features a roaring stone fireplace, plush couch, open kitchen, master king-bed, and a walk-in master bathroom.
 - Hidden Lower Spa: Accessed via a hidden wooden trapdoor in the living room floor with stone stairs leading down to a private heated pool, cedar sauna, massage table, and spa shower.
 - Atmosphere: Deep winter snow outside, completely private and secluded in the mountains.]`;
 
-    var HARDCODED_SYSTEM = `Write {{char}}'s next reply in a chat between {{char}} and {{user}}. Every response MUST consist of 2 to 3 concise, natural paragraphs (100-160 words total). Never write massive walls of text or rush the timeline. Format physical actions and body language in asterisks on their own lines, and use natural spoken dialogue with expressive emojis.
+    var HARDCODED_SYSTEM = `Write Ashley's next turn in this intimate story with Mathew ({{user}}).
 
-[Mandatory Formatting Rule: Ashley's response MUST follow this exact 3-block structure separated by blank lines:
-Paragraph 1: ONLY physical actions and body language, enclosed completely in *asterisks*. No spoken words.
-Paragraph 2: ONLY spoken dialogue with expressive emojis (no asterisks, no quotes).
-Paragraph 3: ONLY physical reactions, sensations, and touches, enclosed completely in *asterisks*. No spoken words.]`;
+[Mandatory Structural Rule: Every response MUST contain spoken dialogue. Ashley MUST NOT respond with only physical narration. Structure each turn cleanly into 2 to 3 paragraphs:
+1. Physical actions, facial expressions, and posture wrapped in *asterisks*.
+2. Direct conversational spoken dialogue containing natural emojis (NO asterisks, NO quotation marks).
+3. Physical sensation, contact, or reaction wrapped in *asterisks*.
+
+Separate all paragraphs with double line breaks. Never omit dialogue.]`;
 
     var HARDCODED_INPUT_SUFFIX = `<|im_end|>
-[Strict Directives:
-- Identity & Role: Ashley is strictly a 24-year-old commercial flight attendant on vacation. She NEVER works at a bar or other jobs. Mathew ({{user}}) is her lifelong male best friend.
-- Conversational Priority: Ashley MUST talk substantially more. Prioritize natural, playful banter and teasing. Spoken dialogue MUST outnumber narration. No melodrama or financial panic.
-- Formatting: All physical actions and body language in *asterisks*. Spoken dialogue in plain text with emojis. NEVER use quotation marks (" ").
-- Pacing: React strictly to the present moment. Wait for Mathew's move.]`;
+[Directives: Ensure Ashley speaks aloud naturally and playfully with emojis. Do not output only narration. Do not wrap dialogue in asterisks or quotes. Maintain the newly engaged romantic dynamic.]
+Ashley:`;
 
     var HARDCODED_EXAMPLES = `<START>
 {{user}}: *I take your coat and hang it on the rack.* Come on in and get warm by the fire. Coffee or tea?
@@ -528,6 +536,7 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
     var activeHordeRequestId = null;
     var generationStartTime = null;
     var editingMessageIndex = null;
+    var isCompleted = false;
 
     function init() {
       try {
@@ -562,19 +571,21 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       el.style.height = (newHeight < 24 ? 24 : newHeight) + 'px';
     }
 
+    /* Robust parser that prevents formatting breakdown */
     function parseMessage(rawText) {
       if (!rawText) return '';
-      var blocks = rawText.split(/\n\s*\n/);
+      var clean = rawText.replace(/<\|.*?\|>/g, '').trim();
+      var blocks = clean.split(/\n{2,}/);
       var outputHtml = '';
 
       blocks.forEach(function(block) {
         var trimmed = block.trim();
         if (!trimmed) return;
 
-        if (trimmed.startsWith('*') && trimmed.endsWith('*')) {
+        if (/^\*[^*]+(\*|$)/.test(trimmed) && trimmed.endsWith('*')) {
           var cleanAction = trimmed.replace(/^\*+|\*+$/g, '').trim();
           outputHtml += '<span class="action">' + cleanAction + '</span>';
-        } else {
+        } else if (trimmed.indexOf('*') !== -1) {
           var parts = trimmed.split(/(\*[^*]+\*)/g);
           parts.forEach(function(part) {
             var subTrim = part.trim();
@@ -583,9 +594,13 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
               var cleanSub = subTrim.slice(1, -1).trim();
               outputHtml += '<span class="action">' + cleanSub + '</span>';
             } else {
-              outputHtml += '<span class="speech">' + subTrim + '</span>';
+              var speechClean = subTrim.replace(/^["']|["']$/g, '');
+              outputHtml += '<span class="speech">' + speechClean + '</span>';
             }
           });
+        } else {
+          var unquoted = trimmed.replace(/^["']|["']$/g, '');
+          outputHtml += '<span class="speech">' + unquoted + '</span>';
         }
       });
 
@@ -613,19 +628,23 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       var html = '';
 
       if (role === 'user') {
+        /* Mathew's controls: Pinned to the LEFT side */
         html = '<div class="msg-group user" id="msg-' + idx + '"><div class="user-wrapper"><div class="glass-bubble">' +
-          parseMessage(text) + '</div><div class="meta-time-row">' + msgCountLabel + '<svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.2 3.1.8-1.3-4.5-2.7z"/></svg><span>' +
+          parseMessage(text) + '</div><div class="meta-time-row">' + msgCountLabel +
+          '<svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.2 3.1.8-1.3-4.5-2.7z"/></svg><span>' +
           metaStr + '</span>' +
           '<button class="msg-action-btn" onclick="openEditModal(' + idx + ')" title="Edit message"><svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></button>' +
           '<button class="msg-action-btn delete-btn" onclick="deleteMessage(' + idx + ')" title="Delete message"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>' +
           '</div></div></div>';
       } else {
+        /* Ashley's controls: Pinned to the RIGHT side with safe margins */
         var footerContent = '';
         if (idx > 0) {
-          footerContent = '<div class="meta-time-row">' + msgCountLabel + '<svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.2 3.1.8-1.3-4.5-2.7z"/></svg><span>' +
+          footerContent = '<div class="meta-time-row">' + msgCountLabel +
+            '<svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.2 3.1.8-1.3-4.5-2.7z"/></svg><span>' +
             metaStr + '</span>' +
-            '<button class="msg-action-btn" onclick="openEditModal(' + idx + ')" title="Edit message"><svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></button>' +
             '<button class="msg-action-btn" onclick="regenerateMessage(' + idx + ')" title="Reroll message"><svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg></button>' +
+            '<button class="msg-action-btn" onclick="openEditModal(' + idx + ')" title="Edit message"><svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></button>' +
             '<button class="msg-action-btn delete-btn" onclick="deleteMessage(' + idx + ')" title="Delete message"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>' +
             '</div>';
         } else {
@@ -678,7 +697,7 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
         prompt += (m.role === 'user' ? 'Mathew: ' : 'Ashley: ') + m.text + "\n\n";
       });
 
-      prompt += HARDCODED_INPUT_SUFFIX + "\nAshley:";
+      prompt += HARDCODED_INPUT_SUFFIX;
       return prompt;
     }
 
@@ -705,6 +724,7 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
     function stopGeneration() {
       abortActive = true;
       isGenerating = false;
+      isCompleted = true;
       activeHordeRequestId = null;
       localStorage.removeItem('pending_horde_id');
       localStorage.removeItem('pending_horde_start');
@@ -731,6 +751,7 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
     async function triggerAIResponse() {
       isGenerating = true;
       abortActive = false;
+      isCompleted = false;
       setStopButtonState(true);
       showTypingIndicator();
 
@@ -772,6 +793,7 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
     async function resumePolling(requestId) {
       isGenerating = true;
       abortActive = false;
+      isCompleted = false;
       setStopButtonState(true);
       showTypingIndicator();
       await pollHordeResult(requestId);
@@ -780,13 +802,14 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
     async function pollHordeResult(requestId) {
       try {
         var generatedText = "";
-        while (true) {
-          if (abortActive) return;
+        while (!isCompleted && !abortActive) {
           await new Promise(function(r) { setTimeout(r, 2000); });
-          if (abortActive) return;
+          if (abortActive || isCompleted) return;
 
           var checkRes = await fetch("https://aihorde.net/api/v2/generate/text/status/" + requestId);
           var checkData = await checkRes.json();
+
+          if (isCompleted || abortActive) return;
 
           if (checkData.wait_time) {
             updateTypingStatus("Waiting in queue (~" + checkData.wait_time + "s)...");
@@ -796,6 +819,7 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
 
           if (checkData.done) {
             generatedText = checkData.generations[0].text.trim();
+            isCompleted = true;
             break;
           }
           if (checkData.faulted) {
@@ -825,27 +849,29 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
     }
 
     function handleGenerationError(err) {
+      if (isCompleted || abortActive) return;
       removeTypingIndicator();
       localStorage.removeItem('pending_horde_id');
       localStorage.removeItem('pending_horde_start');
       activeHordeRequestId = null;
 
-      if (!abortActive) {
-        var errText = "*Ashley shivers as the wind howls against the window pane.* (" + (err.message || "Connection interrupted. Tap reroll to retry.") + ")";
-        chatHistory.push({ role: 'char', text: errText, time: formatTime(), duration: "Error" });
-        saveChatHistory();
-        renderFullChat();
-      }
+      var errText = "*Ashley shivers as the wind howls against the window pane.* (" + (err.message || "Connection interrupted. Tap reroll to retry.") + ")";
+      chatHistory.push({ role: 'char', text: errText, time: formatTime(), duration: "Error" });
+      saveChatHistory();
+      renderFullChat();
+      
       isGenerating = false;
       setStopButtonState(false);
     }
 
+    /* Fixed visibilitychange listener to eliminate duplicate "failed to fetch" errors */
     document.addEventListener('visibilitychange', function() {
-      if (document.visibilityState === 'visible' && activeHordeRequestId && isGenerating) {
+      if (document.visibilityState === 'visible' && activeHordeRequestId && isGenerating && !isCompleted) {
         fetch("https://aihorde.net/api/v2/generate/text/status/" + activeHordeRequestId)
           .then(function(res) { return res.json(); })
           .then(function(data) {
-            if (data.done) {
+            if (data.done && !isCompleted) {
+              isCompleted = true;
               removeTypingIndicator();
               var text = data.generations[0].text.trim();
               var durationSec = Math.round((Date.now() - (generationStartTime || Date.now())) / 1000) + "s";
@@ -887,7 +913,8 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       document.getElementById('edit-sheet').style.display = 'flex';
     }
 
-    function closeEditModal() {
+    function closeEditModal(e) {
+      if (e && e.target && e.target.id !== 'edit-sheet') return;
       document.getElementById('edit-sheet').style.display = 'none';
       editingMessageIndex = null;
     }
@@ -898,19 +925,21 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       if (!newText) return;
 
       var targetRole = chatHistory[editingMessageIndex].role;
-      // Truncate history at this index so the timeline cleanly updates from this point forward
-      chatHistory.splice(editingMessageIndex);
-      saveChatHistory();
-      closeEditModal();
+      var targetIdx = editingMessageIndex;
+
+      document.getElementById('edit-sheet').style.display = 'none';
+      editingMessageIndex = null;
 
       if (targetRole === 'user') {
+        // Mathew's turn: truncate subsequent turns and trigger new generation
+        chatHistory.splice(targetIdx);
         chatHistory.push({ role: 'user', text: newText, time: formatTime() });
         saveChatHistory();
         renderFullChat();
         await triggerAIResponse();
       } else {
-        // If editing Ashley's message, save the new text as her response and render
-        chatHistory.push({ role: 'char', text: newText, time: formatTime() });
+        // Ashley's turn: simply update this turn without dropping history
+        chatHistory[targetIdx].text = newText;
         saveChatHistory();
         renderFullChat();
       }
