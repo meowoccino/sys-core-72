@@ -18,7 +18,7 @@
       --gold-accent: #d4af7a;
       --action-color: #e2c4a2;
       --speech-text: #f5f2ed;
-      --quoted-rose: #e5b2aa; /* 4. Soft Rose Dusk for 'quoted' phrases */
+      --quoted-rose: #e5b2aa;
       --text-dim: #8b92a2;
       --danger-color: #e06c75;
     }
@@ -144,14 +144,12 @@
     }
     .action:last-child, .speech:last-child { margin-bottom: 0; }
 
-    /* Single quoted transformation: Soft Rose Dusk (No italics, regular upright text) */
     .quoted-text {
       color: var(--quoted-rose);
       font-style: normal;
       font-weight: 500;
     }
 
-    /* Metadata Bar Layout */
     .meta-time-row {
       display: inline-flex;
       align-items: center;
@@ -162,13 +160,11 @@
       color: var(--text-dim);
     }
     
-    /* Mathew controls: Pinned LEFT */
     .user .meta-time-row {
       align-self: flex-start;
       margin-left: 2px;
     }
 
-    /* Ashley controls: Pinned RIGHT */
     .ashley .meta-time-row {
       align-self: flex-end;
       margin-right: 6px;
@@ -198,7 +194,6 @@
       font-weight: 500;
     }
 
-    /* Floating Thinking Indicator (No Box) */
     .thinking-row {
       display: flex;
       align-items: center;
@@ -240,7 +235,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Edit Sheet Overlay */
     .sheet-overlay {
       display: none;
       position: fixed;
@@ -353,7 +347,6 @@
       text-decoration-skip-ink: none;
     }
 
-    /* Red wavy underline for native spelling/grammar issues */
     .dock-input textarea::spelling-error {
       text-decoration: underline wavy var(--danger-color);
     }
@@ -518,16 +511,14 @@ Spoken words go here without quotes, using natural emojis 🥰✨😏🥺❤️
 
     var HARDCODED_SYSTEM = `Write Ashley's next turn in this intimate story with Mathew ({{user}}).
 
-[Mandatory Structural Rule: Every response MUST contain spoken dialogue. Ashley MUST NOT respond with only physical narration. Structure each turn cleanly into 2 to 3 paragraphs:
-1. Physical actions, facial expressions, and posture wrapped in *asterisks*.
-2. Direct conversational spoken dialogue containing natural emojis (NO asterisks, NO quotation marks).
-3. Physical sensation, contact, or reaction wrapped in *asterisks*.
-
-Separate all paragraphs with double line breaks. Never omit dialogue.]`;
+[Mandatory Structural Rule: Every response MUST consist of both physical narration and spoken dialogue. Never drop actions, and never drop speech. Every single turn MUST follow this exact 3-block structure separated by double line breaks:
+1. Physical actions, posture, and facial expressions wrapped in *asterisks*.
+2. Direct conversational spoken dialogue containing natural emojis (NO asterisks, NO quotes).
+3. Physical sensation, contact, or reaction wrapped in *asterisks*.]`;
 
     var HARDCODED_INPUT_SUFFIX = `<|im_end|>
-[Directives: Ensure Ashley speaks aloud naturally and playfully with emojis. Do not output only narration. Do not wrap dialogue in asterisks or quotes. Maintain the newly engaged romantic dynamic.]
-Ashley:`;
+[Format Directive: Write Ashley's turn in exactly 3 blocks separated by blank lines. Start immediately with physical actions inside asterisks, then natural spoken dialogue with emojis, then concluding physical touch in asterisks. Do not skip narration, and do not skip dialogue.]
+Ashley: *`;
 
     var HARDCODED_EXAMPLES = `<START>
 {{user}}: *I take your coat and hang it on the rack.* Come on in and get warm by the fire. Coffee or tea?
@@ -595,7 +586,6 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       el.style.height = (newHeight < 24 ? 24 : newHeight) + 'px';
     }
 
-    /* Transform single-quoted words/phrases into Soft Rose Dusk span without quotes */
     function applyQuoteColor(text) {
       return text.replace(/(^|[\s(])'([^'\n]+)'([.,!?\s)]|$)/g, '$1<span class="quoted-text">$2</span>$3');
     }
@@ -656,7 +646,6 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       var html = '';
 
       if (role === 'user') {
-        /* Mathew's controls pinned to LEFT */
         html = '<div class="msg-group user" id="msg-' + idx + '"><div class="user-wrapper"><div class="glass-bubble">' +
           parseMessage(text) + '</div><div class="meta-time-row">' + msgCountLabel +
           '<svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.2 3.1.8-1.3-4.5-2.7z"/></svg><span>' +
@@ -665,7 +654,6 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
           '<button class="msg-action-btn delete-btn" onclick="deleteMessage(' + idx + ')" title="Delete message"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>' +
           '</div></div></div>';
       } else {
-        /* Ashley's controls pinned to RIGHT */
         var footerContent = '';
         if (idx > 0) {
           footerContent = '<div class="meta-time-row">' + msgCountLabel +
@@ -858,6 +846,12 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
         if (abortActive) return;
 
         removeTypingIndicator();
+        
+        /* Prefill stitch: ensure the response cleanly starts with the opening asterisk */
+        if (!generatedText.startsWith('*')) {
+          generatedText = '*' + generatedText;
+        }
+
         var durationSec = Math.round((Date.now() - (generationStartTime || Date.now())) / 1000) + "s";
         chatHistory.push({ role: 'char', text: generatedText, time: formatTime(), duration: durationSec });
         saveChatHistory();
@@ -892,7 +886,6 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       setStopButtonState(false);
     }
 
-    /* Fixed visibilitychange listener to eliminate duplicate error races */
     document.addEventListener('visibilitychange', function() {
       if (document.visibilityState === 'visible' && activeHordeRequestId && isGenerating && !isCompleted) {
         fetch("https://aihorde.net/api/v2/generate/text/status/" + activeHordeRequestId)
@@ -902,6 +895,9 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
               isCompleted = true;
               removeTypingIndicator();
               var text = data.generations[0].text.trim();
+              if (!text.startsWith('*')) {
+                text = '*' + text;
+              }
               var durationSec = Math.round((Date.now() - (generationStartTime || Date.now())) / 1000) + "s";
               chatHistory.push({ role: 'char', text: text, time: formatTime(), duration: durationSec });
               saveChatHistory();
