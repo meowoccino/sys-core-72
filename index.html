@@ -144,12 +144,6 @@
     }
     .action:last-child, .speech:last-child { margin-bottom: 0; }
 
-    .speech em {
-      font-style: italic;
-      color: #ffffff;
-      font-weight: 500;
-    }
-
     .quoted-text {
       color: var(--quoted-rose);
       font-style: normal;
@@ -597,13 +591,13 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       el.style.height = (newHeight < 24 ? 24 : newHeight) + 'px';
     }
 
-    /* Seamlessly strips both '...' and "..." and highlights content in Soft Rose Dusk */
     function applyQuoteColor(text) {
       return text
         .replace(/(^|[\s(])['"“]([^'"“”\n]+)['"”]([.,!?\s)]|$)/g, '$1<span class="quoted-text">$2</span>$3')
         .replace(/(^|[\s(])['"“]([^'"“”\n]+)['"”]([.,!?\s)]|$)/g, '$1<span class="quoted-text">$2</span>$3');
     }
 
+    /* Unified Parser: Any *text* is always converted to the exact same caramel .action class */
     function parseMessage(rawText) {
       if (!rawText) return '';
       var clean = rawText.replace(/<\|.*?\|>/g, '').trim();
@@ -614,13 +608,31 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
         var trimmed = block.trim();
         if (!trimmed) return;
 
-        if (trimmed.startsWith('*') && trimmed.endsWith('*') && trimmed.length > 2 && !trimmed.slice(1, -1).includes('\n\n')) {
+        // 1. Entire block wrapped in asterisks
+        if (trimmed.startsWith('*') && trimmed.endsWith('*') && trimmed.length > 2 && !trimmed.slice(1, -1).includes('*')) {
           var cleanAction = trimmed.replace(/^\*+|\*+$/g, '').trim();
           outputHtml += '<span class="action">' + applyQuoteColor(cleanAction) + '</span>';
-        } else {
-          var speechHtml = trimmed.replace(/\*([^*\n]+)\*/g, '<em>$1</em>');
-          speechHtml = speechHtml.replace(/^["'“”]|["'“”]$/g, '');
-          outputHtml += '<span class="speech">' + applyQuoteColor(speechHtml) + '</span>';
+        } 
+        // 2. Block with *action* mixed with speech (whether yours or hers)
+        else if (trimmed.includes('*')) {
+          var tokens = trimmed.split(/(\*[^*\n]+\*)/g);
+          tokens.forEach(function(token) {
+            var sub = token.trim();
+            if (!sub) return;
+
+            if (sub.startsWith('*') && sub.endsWith('*')) {
+              var inner = sub.slice(1, -1).trim();
+              outputHtml += '<span class="action">' + applyQuoteColor(inner) + '</span>';
+            } else {
+              var speechClean = sub.replace(/^["'“”]|["'“”]$/g, '');
+              outputHtml += '<span class="speech">' + applyQuoteColor(speechClean) + '</span>';
+            }
+          });
+        } 
+        // 3. Plain speech block
+        else {
+          var speechClean = trimmed.replace(/^["'“”]|["'“”]$/g, '');
+          outputHtml += '<span class="speech">' + applyQuoteColor(speechClean) + '</span>';
         }
       });
 
