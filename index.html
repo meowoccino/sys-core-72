@@ -565,7 +565,6 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
         var savedChat = localStorage.getItem('ashley_chat_history');
         if (savedChat) {
           chatHistory = JSON.parse(savedChat);
-          // Purge any stored error bubbles automatically
           chatHistory = chatHistory.filter(function(m) {
             return !m.text.includes("Failed to fetch") && !m.text.includes("Connection interrupted");
           });
@@ -598,8 +597,11 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       el.style.height = (newHeight < 24 ? 24 : newHeight) + 'px';
     }
 
+    /* Seamlessly strips both '...' and "..." and highlights content in Soft Rose Dusk */
     function applyQuoteColor(text) {
-      return text.replace(/(^|[\s(])'([^'\n]+)'([.,!?\s)]|$)/g, '$1<span class="quoted-text">$2</span>$3');
+      return text
+        .replace(/(^|[\s(])['"“]([^'"“”\n]+)['"”]([.,!?\s)]|$)/g, '$1<span class="quoted-text">$2</span>$3')
+        .replace(/(^|[\s(])['"“]([^'"“”\n]+)['"”]([.,!?\s)]|$)/g, '$1<span class="quoted-text">$2</span>$3');
     }
 
     function parseMessage(rawText) {
@@ -617,7 +619,7 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
           outputHtml += '<span class="action">' + applyQuoteColor(cleanAction) + '</span>';
         } else {
           var speechHtml = trimmed.replace(/\*([^*\n]+)\*/g, '<em>$1</em>');
-          speechHtml = speechHtml.replace(/^["']|["']$/g, '');
+          speechHtml = speechHtml.replace(/^["'“”]|["'“”]$/g, '');
           outputHtml += '<span class="speech">' + applyQuoteColor(speechHtml) + '</span>';
         }
       });
@@ -827,7 +829,7 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
         try {
           var checkRes = await fetch("https://aihorde.net/api/v2/generate/text/status/" + requestId);
           var checkData = await checkRes.json();
-          consecutiveErrors = 0; // Network succeeded, clear error counter
+          consecutiveErrors = 0;
 
           if (isCompleted || abortActive) return;
 
@@ -846,7 +848,6 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
             throw new Error("Horde worker faulted");
           }
         } catch (fetchErr) {
-          // Silent retry protection: do not crash or spawn error bubble on temporary mobile network hiccups
           consecutiveErrors++;
           if (consecutiveErrors > 6) {
             handleGenerationError(fetchErr);
@@ -886,8 +887,6 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       activeHordeRequestId = null;
       isGenerating = false;
       setStopButtonState(false);
-      
-      // Update status text rather than polluting chat stream with error bubbles
       alert("Horde connection interrupted. Tap send/reroll to retry.");
     }
 
@@ -913,9 +912,7 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
               isGenerating = false;
               setStopButtonState(false);
             }
-          }).catch(function() {
-            // Silently swallow fetch errors during tab wakeups
-          });
+          }).catch(function() {});
       }
     });
 
