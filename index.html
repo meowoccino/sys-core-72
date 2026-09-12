@@ -18,6 +18,7 @@
       --gold-accent: #d4af7a;
       --action-color: #e2c4a2;
       --speech-text: #f5f2ed;
+      --quoted-rose: #e5b2aa; /* 4. Soft Rose Dusk for 'quoted' phrases */
       --text-dim: #8b92a2;
       --danger-color: #e06c75;
     }
@@ -143,6 +144,13 @@
     }
     .action:last-child, .speech:last-child { margin-bottom: 0; }
 
+    /* Single quoted transformation: Soft Rose Dusk (No italics, regular upright text) */
+    .quoted-text {
+      color: var(--quoted-rose);
+      font-style: normal;
+      font-weight: 500;
+    }
+
     /* Metadata Bar Layout */
     .meta-time-row {
       display: inline-flex;
@@ -154,13 +162,13 @@
       color: var(--text-dim);
     }
     
-    /* Mathew controls: Pinned LEFT with safe screen margin */
+    /* Mathew controls: Pinned LEFT */
     .user .meta-time-row {
       align-self: flex-start;
       margin-left: 2px;
     }
 
-    /* Ashley controls: Pinned RIGHT with safe screen margin */
+    /* Ashley controls: Pinned RIGHT */
     .ashley .meta-time-row {
       align-self: flex-end;
       margin-right: 6px;
@@ -190,7 +198,7 @@
       font-weight: 500;
     }
 
-    /* Thinking Indicator */
+    /* Floating Thinking Indicator (No Box) */
     .thinking-row {
       display: flex;
       align-items: center;
@@ -232,7 +240,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Sheet Overlay for Editing */
+    /* Edit Sheet Overlay */
     .sheet-overlay {
       display: none;
       position: fixed;
@@ -341,6 +349,16 @@
       padding: 2px 0;
       overflow-y: auto;
       display: block;
+      caret-color: var(--gold-accent);
+      text-decoration-skip-ink: none;
+    }
+
+    /* Red wavy underline for native spelling/grammar issues */
+    .dock-input textarea::spelling-error {
+      text-decoration: underline wavy var(--danger-color);
+    }
+    .dock-input textarea::grammar-error {
+      text-decoration: underline wavy var(--danger-color);
     }
 
     .action-symbol-btn {
@@ -422,7 +440,13 @@
 
     <footer id="input-footer">
       <div class="dock-input">
-        <textarea id="promptInput" rows="1" placeholder="Type a message or action..." oninput="autoExpandTextarea(this)"></textarea>
+        <textarea id="promptInput" rows="1" 
+          placeholder="Type a message or action..." 
+          spellcheck="true" 
+          autocorrect="on" 
+          autocomplete="on" 
+          autocapitalize="sentences"
+          oninput="autoExpandTextarea(this)"></textarea>
         <button type="button" class="action-symbol-btn" onclick="insertActionWrapper()">* *</button>
       </div>
       <button type="button" class="send-pill" id="actionBtn" onclick="handleActionClick()">
@@ -434,7 +458,7 @@
   <div id="edit-sheet" class="sheet-overlay" onclick="closeEditModal(event)">
     <div class="sheet-content" onclick="event.stopPropagation()">
       <div class="sheet-title" id="edit-sheet-title">Edit Message</div>
-      <textarea id="editMessageTextarea" class="edit-textarea"></textarea>
+      <textarea id="editMessageTextarea" class="edit-textarea" spellcheck="true" autocorrect="on"></textarea>
       <div class="sheet-btn-row">
         <button type="button" class="sheet-cancel-btn" onclick="closeEditModal()">Cancel</button>
         <button type="button" class="sheet-save-btn" onclick="saveEditedMessage()">Save</button>
@@ -571,7 +595,11 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       el.style.height = (newHeight < 24 ? 24 : newHeight) + 'px';
     }
 
-    /* Robust parser that prevents formatting breakdown */
+    /* Transform single-quoted words/phrases into Soft Rose Dusk span without quotes */
+    function applyQuoteColor(text) {
+      return text.replace(/(^|[\s(])'([^'\n]+)'([.,!?\s)]|$)/g, '$1<span class="quoted-text">$2</span>$3');
+    }
+
     function parseMessage(rawText) {
       if (!rawText) return '';
       var clean = rawText.replace(/<\|.*?\|>/g, '').trim();
@@ -584,7 +612,7 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
 
         if (/^\*[^*]+(\*|$)/.test(trimmed) && trimmed.endsWith('*')) {
           var cleanAction = trimmed.replace(/^\*+|\*+$/g, '').trim();
-          outputHtml += '<span class="action">' + cleanAction + '</span>';
+          outputHtml += '<span class="action">' + applyQuoteColor(cleanAction) + '</span>';
         } else if (trimmed.indexOf('*') !== -1) {
           var parts = trimmed.split(/(\*[^*]+\*)/g);
           parts.forEach(function(part) {
@@ -592,15 +620,15 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
             if (!subTrim) return;
             if (subTrim.startsWith('*') && subTrim.endsWith('*')) {
               var cleanSub = subTrim.slice(1, -1).trim();
-              outputHtml += '<span class="action">' + cleanSub + '</span>';
+              outputHtml += '<span class="action">' + applyQuoteColor(cleanSub) + '</span>';
             } else {
               var speechClean = subTrim.replace(/^["']|["']$/g, '');
-              outputHtml += '<span class="speech">' + speechClean + '</span>';
+              outputHtml += '<span class="speech">' + applyQuoteColor(speechClean) + '</span>';
             }
           });
         } else {
           var unquoted = trimmed.replace(/^["']|["']$/g, '');
-          outputHtml += '<span class="speech">' + unquoted + '</span>';
+          outputHtml += '<span class="speech">' + applyQuoteColor(unquoted) + '</span>';
         }
       });
 
@@ -628,7 +656,7 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       var html = '';
 
       if (role === 'user') {
-        /* Mathew's controls: Pinned to the LEFT side */
+        /* Mathew's controls pinned to LEFT */
         html = '<div class="msg-group user" id="msg-' + idx + '"><div class="user-wrapper"><div class="glass-bubble">' +
           parseMessage(text) + '</div><div class="meta-time-row">' + msgCountLabel +
           '<svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.2 3.1.8-1.3-4.5-2.7z"/></svg><span>' +
@@ -637,7 +665,7 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
           '<button class="msg-action-btn delete-btn" onclick="deleteMessage(' + idx + ')" title="Delete message"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>' +
           '</div></div></div>';
       } else {
-        /* Ashley's controls: Pinned to the RIGHT side with safe margins */
+        /* Ashley's controls pinned to RIGHT */
         var footerContent = '';
         if (idx > 0) {
           footerContent = '<div class="meta-time-row">' + msgCountLabel +
@@ -864,7 +892,7 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       setStopButtonState(false);
     }
 
-    /* Fixed visibilitychange listener to eliminate duplicate "failed to fetch" errors */
+    /* Fixed visibilitychange listener to eliminate duplicate error races */
     document.addEventListener('visibilitychange', function() {
       if (document.visibilityState === 'visible' && activeHordeRequestId && isGenerating && !isCompleted) {
         fetch("https://aihorde.net/api/v2/generate/text/status/" + activeHordeRequestId)
@@ -931,14 +959,12 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       editingMessageIndex = null;
 
       if (targetRole === 'user') {
-        // Mathew's turn: truncate subsequent turns and trigger new generation
         chatHistory.splice(targetIdx);
         chatHistory.push({ role: 'user', text: newText, time: formatTime() });
         saveChatHistory();
         renderFullChat();
         await triggerAIResponse();
       } else {
-        // Ashley's turn: simply update this turn without dropping history
         chatHistory[targetIdx].text = newText;
         saveChatHistory();
         renderFullChat();
