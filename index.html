@@ -144,7 +144,6 @@
     }
     .action:last-child, .speech:last-child { margin-bottom: 0; }
 
-    /* Inline emphasis inside dialogue stays fluid and inline */
     .speech em {
       font-style: italic;
       color: #ffffff;
@@ -524,7 +523,7 @@ Spoken words go here without quotes, using natural emojis 🥰✨😏🥺❤️
 3. Physical sensation, contact, or reaction wrapped in *asterisks*.]`;
 
     var HARDCODED_INPUT_SUFFIX = `<|im_end|>
-[Format Directive: Write Ashley's turn in exactly 3 blocks separated by blank lines. Start immediately with physical actions inside asterisks, then natural spoken dialogue with emojis, then concluding physical touch in asterisks. Do not skip narration, and do not skip dialogue.]
+[Directives: Write Ashley's turn in exactly 3 blocks separated by blank lines. Start immediately with physical actions inside asterisks, then natural spoken dialogue with emojis, then concluding physical touch in asterisks. Maintain first-person perspective ("I", "my") and newly engaged intimacy.]
 Ashley: *`;
 
     var HARDCODED_EXAMPLES = `<START>
@@ -559,12 +558,18 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
     var generationStartTime = null;
     var editingMessageIndex = null;
     var isCompleted = false;
+    var pollTimeoutHandle = null;
 
     function init() {
       try {
         var savedChat = localStorage.getItem('ashley_chat_history');
         if (savedChat) {
           chatHistory = JSON.parse(savedChat);
+          // Purge any stored error bubbles automatically
+          chatHistory = chatHistory.filter(function(m) {
+            return !m.text.includes("Failed to fetch") && !m.text.includes("Connection interrupted");
+          });
+          saveChatHistory();
         } else {
           chatHistory.push({ role: 'char', text: HARDCODED_GREETING, time: formatTime() });
           saveChatHistory();
@@ -597,7 +602,6 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       return text.replace(/(^|[\s(])'([^'\n]+)'([.,!?\s)]|$)/g, '$1<span class="quoted-text">$2</span>$3');
     }
 
-    /* Robust parser: keeps inline asterisks inside speech fluid, preserves paragraph actions */
     function parseMessage(rawText) {
       if (!rawText) return '';
       var clean = rawText.replace(/<\|.*?\|>/g, '').trim();
@@ -608,12 +612,10 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
         var trimmed = block.trim();
         if (!trimmed) return;
 
-        // Dedicated action paragraph (entire block wrapped in *asterisks*)
         if (trimmed.startsWith('*') && trimmed.endsWith('*') && trimmed.length > 2 && !trimmed.slice(1, -1).includes('\n\n')) {
           var cleanAction = trimmed.replace(/^\*+|\*+$/g, '').trim();
           outputHtml += '<span class="action">' + applyQuoteColor(cleanAction) + '</span>';
         } else {
-          // Dialogue paragraph: convert inline *word* to inline <em> so it doesn't break the line
           var speechHtml = trimmed.replace(/\*([^*\n]+)\*/g, '<em>$1</em>');
           speechHtml = speechHtml.replace(/^["']|["']$/g, '');
           outputHtml += '<span class="speech">' + applyQuoteColor(speechHtml) + '</span>';
@@ -740,6 +742,7 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       isGenerating = false;
       isCompleted = true;
       activeHordeRequestId = null;
+      if (pollTimeoutHandle) clearTimeout(pollTimeoutHandle);
       localStorage.removeItem('pending_horde_id');
       localStorage.removeItem('pending_horde_start');
       removeTypingIndicator();
@@ -814,14 +817,17 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
     }
 
     async function pollHordeResult(requestId) {
-      try {
-        var generatedText = "";
-        while (!isCompleted && !abortActive) {
-          await new Promise(function(r) { setTimeout(r, 2000); });
-          if (abortActive || isCompleted) return;
+      var generatedText = "";
+      var consecutiveErrors = 0;
 
+      while (!isCompleted && !abortActive) {
+        await new Promise(function(r) { pollTimeoutHandle = setTimeout(r, 2000); });
+        if (abortActive || isCompleted) return;
+
+        try {
           var checkRes = await fetch("https://aihorde.net/api/v2/generate/text/status/" + requestId);
           var checkData = await checkRes.json();
+          consecutiveErrors = 0; // Network succeeded, clear error counter
 
           if (isCompleted || abortActive) return;
 
@@ -839,33 +845,37 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
           if (checkData.faulted) {
             throw new Error("Horde worker faulted");
           }
+        } catch (fetchErr) {
+          // Silent retry protection: do not crash or spawn error bubble on temporary mobile network hiccups
+          consecutiveErrors++;
+          if (consecutiveErrors > 6) {
+            handleGenerationError(fetchErr);
+            return;
+          }
+          updateTypingStatus("Reconnecting to Ashley...");
         }
-
-        if (abortActive) return;
-
-        removeTypingIndicator();
-        
-        /* Prefill stitch: ensure the response cleanly starts with the opening asterisk */
-        if (!generatedText.startsWith('*')) {
-          generatedText = '*' + generatedText;
-        }
-
-        var durationSec = Math.round((Date.now() - (generationStartTime || Date.now())) / 1000) + "s";
-        chatHistory.push({ role: 'char', text: generatedText, time: formatTime(), duration: durationSec });
-        saveChatHistory();
-        renderFullChat();
-
-        localStorage.removeItem('pending_horde_id');
-        localStorage.removeItem('pending_horde_start');
-        activeHordeRequestId = null;
-
-        triggerBackgroundSummary();
-      } catch (err) {
-        handleGenerationError(err);
-      } finally {
-        isGenerating = false;
-        setStopButtonState(false);
       }
+
+      if (abortActive) return;
+
+      removeTypingIndicator();
+      
+      if (!generatedText.startsWith('*')) {
+        generatedText = '*' + generatedText;
+      }
+
+      var durationSec = Math.round((Date.now() - (generationStartTime || Date.now())) / 1000) + "s";
+      chatHistory.push({ role: 'char', text: generatedText, time: formatTime(), duration: durationSec });
+      saveChatHistory();
+      renderFullChat();
+
+      localStorage.removeItem('pending_horde_id');
+      localStorage.removeItem('pending_horde_start');
+      activeHordeRequestId = null;
+      isGenerating = false;
+      setStopButtonState(false);
+
+      triggerBackgroundSummary();
     }
 
     function handleGenerationError(err) {
@@ -874,14 +884,11 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       localStorage.removeItem('pending_horde_id');
       localStorage.removeItem('pending_horde_start');
       activeHordeRequestId = null;
-
-      var errText = "*Ashley shivers as the wind howls against the window pane.* (" + (err.message || "Connection interrupted. Tap reroll to retry.") + ")";
-      chatHistory.push({ role: 'char', text: errText, time: formatTime(), duration: "Error" });
-      saveChatHistory();
-      renderFullChat();
-      
       isGenerating = false;
       setStopButtonState(false);
+      
+      // Update status text rather than polluting chat stream with error bubbles
+      alert("Horde connection interrupted. Tap send/reroll to retry.");
     }
 
     document.addEventListener('visibilitychange', function() {
@@ -889,7 +896,7 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
         fetch("https://aihorde.net/api/v2/generate/text/status/" + activeHordeRequestId)
           .then(function(res) { return res.json(); })
           .then(function(data) {
-            if (data.done && !isCompleted) {
+            if (data && data.done && !isCompleted) {
               isCompleted = true;
               removeTypingIndicator();
               var text = data.generations[0].text.trim();
@@ -906,7 +913,9 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
               isGenerating = false;
               setStopButtonState(false);
             }
-          }).catch(function() {});
+          }).catch(function() {
+            // Silently swallow fetch errors during tab wakeups
+          });
       }
     });
 
