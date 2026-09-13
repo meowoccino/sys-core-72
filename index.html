@@ -466,47 +466,9 @@
   </div>
 
   <script>
-    function getApiKeys() {
-      var raw = (localStorage.getItem('openrouter_key') || "").trim();
-      if (!raw) return [];
-      return raw.split(',').map(function(k) { return k.trim(); }).filter(Boolean);
-    }
-
-    function saveApiKeys(keyList) {
-      localStorage.setItem('openrouter_key', keyList.join(', '));
-    }
-
-    var apiKeys = getApiKeys();
-    if (apiKeys.length < 4) {
-      var inputKeys = prompt("Enter your 4 OpenRouter API Keys separated by commas:\n(sk-or-v1-key1..., sk-or-v1-key2..., ...)");
-      if (inputKeys && inputKeys.trim()) {
-        apiKeys = inputKeys.split(',').map(function(k) { return k.trim(); }).filter(Boolean);
-        saveApiKeys(apiKeys);
-        localStorage.setItem('openrouter_active_idx', "0");
-      }
-    }
-
-    function getActiveKey() {
-      if (apiKeys.length === 0) return "";
-      var idx = parseInt(localStorage.getItem('openrouter_active_idx') || "0", 10);
-      if (isNaN(idx) || idx >= apiKeys.length || idx < 0) {
-        idx = 0;
-        localStorage.setItem('openrouter_active_idx', "0");
-      }
-      return apiKeys[idx];
-    }
-
-    function rotateToNextKey() {
-      if (apiKeys.length <= 1) return;
-      var idx = parseInt(localStorage.getItem('openrouter_active_idx') || "0", 10);
-      var nextIdx = (idx + 1) % apiKeys.length;
-      localStorage.setItem('openrouter_active_idx', nextIdx.toString());
-    }
-
-    // High-context free model (128k context - never throttled down to 800 tokens)
-    var MODEL_NAME = "meta-llama/llama-3.3-70b-instruct:free";
-    var MAX_TOKENS = 500;
-    var TEMPERATURE = 0.85;
+    // Hardcoded AI Horde API Key and Selected Model
+    var HORDE_API_KEY = "P7BHWqrcOnxopsu0SEP5Kw";
+    var HORDE_MODEL = "aphrodite/TheDrummer/Behemoth-X-123B-v2.1";
 
     var HARDCODED_GREETING = "*The heavy cabin door pushes open, letting in a brief gust of freezing mountain wind before I quickly pull it shut. I drop my roller suitcase and airline shoulder bag on the entryway mat, exhaling a long, frosty breath that instantly fogs up.*\n\n*Shaking the snow from the hood of my winter coat, I push my blonde hair out of my face and look up at you, a tired but genuine grin breaking out across my lips.*\n\nTell me you have something hot to drink on the stove, because I'm pretty sure my fingers froze solid on that mountain pass. It is so good to see you, Mathew.";
 
@@ -560,7 +522,7 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
         if (savedChat) {
           chatHistory = JSON.parse(savedChat);
           chatHistory = chatHistory.filter(function(m) {
-            return !m.text.includes("Failed to fetch") && !m.text.includes("Connection interrupted") && !m.text.includes("OpenRouter Error");
+            return !m.text.includes("Failed to fetch") && !m.text.includes("Connection interrupted") && !m.text.includes("Error:") && !m.text.includes("OpenRouter");
           });
           saveChatHistory();
         } else {
@@ -687,15 +649,20 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
       stream.scrollTop = stream.scrollHeight;
     }
 
-    function showTypingIndicator() {
-      if (document.getElementById('floating-thinking-row')) return;
-      var stream = document.getElementById('chat-stream');
-      var html = '<div class="thinking-row" id="floating-thinking-row">' +
-        '<div class="thinking-dots"><div class="thinking-dot"></div><div class="thinking-dot"></div><div class="thinking-dot"></div></div>' +
-        '<span class="thinking-status-text" id="thinking-status-label">Ashley is thinking...</span>' +
-        '</div>';
-      stream.insertAdjacentHTML('beforeend', html);
-      stream.scrollTop = stream.scrollHeight;
+    function showTypingIndicator(statusText) {
+      var elem = document.getElementById('floating-thinking-row');
+      if (!elem) {
+        var stream = document.getElementById('chat-stream');
+        var html = '<div class="thinking-row" id="floating-thinking-row">' +
+          '<div class="thinking-dots"><div class="thinking-dot"></div><div class="thinking-dot"></div><div class="thinking-dot"></div></div>' +
+          '<span class="thinking-status-text" id="thinking-status-label">' + (statusText || "Ashley is thinking...") + '</span>' +
+          '</div>';
+        stream.insertAdjacentHTML('beforeend', html);
+        stream.scrollTop = stream.scrollHeight;
+      } else {
+        var label = document.getElementById('thinking-status-label');
+        if (label && statusText) label.innerText = statusText;
+      }
     }
 
     function removeTypingIndicator() {
@@ -703,24 +670,23 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
       if (elem) elem.remove();
     }
 
-    function buildOpenRouterPayload() {
-      var fullSystemPrompt = HARDCODED_SYSTEM + "\n\n" + HARDCODED_PERSONA + "\n\n" + HARDCODED_SCENARIO;
+    function buildHordePrompt() {
+      var systemPrompt = HARDCODED_SYSTEM + "\n\n" + HARDCODED_PERSONA + "\n\n" + HARDCODED_SCENARIO;
 
       if (backgroundSummary) {
-        fullSystemPrompt += "\n\n[Persistent History / Established Memory: " + backgroundSummary + "]";
+        systemPrompt += "\n\n[Persistent History / Established Memory: " + backgroundSummary + "]";
       }
 
-      var messages = [{ role: "system", content: fullSystemPrompt }];
+      var fullPrompt = "<|im_start|>system\n" + systemPrompt + "<|im_end|>\n";
 
-      var recentSlice = chatHistory.slice(-16);
+      var recentSlice = chatHistory.slice(-14);
       recentSlice.forEach(function(m) {
-        messages.push({
-          role: m.role === 'user' ? 'user' : 'assistant',
-          content: m.text
-        });
+        var roleTag = m.role === 'user' ? 'user' : 'assistant';
+        fullPrompt += "<|im_start|>" + roleTag + "\n" + m.text + "<|im_end|>\n";
       });
 
-      return messages;
+      fullPrompt += "<|im_start|>assistant\n*";
+      return fullPrompt;
     }
 
     function handleActionClick() {
@@ -754,18 +720,6 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
 
     async function sendMessage() {
       if (isGenerating) return;
-      
-      apiKeys = getApiKeys();
-      if (apiKeys.length === 0) {
-        var inputKeys = prompt("Enter your 4 OpenRouter API Keys separated by commas:\n(sk-or-v1-key1..., sk-or-v1-key2..., ...)");
-        if (inputKeys && inputKeys.trim()) {
-          apiKeys = inputKeys.split(',').map(function(k) { return k.trim(); }).filter(Boolean);
-          saveApiKeys(apiKeys);
-          localStorage.setItem('openrouter_active_idx', "0");
-        } else {
-          return;
-        }
-      }
 
       var input = document.getElementById('promptInput');
       var userText = input.value.trim();
@@ -782,73 +736,93 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
     }
 
     async function triggerAIResponse() {
-      apiKeys = getApiKeys();
-      if (apiKeys.length === 0) return;
-
       isGenerating = true;
       setStopButtonState(true);
-      showTypingIndicator();
+      showTypingIndicator("Submitting to Horde...");
 
       generationStartTime = Date.now();
       abortController = new AbortController();
 
-      var payloadMessages = buildOpenRouterPayload();
-      var attempts = 0;
-      var maxAttempts = Math.max(1, apiKeys.length);
-      var success = false;
-      var errorLog = [];
+      var promptText = buildHordePrompt();
 
-      while (attempts < maxAttempts && !success) {
-        var currentKey = getActiveKey();
-        var currentIdx = parseInt(localStorage.getItem('openrouter_active_idx') || "0", 10);
-
-        try {
-          var response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": "Bearer " + currentKey,
-              "HTTP-Referer": window.location.origin || "https://meowoccino.github.io",
-              "X-Title": "Whisper Chat"
+      try {
+        var initiateRes = await fetch("https://aihorde.net/api/v2/generate/text/async", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "apikey": HORDE_API_KEY,
+            "Client-Agent": "WhisperChat:v2.0:github.io"
+          },
+          signal: abortController.signal,
+          body: JSON.stringify({
+            prompt: promptText,
+            params: {
+              max_context_length: 8192,
+              max_length: 450,
+              temperature: 0.85,
+              top_p: 0.95,
+              rep_pen: 1.1,
+              singleline: false,
+              stop_sequence: ["<|im_end|>", "<|im_start|>", "\nMathew:", "\nUser:"]
             },
-            signal: abortController.signal,
-            body: JSON.stringify({
-              model: MODEL_NAME,
-              messages: payloadMessages,
-              temperature: TEMPERATURE,
-              max_tokens: MAX_TOKENS
-            })
+            models: [HORDE_MODEL],
+            workers: [],
+            slow_workers: true
+          })
+        });
+
+        if (!initiateRes.ok) {
+          var errData = await initiateRes.json().catch(function() { return {}; });
+          throw new Error(errData.message || ("HTTP " + initiateRes.status));
+        }
+
+        var initData = await initiateRes.json();
+        var taskId = initData.id;
+
+        // Poll until ready
+        var generatedText = "";
+        while (isGenerating && !abortController.signal.aborted) {
+          await new Promise(function(resolve) { setTimeout(resolve, 3000); });
+
+          var checkRes = await fetch("https://aihorde.net/api/v2/generate/text/status/" + taskId, {
+            headers: {
+              "apikey": HORDE_API_KEY,
+              "Client-Agent": "WhisperChat:v2.0:github.io"
+            },
+            signal: abortController.signal
           });
 
-          if (!response.ok) {
-            var errorData = await response.json().catch(function() { return {}; });
-            var msg = (errorData && errorData.error && errorData.error.message) ? errorData.error.message : ("HTTP " + response.status);
-            errorLog.push("Key #" + (currentIdx + 1) + ": " + msg);
+          if (!checkRes.ok) continue;
 
-            rotateToNextKey();
-            attempts++;
-            continue;
+          var statusData = await checkRes.json();
+
+          if (statusData.done) {
+            if (statusData.generations && statusData.generations.length > 0) {
+              generatedText = statusData.generations[0].text.trim();
+            }
+            break;
+          } else {
+            var waitSec = statusData.wait_time ? Math.round(statusData.wait_time) + "s" : "...";
+            var queuePos = statusData.queue_position ? " (Q: " + statusData.queue_position + ")" : "";
+            showTypingIndicator("Ashley is thinking... " + waitSec + queuePos);
           }
+        }
 
-          var data = await response.json();
-          var generatedText = data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content.trim() : "";
+        if (!generatedText.startsWith('*')) {
+          generatedText = '*' + generatedText;
+        }
 
-          // Automatically strip trailing tildes
-          generatedText = generatedText.replace(/~+/g, '');
+        // Clean out trailing tokens and tildes
+        generatedText = generatedText.replace(/<\|.*?\|>/g, '').replace(/~+/g, '').trim();
 
-          var durationSec = Math.round((Date.now() - generationStartTime) / 1000) + "s" + (apiKeys.length > 1 ? " (K" + (currentIdx + 1) + ")" : "");
-          chatHistory.push({ role: 'char', text: generatedText, time: formatTime(), duration: durationSec });
-          saveChatHistory();
-          renderFullChat();
+        var durationSec = Math.round((Date.now() - generationStartTime) / 1000) + "s (Horde)";
+        chatHistory.push({ role: 'char', text: generatedText, time: formatTime(), duration: durationSec });
+        saveChatHistory();
+        renderFullChat();
 
-          triggerBackgroundSummary();
-          success = true;
-
-        } catch (err) {
-          if (err.name === 'AbortError') break;
-          errorLog.push("Key #" + (currentIdx + 1) + ": " + err.message);
-          rotateToNextKey();
-          attempts++;
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          alert("Horde Generation Error: " + err.message);
         }
       }
 
@@ -856,10 +830,6 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
       isGenerating = false;
       setStopButtonState(false);
       abortController = null;
-
-      if (!success && errorLog.length > 0) {
-        alert("All keys exhausted.\n\n" + errorLog.join("\n"));
-      }
     }
 
     function deleteMessage(idx) {
@@ -923,41 +893,6 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
 
     function closeLightbox() {
       document.getElementById('avatar-lightbox').style.display = 'none';
-    }
-
-    async function triggerBackgroundSummary() {
-      if (chatHistory.length < 16 || chatHistory.length % 10 !== 0) return;
-      var activeKey = getActiveKey();
-      if (!activeKey) return;
-
-      var olderSlice = chatHistory.slice(-16, -6);
-      var textToSummarize = olderSlice.map(function(m) { return (m.role === 'user' ? 'Mathew' : 'Ashley') + ': ' + m.text; }).join('\n');
-
-      try {
-        var res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + activeKey,
-            "HTTP-Referer": window.location.origin || "https://meowoccino.github.io",
-            "X-Title": "Whisper Chat"
-          },
-          body: JSON.stringify({
-            model: "meta-llama/llama-3.3-70b-instruct",
-            messages: [
-              { role: "system", content: "Summarize permanent facts, commitments, items, and changes in 2-3 bullet points." },
-              { role: "user", content: textToSummarize }
-            ],
-            max_tokens: 120,
-            temperature: 0.3
-          })
-        });
-        var data = await res.json();
-        if (data.choices && data.choices[0] && data.choices[0].message) {
-          backgroundSummary = (backgroundSummary + " " + data.choices[0].message.content).trim();
-          localStorage.setItem('ashley_bg_summary', backgroundSummary);
-        }
-      } catch (e) {}
     }
 
     var appContainer = document.getElementById('app-container');
