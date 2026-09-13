@@ -476,7 +476,6 @@
       localStorage.setItem('openrouter_key', keyList.join(', '));
     }
 
-    // Prompts automatically if fewer than 4 keys are stored
     var apiKeys = getApiKeys();
     if (apiKeys.length < 4) {
       var inputKeys = prompt("Enter your 4 OpenRouter API Keys separated by commas:\n(sk-or-v1-key1..., sk-or-v1-key2..., ...)");
@@ -490,7 +489,7 @@
     function getActiveKey() {
       if (apiKeys.length === 0) return "";
       var idx = parseInt(localStorage.getItem('openrouter_active_idx') || "0", 10);
-      if (idx >= apiKeys.length) {
+      if (isNaN(idx) || idx >= apiKeys.length || idx < 0) {
         idx = 0;
         localStorage.setItem('openrouter_active_idx', "0");
       }
@@ -747,7 +746,7 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
       
       apiKeys = getApiKeys();
       if (apiKeys.length === 0) {
-        var inputKeys = prompt("Enter your 4 OpenRouter API Keys separated by commas:\n(sk-or-v1-key1..., sk-or-v1-key2..., ...)");
+        var inputKeys = prompt("Enter your OpenRouter API Keys separated by commas:\n(sk-or-v1-key1..., sk-or-v1-key2..., ...)");
         if (inputKeys && inputKeys.trim()) {
           apiKeys = inputKeys.split(',').map(function(k) { return k.trim(); }).filter(Boolean);
           saveApiKeys(apiKeys);
@@ -786,6 +785,7 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
       var attempts = 0;
       var maxAttempts = Math.max(1, apiKeys.length);
       var success = false;
+      var errorLog = [];
 
       while (attempts < maxAttempts && !success) {
         var currentKey = getActiveKey();
@@ -796,7 +796,9 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": "Bearer " + currentKey
+              "Authorization": "Bearer " + currentKey,
+              "HTTP-Referer": window.location.origin || "https://meowoccino.github.io",
+              "X-Title": "Whisper Chat"
             },
             signal: abortController.signal,
             body: JSON.stringify({
@@ -810,14 +812,12 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
           if (!response.ok) {
             var errorData = await response.json().catch(function() { return {}; });
             var msg = (errorData && errorData.error && errorData.error.message) ? errorData.error.message : ("HTTP " + response.status);
+            errorLog.push("Key #" + (currentIdx + 1) + ": " + msg);
 
-            // Silent failover to next key on rate limit (429), bad key (401), or no credits/quota (402)
-            if (response.status === 429 || response.status === 401 || response.status === 402 || msg.toLowerCase().includes("credits") || msg.toLowerCase().includes("rate") || msg.toLowerCase().includes("quota")) {
-              rotateToNextKey();
-              attempts++;
-              continue;
-            }
-            throw new Error(msg);
+            // Failover to next key
+            rotateToNextKey();
+            attempts++;
+            continue;
           }
 
           var data = await response.json();
@@ -840,12 +840,9 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
 
         } catch (err) {
           if (err.name === 'AbortError') break;
-
-          if (attempts >= maxAttempts - 1) {
-            alert("OpenRouter Error: " + err.message);
-          }
-          attempts++;
+          errorLog.push("Key #" + (currentIdx + 1) + ": " + err.message);
           rotateToNextKey();
+          attempts++;
         }
       }
 
@@ -853,6 +850,10 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
       isGenerating = false;
       setStopButtonState(false);
       abortController = null;
+
+      if (!success && errorLog.length > 0) {
+        alert("All keys exhausted.\n\n" + errorLog.join("\n"));
+      }
     }
 
     function deleteMessage(idx) {
@@ -931,7 +932,9 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": "Bearer " + activeKey
+            "Authorization": "Bearer " + activeKey,
+            "HTTP-Referer": window.location.origin || "https://meowoccino.github.io",
+            "X-Title": "Whisper Chat"
           },
           body: JSON.stringify({
             model: "meta-llama/llama-3.3-70b-instruct",
