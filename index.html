@@ -466,12 +466,12 @@
   </div>
 
   <script>
-    // Retrieves your key safely from private phone storage (never pushed to GitHub)
-    var OPENROUTER_API_KEY = localStorage.getItem('openrouter_key') || "";
+    var OPENROUTER_API_KEY = (localStorage.getItem('openrouter_key') || "").trim();
     if (!OPENROUTER_API_KEY) {
-      OPENROUTER_API_KEY = prompt("Enter your OpenRouter API Key (sk-or-v1-...):") || "";
-      if (OPENROUTER_API_KEY) {
-        localStorage.setItem('openrouter_key', OPENROUTER_API_KEY.trim());
+      var inputKey = prompt("Enter your OpenRouter API Key (sk-or-v1-...):");
+      if (inputKey && inputKey.trim()) {
+        OPENROUTER_API_KEY = inputKey.trim();
+        localStorage.setItem('openrouter_key', OPENROUTER_API_KEY);
       }
     }
 
@@ -715,10 +715,12 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
     async function sendMessage() {
       if (isGenerating) return;
       
+      OPENROUTER_API_KEY = (localStorage.getItem('openrouter_key') || "").trim();
       if (!OPENROUTER_API_KEY) {
-        OPENROUTER_API_KEY = prompt("Enter your OpenRouter API Key (sk-or-v1-...):") || "";
-        if (OPENROUTER_API_KEY) {
-          localStorage.setItem('openrouter_key', OPENROUTER_API_KEY.trim());
+        var inputKey = prompt("Enter your OpenRouter API Key (sk-or-v1-...):");
+        if (inputKey && inputKey.trim()) {
+          OPENROUTER_API_KEY = inputKey.trim();
+          localStorage.setItem('openrouter_key', OPENROUTER_API_KEY);
         } else {
           return;
         }
@@ -746,6 +748,7 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
       generationStartTime = Date.now();
       abortController = new AbortController();
 
+      var cleanKey = (OPENROUTER_API_KEY || "").trim();
       var payloadMessages = buildOpenRouterPayload();
 
       try {
@@ -753,9 +756,7 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": "Bearer " + OPENROUTER_API_KEY,
-            "HTTP-Referer": window.location.origin || "https://github.com",
-            "X-Title": "Whisper"
+            "Authorization": "Bearer " + cleanKey
           },
           signal: abortController.signal,
           body: JSON.stringify({
@@ -768,12 +769,13 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
 
         if (!response.ok) {
           var errorData = await response.json().catch(function() { return {}; });
-          if (response.status === 401) {
+          var msg = (errorData && errorData.error && errorData.error.message) ? errorData.error.message : ("HTTP " + response.status);
+          
+          if (response.status === 401 || msg.toLowerCase().includes("user not found") || msg.toLowerCase().includes("invalid api key")) {
             localStorage.removeItem('openrouter_key');
             OPENROUTER_API_KEY = "";
-            throw new Error("Invalid API Key (401). Please refresh and re-enter your key.");
           }
-          throw new Error(errorData.error ? errorData.error.message : ("HTTP " + response.status));
+          throw new Error(msg);
         }
 
         var data = await response.json();
@@ -791,7 +793,7 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
         triggerBackgroundSummary();
       } catch (err) {
         if (err.name !== 'AbortError') {
-          alert(err.message);
+          alert("OpenRouter Error: " + err.message);
         }
       } finally {
         removeTypingIndicator();
@@ -874,7 +876,7 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": "Bearer " + OPENROUTER_API_KEY
+            "Authorization": "Bearer " + OPENROUTER_API_KEY.trim()
           },
           body: JSON.stringify({
             model: "meta-llama/llama-3.3-70b-instruct",
