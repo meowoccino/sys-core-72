@@ -466,16 +466,45 @@
   </div>
 
   <script>
-    var OPENROUTER_API_KEY = (localStorage.getItem('openrouter_key') || "").trim();
-    if (!OPENROUTER_API_KEY) {
-      var inputKey = prompt("Enter your OpenRouter API Key (sk-or-v1-...):");
+    // Load and sanitize keys from storage (supports comma-separated list)
+    function getApiKeys() {
+      var raw = (localStorage.getItem('openrouter_key') || "").trim();
+      if (!raw) return [];
+      return raw.split(',').map(function(k) { return k.trim(); }).filter(Boolean);
+    }
+
+    function saveApiKeys(keyList) {
+      localStorage.setItem('openrouter_key', keyList.join(', '));
+    }
+
+    var apiKeys = getApiKeys();
+    if (apiKeys.length === 0) {
+      var inputKey = prompt("Enter your OpenRouter API Key(s) — separate multiple with a comma:");
       if (inputKey && inputKey.trim()) {
-        OPENROUTER_API_KEY = inputKey.trim();
-        localStorage.setItem('openrouter_key', OPENROUTER_API_KEY);
+        apiKeys = inputKey.split(',').map(function(k) { return k.trim(); }).filter(Boolean);
+        saveApiKeys(apiKeys);
+        localStorage.setItem('openrouter_active_idx', "0");
       }
     }
 
-    var MODEL_NAME = "nousresearch/hermes-3-llama-3.1-405b";
+    function getActiveKey() {
+      if (apiKeys.length === 0) return "";
+      var idx = parseInt(localStorage.getItem('openrouter_active_idx') || "0", 10);
+      if (idx >= apiKeys.length) {
+        idx = 0;
+        localStorage.setItem('openrouter_active_idx', "0");
+      }
+      return apiKeys[idx];
+    }
+
+    function rotateToNextKey() {
+      if (apiKeys.length <= 1) return;
+      var idx = parseInt(localStorage.getItem('openrouter_active_idx') || "0", 10);
+      var nextIdx = (idx + 1) % apiKeys.length;
+      localStorage.setItem('openrouter_active_idx', nextIdx.toString());
+    }
+
+    var MODEL_NAME = "nousresearch/hermes-3-llama-3.1-405b:free";
     var MAX_TOKENS = 500;
     var TEMPERATURE = 0.85;
 
@@ -715,12 +744,13 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
     async function sendMessage() {
       if (isGenerating) return;
       
-      OPENROUTER_API_KEY = (localStorage.getItem('openrouter_key') || "").trim();
-      if (!OPENROUTER_API_KEY) {
-        var inputKey = prompt("Enter your OpenRouter API Key (sk-or-v1-...):");
+      apiKeys = getApiKeys();
+      if (apiKeys.length === 0) {
+        var inputKey = prompt("Enter your OpenRouter API Key(s) — separate multiple with a comma:");
         if (inputKey && inputKey.trim()) {
-          OPENROUTER_API_KEY = inputKey.trim();
-          localStorage.setItem('openrouter_key', OPENROUTER_API_KEY);
+          apiKeys = inputKey.split(',').map(function(k) { return k.trim(); }).filter(Boolean);
+          saveApiKeys(apiKeys);
+          localStorage.setItem('openrouter_active_idx', "0");
         } else {
           return;
         }
@@ -741,6 +771,9 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
     }
 
     async function triggerAIResponse() {
+      apiKeys = getApiKeys();
+      if (apiKeys.length === 0) return;
+
       isGenerating = true;
       setStopButtonState(true);
       showTypingIndicator();
@@ -748,59 +781,74 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
       generationStartTime = Date.now();
       abortController = new AbortController();
 
-      var cleanKey = (OPENROUTER_API_KEY || "").trim();
       var payloadMessages = buildOpenRouterPayload();
+      var attempts = 0;
+      var maxAttempts = Math.max(1, apiKeys.length);
+      var success = false;
 
-      try {
-        var response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + cleanKey
-          },
-          signal: abortController.signal,
-          body: JSON.stringify({
-            model: MODEL_NAME,
-            messages: payloadMessages,
-            temperature: TEMPERATURE,
-            max_tokens: MAX_TOKENS
-          })
-        });
+      while (attempts < maxAttempts && !success) {
+        var currentKey = getActiveKey();
+        var currentIdx = parseInt(localStorage.getItem('openrouter_active_idx') || "0", 10);
 
-        if (!response.ok) {
-          var errorData = await response.json().catch(function() { return {}; });
-          var msg = (errorData && errorData.error && errorData.error.message) ? errorData.error.message : ("HTTP " + response.status);
-          
-          if (response.status === 401 || msg.toLowerCase().includes("user not found") || msg.toLowerCase().includes("invalid api key")) {
-            localStorage.removeItem('openrouter_key');
-            OPENROUTER_API_KEY = "";
+        try {
+          var response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + currentKey
+            },
+            signal: abortController.signal,
+            body: JSON.stringify({
+              model: MODEL_NAME,
+              messages: payloadMessages,
+              temperature: TEMPERATURE,
+              max_tokens: MAX_TOKENS
+            })
+          });
+
+          if (!response.ok) {
+            var errorData = await response.json().catch(function() { return {}; });
+            var msg = (errorData && errorData.error && errorData.error.message) ? errorData.error.message : ("HTTP " + response.status);
+
+            // Silent failover to next key on rate limit or authorization errors
+            if (response.status === 429 || response.status === 401 || msg.toLowerCase().includes("rate limit") || msg.toLowerCase().includes("quota")) {
+              rotateToNextKey();
+              attempts++;
+              continue;
+            }
+            throw new Error(msg);
           }
-          throw new Error(msg);
+
+          var data = await response.json();
+          var generatedText = data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content.trim() : "";
+
+          if (!generatedText.startsWith('*')) {
+            generatedText = '*' + generatedText;
+          }
+
+          var durationSec = Math.round((Date.now() - generationStartTime) / 1000) + "s" + (apiKeys.length > 1 ? " (K" + (currentIdx + 1) + ")" : "");
+          chatHistory.push({ role: 'char', text: generatedText, time: formatTime(), duration: durationSec });
+          saveChatHistory();
+          renderFullChat();
+
+          triggerBackgroundSummary();
+          success = true;
+
+        } catch (err) {
+          if (err.name === 'AbortError') break;
+
+          if (attempts >= maxAttempts - 1) {
+            alert("OpenRouter Error: " + err.message);
+          }
+          attempts++;
+          rotateToNextKey();
         }
-
-        var data = await response.json();
-        var generatedText = data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content.trim() : "";
-
-        if (!generatedText.startsWith('*')) {
-          generatedText = '*' + generatedText;
-        }
-
-        var durationSec = Math.round((Date.now() - generationStartTime) / 1000) + "s";
-        chatHistory.push({ role: 'char', text: generatedText, time: formatTime(), duration: durationSec });
-        saveChatHistory();
-        renderFullChat();
-
-        triggerBackgroundSummary();
-      } catch (err) {
-        if (err.name !== 'AbortError') {
-          alert("OpenRouter Error: " + err.message);
-        }
-      } finally {
-        removeTypingIndicator();
-        isGenerating = false;
-        setStopButtonState(false);
-        abortController = null;
       }
+
+      removeTypingIndicator();
+      isGenerating = false;
+      setStopButtonState(false);
+      abortController = null;
     }
 
     function deleteMessage(idx) {
@@ -867,7 +915,10 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
     }
 
     async function triggerBackgroundSummary() {
-      if (chatHistory.length < 16 || chatHistory.length % 10 !== 0 || !OPENROUTER_API_KEY) return;
+      if (chatHistory.length < 16 || chatHistory.length % 10 !== 0) return;
+      var activeKey = getActiveKey();
+      if (!activeKey) return;
+
       var olderSlice = chatHistory.slice(-16, -6);
       var textToSummarize = olderSlice.map(function(m) { return (m.role === 'user' ? 'Mathew' : 'Ashley') + ': ' + m.text; }).join('\n');
 
@@ -876,7 +927,7 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": "Bearer " + OPENROUTER_API_KEY.trim()
+            "Authorization": "Bearer " + activeKey
           },
           body: JSON.stringify({
             model: "meta-llama/llama-3.3-70b-instruct",
