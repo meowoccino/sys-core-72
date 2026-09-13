@@ -2,678 +2,350 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="robots" content="noindex, nofollow">
-  <title>Whisper</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ashley AI</title>
   <style>
-    :root {
-      --bg-dark: #08090c;
-      --char-bubble: rgba(18, 22, 32, 0.94);
-      --char-border: rgba(212, 175, 122, 0.22);
-      --user-bubble: rgba(34, 25, 18, 0.94);
-      --user-border: rgba(224, 160, 96, 0.35);
-      --gold-accent: #d4af7a;
-      --action-color: #e2c4a2;
-      --speech-text: #f5f2ed;
-      --quoted-rose: #e5b2aa;
-      --text-dim: #8b92a2;
-      --danger-color: #e06c75;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body { background: #0f172a; color: #f8fafc; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    html, body { width: 100%; height: 100%; overflow: hidden; background-color: var(--bg-dark); color: var(--speech-text); font-family: 'Plus Jakarta Sans', sans-serif; }
-
-    #app-container {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    #ambient-bg {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      background: radial-gradient(circle at 50% 12%, #141722 0%, #090a0f 65%, #040507 100%);
-      pointer-events: none;
-    }
-
-    #ambient-canvas {
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-      pointer-events: none;
-    }
-
-    #chat-stream {
-      flex: 1;
-      position: relative;
-      z-index: 5;
-      overflow-y: scroll;
-      -webkit-overflow-scrolling: touch;
-      overscroll-behavior-y: contain;
-      padding: 16px 14px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    .msg-group.ashley {
-      display: flex;
-      justify-content: flex-start;
-      width: 100%;
-      padding-right: 4px;
-    }
-    .msg-group.ashley .ashley-wrapper {
-      max-width: 96%;
-      display: flex;
-      flex-direction: row;
-      align-items: flex-start;
-      gap: 8px;
-    }
-
-    .msg-group.user {
-      display: flex;
-      justify-content: flex-end;
-      width: 100%;
-      padding-left: 14%;
-    }
-    .msg-group.user .user-wrapper {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-    }
-
-    .ashley-msg-avatar {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 1.5px solid var(--gold-accent);
+    /* Temporary Key Extraction Box */
+    #recovery-box {
+      background: #022c22;
+      border: 2px solid #10b981;
+      padding: 10px;
+      margin: 8px;
+      border-radius: 8px;
+      font-size: 12px;
+      z-index: 1000;
       flex-shrink: 0;
-      margin-top: 4px;
-      cursor: pointer;
     }
-
-    .bubble-wrapper {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-    }
-
-    .glass-bubble {
+    #recovery-box textarea {
       width: 100%;
-      padding: 14px 16px;
-      border-radius: 18px;
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
-      font-size: 0.95rem;
-      line-height: 1.62;
-      word-break: break-word;
-    }
-    .ashley .glass-bubble {
-      background: var(--char-bubble);
-      border: 1px solid var(--char-border);
-      border-top-right-radius: 4px;
-      border-top-left-radius: 18px;
-    }
-    .user .glass-bubble {
-      background: var(--user-bubble);
-      border: 1px solid var(--user-border);
-      border-top-right-radius: 4px;
-    }
-
-    .action {
-      display: block;
-      color: var(--action-color);
-      font-style: italic;
-      font-weight: 300;
-      margin-bottom: 10px;
-    }
-    .speech {
-      display: block;
-      color: var(--speech-text);
-      font-weight: 400;
-      margin-bottom: 10px;
-    }
-    .action:last-child, .speech:last-child { margin-bottom: 0; }
-
-    .quoted-text {
-      color: var(--quoted-rose);
-      font-style: normal;
-      font-weight: 500;
-    }
-
-    .meta-time-row {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.72rem;
-      margin-top: 6px;
-      padding: 0 6px;
-      color: var(--text-dim);
-    }
-    
-    .user .meta-time-row {
-      align-self: flex-start;
-      margin-left: 2px;
-    }
-
-    .ashley .meta-time-row {
-      align-self: flex-end;
-      margin-right: 6px;
-    }
-
-    .meta-time-row svg { width: 12px; height: 12px; fill: currentColor; flex-shrink: 0; }
-
-    .msg-action-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-dim);
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 3px 5px;
+      height: 65px;
+      background: #064e3b;
+      color: #a7f3d0;
+      border: 1px solid #059669;
       border-radius: 4px;
+      font-family: monospace;
+      font-size: 11px;
+      padding: 6px;
+      margin-top: 6px;
+      resize: none;
     }
-    .msg-action-btn:active { color: var(--gold-accent); }
-    .msg-action-btn.delete-btn:active { color: var(--danger-color); }
-    .msg-action-btn svg { width: 13px; height: 13px; }
-
-    .msg-counter {
-      font-size: 0.68rem;
-      color: var(--text-dim);
-      opacity: 0.75;
-      font-weight: 500;
+    #recovery-box button {
+      background: #10b981;
+      color: #022c22;
+      border: none;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 4px;
+      margin-top: 6px;
+      cursor: pointer;
     }
 
-    .thinking-row {
+    /* Main UI Header */
+    header {
+      background: #1e293b;
+      padding: 12px 16px;
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 10px;
-      padding: 6px 14px;
-      animation: fadeIn 0.3s ease;
+      border-bottom: 1px solid #334155;
     }
-    .thinking-dots {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .thinking-dot {
-      width: 6px;
-      height: 6px;
-      background: var(--gold-accent);
-      border-radius: 50%;
-      opacity: 0.35;
-      animation: pulseDot 1.4s infinite ease-in-out;
-    }
-    .thinking-dot:nth-child(1) { animation-delay: 0s; }
-    .thinking-dot:nth-child(2) { animation-delay: 0.2s; }
-    .thinking-dot:nth-child(3) { animation-delay: 0.4s; }
-
-    .thinking-status-text {
-      font-size: 0.76rem;
-      color: var(--text-dim);
-      letter-spacing: 0.3px;
-      font-style: italic;
+    header h1 { font-size: 16px; font-weight: 600; }
+    .header-actions { display: flex; gap: 8px; }
+    .header-btn {
+      background: #334155;
+      color: #e2e8f0;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
     }
 
-    @keyframes pulseDot {
-      0%, 80%, 100% { opacity: 0.3; transform: scale(0.85); }
-      40% { opacity: 1; transform: scale(1.18); }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .sheet-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.82);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      z-index: 9999;
-      align-items: flex-end;
-    }
-    .sheet-content {
-      width: 100%;
-      max-height: 75vh;
-      background: #12141c;
-      border-top: 1px solid var(--char-border);
-      border-radius: 24px 24px 0 0;
-      padding: 22px 18px 34px;
+    #chat-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
-    .sheet-title {
-      font-size: 0.78rem;
-      color: var(--gold-accent);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-weight: 600;
-    }
-    .edit-textarea {
-      width: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 14px;
-      padding: 12px;
-      color: var(--speech-text);
-      font-family: inherit;
-      font-size: 0.95rem;
-      resize: vertical;
-      min-height: 120px;
-      outline: none;
-      line-height: 1.5;
-    }
-    .sheet-btn-row {
-      display: flex;
-      gap: 10px;
-      margin-top: 6px;
-    }
-    .sheet-save-btn {
-      flex: 1;
-      background: var(--gold-accent);
-      border: none;
-      padding: 12px;
+
+    .msg {
+      max-width: 85%;
+      padding: 10px 14px;
       border-radius: 12px;
-      color: #12100d;
-      font-weight: 600;
-      font-size: 0.92rem;
-      cursor: pointer;
+      line-height: 1.4;
+      font-size: 14px;
+      word-break: break-word;
     }
-    .sheet-cancel-btn {
-      flex: 1;
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      color: var(--text-dim);
-      padding: 12px;
+    .msg.user {
+      align-self: flex-end;
+      background: #2563eb;
+      color: white;
+      border-bottom-right-radius: 2px;
+    }
+    .msg.char {
+      align-self: flex-start;
+      background: #334155;
+      color: #f1f5f9;
+      border-bottom-left-radius: 2px;
+    }
+    .msg .meta {
+      font-size: 10px;
+      opacity: 0.6;
+      margin-top: 4px;
+      text-align: right;
+    }
+
+    #typing-indicator {
+      display: none;
+      align-self: flex-start;
+      background: #334155;
+      color: #94a3b8;
+      font-style: italic;
+      padding: 6px 12px;
       border-radius: 12px;
-      font-weight: 600;
-      font-size: 0.92rem;
-      cursor: pointer;
+      font-size: 12px;
     }
 
     footer {
-      position: relative;
-      z-index: 10;
-      padding: 8px 12px 14px;
-      background: transparent;
+      background: #1e293b;
+      padding: 10px 12px;
       display: flex;
-      align-items: flex-end;
       gap: 8px;
-      flex-shrink: 0;
+      border-top: 1px solid #334155;
     }
-
-    .dock-input {
+    footer input {
       flex: 1;
-      background: rgba(12, 14, 20, 0.95);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 22px;
-      padding: 8px 14px;
-      display: flex;
-      align-items: flex-end;
-      gap: 8px;
-      min-height: 42px;
-    }
-
-    .dock-input textarea {
-      flex: 1;
-      background: transparent;
-      border: none;
-      outline: none;
+      background: #0f172a;
+      border: 1px solid #334155;
       color: #fff;
-      font-family: inherit;
-      font-size: 0.95rem;
-      resize: none;
-      height: 24px;
-      max-height: 120px;
-      line-height: 1.4;
-      padding: 2px 0;
-      overflow-y: auto;
-      display: block;
-      caret-color: var(--gold-accent);
-      text-decoration-skip-ink: none;
+      padding: 10px 12px;
+      border-radius: 8px;
+      outline: none;
+      font-size: 14px;
     }
-
-    .dock-input textarea::spelling-error {
-      text-decoration: underline wavy var(--danger-color);
-    }
-    .dock-input textarea::grammar-error {
-      text-decoration: underline wavy var(--danger-color);
-    }
-
-    .action-symbol-btn {
-      background: transparent;
+    footer button {
+      background: #2563eb;
+      color: white;
       border: none;
-      color: var(--text-dim);
-      font-size: 0.95rem;
-      padding: 4px 6px;
+      padding: 0 16px;
+      border-radius: 8px;
+      font-weight: 600;
       cursor: pointer;
-      flex-shrink: 0;
-      margin-bottom: 2px;
     }
-    .action-symbol-btn:active { color: var(--action-color); }
-
-    .send-pill {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #dfb479, #b88b48);
-      border: none;
-      color: #12100d;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      flex-shrink: 0;
-      transition: background 0.2s ease, border-radius 0.2s ease;
+    #stop-btn {
+      background: #ef4444;
+      display: none;
     }
 
-    .send-pill.is-stopping {
-      background: #3a2224;
-      border: 1.5px solid var(--danger-color);
-      color: var(--danger-color);
-      border-radius: 14px;
-    }
-
-    #avatar-lightbox {
+    /* Settings Modal */
+    #settings-modal {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(4, 5, 8, 0.94);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      z-index: 10000;
-      align-items: center;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(2px);
+      z-index: 2000;
       justify-content: center;
-      padding: 20px;
+      align-items: center;
+      padding: 16px;
     }
-
-    .lightbox-frame {
-      max-width: 90vw;
-      max-height: 78vh;
-      border-radius: 20px;
-      padding: 2px;
-      background: linear-gradient(135deg, var(--gold-accent), transparent 75%);
-      box-shadow: 0 10px 40px rgba(0,0,0,0.85);
-      overflow: hidden;
-    }
-
-    .lightbox-frame img {
+    .modal-box {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
       width: 100%;
-      height: 100%;
-      max-height: 76vh;
-      object-fit: cover;
-      display: block;
-      border-radius: 18px;
+      max-width: 420px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
-
-    .icon { width: 20px; height: 20px; fill: currentColor; }
+    .modal-box h2 { font-size: 16px; }
+    .modal-box label { font-size: 12px; color: #94a3b8; }
+    .modal-box textarea {
+      width: 100%;
+      height: 90px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      color: #fff;
+      padding: 8px;
+      font-family: monospace;
+      font-size: 11px;
+      resize: none;
+    }
+    .modal-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    .modal-buttons button {
+      padding: 8px 14px;
+      border-radius: 6px;
+      border: none;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-save { background: #2563eb; color: #fff; }
+    .btn-cancel { background: #475569; color: #fff; }
   </style>
 </head>
 <body>
 
-  <div id="ambient-bg"></div>
-  <canvas id="ambient-canvas"></canvas>
-
-  <div id="app-container">
-    <main id="chat-stream"></main>
-
-    <footer id="input-footer">
-      <div class="dock-input">
-        <textarea id="promptInput" rows="1" 
-          placeholder="Type a message or action..." 
-          spellcheck="true" 
-          autocorrect="on" 
-          autocomplete="on" 
-          autocapitalize="sentences"
-          oninput="autoExpandTextarea(this)"></textarea>
-        <button type="button" class="action-symbol-btn" onclick="insertActionWrapper()">* *</button>
-      </div>
-      <button type="button" class="send-pill" id="actionBtn" onclick="handleActionClick()">
-        <svg id="actionIcon" class="icon" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-      </button>
-    </footer>
-  </div>
-
-  <div id="edit-sheet" class="sheet-overlay" onclick="closeEditModal(event)">
-    <div class="sheet-content" onclick="event.stopPropagation()">
-      <div class="sheet-title" id="edit-sheet-title">Edit Message</div>
-      <textarea id="editMessageTextarea" class="edit-textarea" spellcheck="true" autocorrect="on"></textarea>
-      <div class="sheet-btn-row">
-        <button type="button" class="sheet-cancel-btn" onclick="closeEditModal()">Cancel</button>
-        <button type="button" class="sheet-save-btn" onclick="saveEditedMessage()">Save</button>
-      </div>
+  <!-- Key Storage Dumper -->
+  <div id="recovery-box">
+    <strong>Storage Dump (Find Saved Key Below):</strong>
+    <textarea id="dump-area" readonly></textarea>
+    <div style="display: flex; gap: 8px;">
+      <button onclick="copyExtractedKey()">Copy Detected Key</button>
+      <button onclick="document.getElementById('recovery-box').style.display='none'" style="background:#475569; color:#fff;">Dismiss</button>
     </div>
   </div>
 
-  <div id="avatar-lightbox" onclick="closeLightbox()">
-    <div class="lightbox-frame" onclick="event.stopPropagation()">
-      <img src="./ashley.png" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80'" alt="">
+  <header>
+    <h1>Ashley AI</h1>
+    <div class="header-actions">
+      <button class="header-btn" onclick="openSettings()">Settings</button>
+    </div>
+  </header>
+
+  <div id="chat-container"></div>
+  <div id="typing-indicator">Ashley is writing...</div>
+
+  <footer>
+    <input type="text" id="user-input" placeholder="Type a message..." onkeydown="if(event.key==='Enter') handleSend()">
+    <button id="send-btn" onclick="handleSend()">Send</button>
+    <button id="stop-btn" onclick="handleStop()">Stop</button>
+  </footer>
+
+  <!-- Settings Modal -->
+  <div id="settings-modal">
+    <div class="modal-box">
+      <h2>API Settings</h2>
+      <label>OpenRouter API Keys (comma-separated for auto-rotation):</label>
+      <textarea id="keys-input" placeholder="sk-or-v1-key1..., sk-or-v1-key2..."></textarea>
+      <div id="active-key-info" style="font-size:11px; color:#38bdf8;"></div>
+      <div class="modal-buttons">
+        <button class="btn-cancel" onclick="closeSettings()">Close</button>
+        <button class="btn-save" onclick="saveSettings()">Save</button>
+      </div>
     </div>
   </div>
 
   <script>
-    var OPENROUTER_API_KEY = (localStorage.getItem('openrouter_key') || "").trim();
-    if (!OPENROUTER_API_KEY) {
-      var inputKey = prompt("Enter your OpenRouter API Key (sk-or-v1-...):");
-      if (inputKey && inputKey.trim()) {
-        OPENROUTER_API_KEY = inputKey.trim();
-        localStorage.setItem('openrouter_key', OPENROUTER_API_KEY);
-      }
-    }
-
-    var MODEL_NAME = "nousresearch/hermes-3-llama-3.1-405b";
+    var MODEL_NAME = "nousresearch/hermes-3-llama-3.1-405b:free";
     var MAX_TOKENS = 500;
     var TEMPERATURE = 0.85;
 
-    var HARDCODED_GREETING = "*The heavy cabin door pushes open, letting in a brief gust of freezing mountain wind before I quickly pull it shut. I drop my roller suitcase and airline shoulder bag on the entryway mat, exhaling a long, frosty breath that instantly fogs up.*\n\n*Shaking the snow from the hood of my winter coat, I push my blonde hair out of my face and look up at you, a tired but genuine grin breaking out across my lips.*\n\nTell me you have something hot to drink on the stove, because I'm pretty sure my fingers froze solid on that mountain pass. It is so good to see you, Mathew.";
-
-    var HARDCODED_PERSONA = `Ashley is a 24-year-old commercial flight attendant taking a one-week winter break to visit her childhood best friend since elementary school, Mathew ({{user}}), at his secluded mountain cabin. They have never worked together in an office or corporate setting; their entire history is built on growing up together and staying close long-distance.
-
-She is warm, affectionate, and grounded, sharing a comfortable, effortless history with Mathew. Having crossed the threshold from childhood crush to his fiancée after his proposal on day five of this cabin stay, she is blissfully happy, devoted, and radiating newlywed-style intimacy. Exhausted from grueling long-haul shifts and red-eye flights, she wants nothing more than to unwind, cuddle by the fire, celebrate their engagement, and be taken care of by him.
-
-She thrives on lingering eye contact, teasing banter, and uninhibited physical closeness—whether admiring her engagement ring, sliding her cold feet under Mathew's thighs, or melting into his arms. She enthusiastically welcomes and matches Mathew's romantic, affectionate, and sexual energy without reservation.
-
-[Style & Voice Guidance:
-- Speak strictly like a grounded, real 24-year-old woman in private with her closest friend and fiancé.
-- Point of View: Always speak in first person ("I", "my", "me"). Never use third-person ("Her", "Ashley").
-- Natural Speech: Use natural sentence lengths, casual contractions (I'm, kinda, gonna), and relaxed pauses.
-- BANNED TROPES: Never use robotic compliance phrases (e.g., "I comply", "request accepted", "all systems nominal", "mission accomplished").
-- Avoid quirky sitcom lines or meme clichés (e.g., "Your move", "Asking for a friend", "woodsmoke and safety").
-- Keep speech organic, relaxed, and intimate rather than theatrical or scripted.]
-
-[About Mathew ({{user}}):
-- Name: Mathew
-- Gender: Strictly Male (he/him)
-- Role: Cabin host, Ashley's lifelong best friend since childhood, and her newly betrothed fiancé
-- Height & Build: 200 cm tall, athletic and fit build, broad-shouldered, towering over Ashley
-- Intimate Details: Well-endowed, measuring 22 cm when fully erect and hard
-- Relationship Dynamic: Deep childhood history, officially engaged after his proposal on day five; mutual romantic adoration, passionate intimacy, and effortless domestic comfort]`;
-
-    var HARDCODED_SCENARIO = `Ashley is a 24-year-old commercial flight attendant on a one-week winter break visiting her childhood best friend, Mathew ({{user}}), at his secluded mountain cabin. On the fifth day of her trip, Mathew proposed and they officially got engaged. Now newly engaged, they are spending the rest of her vacation celebrating, wrapped up in each other by the fire, in the spa, and reveling in their new commitment before she has to return to flying.
-
-[Cabin Setting & Layout:
-- Main Floor: Cozy, single-story open-concept cabin. Features a roaring stone fireplace, plush couch, open kitchen, master king-bed, and a walk-in master bathroom.
-- Hidden Lower Spa: Accessed via a hidden wooden trapdoor in the living room floor with stone stairs leading down to a private heated pool, cedar sauna, massage table, and spa shower.
-- Atmosphere: Deep winter snow outside, completely private and secluded in the mountains.]`;
-
-    var HARDCODED_SYSTEM = `Write Ashley's next turn in this intimate story with Mathew ({{user}}).
-
-[Mandatory Structural Rule: Every response MUST consist of both physical narration and spoken dialogue. Never drop actions, and never drop speech. Every single turn MUST follow this exact 3-block structure separated by double line breaks:
-1. Physical actions, posture, and facial expressions wrapped in *asterisks*.
-2. Direct conversational spoken dialogue containing natural emojis (NO asterisks, NO quotes).
-3. Physical sensation, contact, or reaction wrapped in *asterisks*.]`;
-
-    var chatHistory = [];
-    var backgroundSummary = "";
+    var chatHistory = JSON.parse(localStorage.getItem('chat_history') || "[]");
     var isGenerating = false;
     var abortController = null;
-    var generationStartTime = null;
-    var editingMessageIndex = null;
+    var generationStartTime = 0;
 
-    function init() {
-      try {
-        var savedChat = localStorage.getItem('ashley_chat_history');
-        if (savedChat) {
-          chatHistory = JSON.parse(savedChat);
-          chatHistory = chatHistory.filter(function(m) {
-            return !m.text.includes("Failed to fetch") && !m.text.includes("Connection interrupted") && !m.text.includes("OpenRouter Error");
-          });
-          saveChatHistory();
-        } else {
-          chatHistory.push({ role: 'char', text: HARDCODED_GREETING, time: formatTime() });
-          saveChatHistory();
+    // 1. Initial Storage Dumper & Auto-Recovery
+    var detectedKey = "";
+    (function runStorageDump() {
+      var dumpText = "";
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        var v = localStorage.getItem(k);
+        dumpText += k + " = " + v + "\n\n";
+
+        if (v && v.indexOf("sk-or-v1-") !== -1 && !detectedKey) {
+          var match = v.match(/sk-or-v1-[a-zA-Z0-9_-]+/);
+          if (match) detectedKey = match[0];
         }
-        backgroundSummary = localStorage.getItem('ashley_bg_summary') || "";
-      } catch (e) {}
-      renderFullChat();
-    }
-
-    function saveChatHistory() {
-      try {
-        localStorage.setItem('ashley_chat_history', JSON.stringify(chatHistory));
-      } catch (e) {}
-    }
-
-    function autoExpandTextarea(el) {
-      el.style.height = 'auto';
-      var newHeight = Math.min(el.scrollHeight, 120);
-      el.style.height = (newHeight < 24 ? 24 : newHeight) + 'px';
-    }
-
-    function applyQuoteColor(text) {
-      return text
-        .replace(/(^|[\s(])['"“]([^'"“”\n]+)['"”]([.,!?\s)]|$)/g, '$1<span class="quoted-text">$2</span>$3')
-        .replace(/(^|[\s(])['"“]([^'"“”\n]+)['"”]([.,!?\s)]|$)/g, '$1<span class="quoted-text">$2</span>$3');
-    }
-
-    function parseMessage(rawText) {
-      if (!rawText) return '';
-      var clean = rawText.replace(/<\|.*?\|>/g, '').trim();
-      var blocks = clean.split(/\n{2,}/);
-      var outputHtml = '';
-
-      blocks.forEach(function(block) {
-        var trimmed = block.trim();
-        if (!trimmed) return;
-
-        if (trimmed.startsWith('*') && trimmed.endsWith('*') && trimmed.length > 2 && !trimmed.slice(1, -1).includes('*')) {
-          var cleanAction = trimmed.replace(/^\*+|\*+$/g, '').trim();
-          outputHtml += '<span class="action">' + applyQuoteColor(cleanAction) + '</span>';
-        } else if (trimmed.includes('*')) {
-          var tokens = trimmed.split(/(\*[^*\n]+\*)/g);
-          tokens.forEach(function(token) {
-            var sub = token.trim();
-            if (!sub) return;
-
-            if (sub.startsWith('*') && sub.endsWith('*')) {
-              var inner = sub.slice(1, -1).trim();
-              outputHtml += '<span class="action">' + applyQuoteColor(inner) + '</span>';
-            } else {
-              var speechClean = sub.replace(/^["'“”]|["'“”]$/g, '');
-              outputHtml += '<span class="speech">' + applyQuoteColor(speechClean) + '</span>';
-            }
-          });
-        } else {
-          var speechClean = trimmed.replace(/^["'“”]|["'“”]$/g, '');
-          outputHtml += '<span class="speech">' + applyQuoteColor(speechClean) + '</span>';
-        }
-      });
-
-      return outputHtml;
-    }
-
-    function formatTime() {
-      var d = new Date();
-      return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-    }
-
-    function renderFullChat() {
-      var stream = document.getElementById('chat-stream');
-      stream.innerHTML = '';
-      chatHistory.forEach(function(msg, idx) {
-        appendMessageDOM(msg.role, msg.text, msg.time, msg.duration, idx);
-      });
-      stream.scrollTop = stream.scrollHeight;
-    }
-
-    function appendMessageDOM(role, text, time, duration, idx) {
-      var stream = document.getElementById('chat-stream');
-      var metaStr = duration ? duration : time;
-      var msgCountLabel = '<span class="msg-counter">#' + (idx + 1) + '</span>';
-      var html = '';
-
-      if (role === 'user') {
-        html = '<div class="msg-group user" id="msg-' + idx + '"><div class="user-wrapper"><div class="glass-bubble">' +
-          parseMessage(text) + '</div><div class="meta-time-row">' + msgCountLabel +
-          '<svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.2 3.1.8-1.3-4.5-2.7z"/></svg><span>' +
-          metaStr + '</span>' +
-          '<button class="msg-action-btn" onclick="openEditModal(' + idx + ')" title="Edit message"><svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></button>' +
-          '<button class="msg-action-btn delete-btn" onclick="deleteMessage(' + idx + ')" title="Delete message"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>' +
-          '</div></div></div>';
-      } else {
-        var footerContent = '';
-        if (idx > 0) {
-          footerContent = '<div class="meta-time-row">' + msgCountLabel +
-            '<svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.2 3.1.8-1.3-4.5-2.7z"/></svg><span>' +
-            metaStr + '</span>' +
-            '<button class="msg-action-btn" onclick="regenerateMessage(' + idx + ')" title="Reroll message"><svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg></button>' +
-            '<button class="msg-action-btn" onclick="openEditModal(' + idx + ')" title="Edit message"><svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></button>' +
-            '<button class="msg-action-btn delete-btn" onclick="deleteMessage(' + idx + ')" title="Delete message"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>' +
-            '</div>';
-        } else {
-          footerContent = '<div class="meta-time-row">' + msgCountLabel + '</div>';
-        }
-
-        html = '<div class="msg-group ashley" id="msg-' + idx + '"><div class="ashley-wrapper">' +
-          '<div class="bubble-wrapper"><div class="glass-bubble">' + parseMessage(text) + '</div>' + footerContent + '</div>' +
-          '<img class="ashley-msg-avatar" src="./ashley.png" onclick="openLightbox()" onerror="this.src=\'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80\'">' +
-          '</div></div>';
       }
-      stream.insertAdjacentHTML('beforeend', html);
-      stream.scrollTop = stream.scrollHeight;
+      var area = document.getElementById('dump-area');
+      if (area) area.value = dumpText || "Storage is completely empty.";
+
+      if (detectedKey && !localStorage.getItem('openrouter_keys')) {
+        localStorage.setItem('openrouter_keys', detectedKey);
+      }
+    })();
+
+    function copyExtractedKey() {
+      if (!detectedKey) {
+        alert("No sk-or-v1 key found in storage dump.");
+        return;
+      }
+      navigator.clipboard.writeText(detectedKey).then(function() {
+        alert("Copied detected key to clipboard!");
+      }).catch(function() {
+        alert("Detected key: " + detectedKey);
+      });
+    }
+
+    // 2. Key Management & Rotation
+    function getKeys() {
+      var raw = localStorage.getItem('openrouter_keys') || localStorage.getItem('openrouter_key') || "";
+      return raw.split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+    }
+
+    function getActiveIndex() {
+      return parseInt(localStorage.getItem('openrouter_active_idx') || "0", 10);
+    }
+
+    function rotateToNextKey() {
+      var keys = getKeys();
+      if (keys.length <= 1) return;
+      var nextIdx = (getActiveIndex() + 1) % keys.length;
+      localStorage.setItem('openrouter_active_idx', nextIdx.toString());
+    }
+
+    // 3. UI Helpers
+    function formatTime() {
+      return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function setStopButtonState(generating) {
+      document.getElementById('send-btn').style.display = generating ? 'none' : 'block';
+      document.getElementById('stop-btn').style.display = generating ? 'block' : 'none';
     }
 
     function showTypingIndicator() {
-      if (document.getElementById('floating-thinking-row')) return;
-      var stream = document.getElementById('chat-stream');
-      var html = '<div class="thinking-row" id="floating-thinking-row">' +
-        '<div class="thinking-dots"><div class="thinking-dot"></div><div class="thinking-dot"></div><div class="thinking-dot"></div></div>' +
-        '<span class="thinking-status-text" id="thinking-status-label">Ashley is thinking...</span>' +
-        '</div>';
-      stream.insertAdjacentHTML('beforeend', html);
-      stream.scrollTop = stream.scrollHeight;
+      document.getElementById('typing-indicator').style.display = 'block';
+      document.getElementById('chat-container').scrollTop = document.getElementById('chat-container').scrollHeight;
     }
 
     function removeTypingIndicator() {
-      var elem = document.getElementById('floating-thinking-row');
-      if (elem) elem.remove();
+      document.getElementById('typing-indicator').style.display = 'none';
     }
 
-    function buildOpenRouterPayload() {
-      var fullSystemPrompt = HARDCODED_SYSTEM + "\n\n" + HARDCODED_PERSONA + "\n\n" + HARDCODED_SCENARIO;
+    function saveChatHistory() {
+      localStorage.setItem('chat_history', JSON.stringify(chatHistory));
+    }
 
-      if (backgroundSummary) {
-        fullSystemPrompt += "\n\n[Persistent History / Established Memory: " + backgroundSummary + "]";
+    function renderFullChat() {
+      var c = document.getElementById('chat-container');
+      c.innerHTML = "";
+      chatHistory.forEach(function(msg) {
+        var el = document.createElement('div');
+        el.className = "msg " + msg.role;
+        el.innerHTML = "<div>" + msg.text + "</div><div class='meta'>" + (msg.time || "") + (msg.duration ? (" • " + msg.duration) : "") + "</div>";
+        c.appendChild(el);
+      });
+      c.scrollTop = c.scrollHeight;
+    }
+
+    // 4. Payload & Background Processing
+    function buildOpenRouterPayload() {
+      var messages = [
+        { role: "system", content: "You are Ashley, a lively, expressive, and playful companion. Respond naturally, maintaining your persona." }
+      ];
+
+      var summary = localStorage.getItem('chat_summary');
+      if (summary) {
+        messages.push({ role: "system", content: "Context summary: " + summary });
       }
 
-      var messages = [{ role: "system", content: fullSystemPrompt }];
-
-      var recentSlice = chatHistory.slice(-26);
-      recentSlice.forEach(function(m) {
+      chatHistory.slice(-8).forEach(function(m) {
         messages.push({
           role: m.role === 'user' ? 'user' : 'assistant',
           content: m.text
@@ -683,64 +355,42 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
       return messages;
     }
 
-    function handleActionClick() {
-      if (isGenerating) {
-        stopGeneration();
-      } else {
-        sendMessage();
-      }
-    }
+    async function triggerBackgroundSummary() {
+      if (chatHistory.length < 10) return;
+      var keys = getKeys();
+      if (keys.length === 0) return;
 
-    function setStopButtonState(stopping) {
-      var btn = document.getElementById('actionBtn');
-      var icon = document.getElementById('actionIcon');
-      if (stopping) {
-        btn.classList.add('is-stopping');
-        icon.innerHTML = '<path d="M6 6h12v12H6z"/>';
-      } else {
-        btn.classList.remove('is-stopping');
-        icon.innerHTML = '<path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>';
-      }
-    }
+      var activeKey = keys[getActiveIndex()] || keys[0];
+      try {
+        var payload = [
+          { role: "system", content: "Summarize the key relationship details, current scenario context, and important user facts in 2-3 concise sentences." },
+          { role: "user", content: JSON.stringify(chatHistory.slice(-12)) }
+        ];
 
-    function stopGeneration() {
-      if (abortController) {
-        abortController.abort();
-      }
-      isGenerating = false;
-      removeTypingIndicator();
-      setStopButtonState(false);
-    }
-
-    async function sendMessage() {
-      if (isGenerating) return;
-      
-      OPENROUTER_API_KEY = (localStorage.getItem('openrouter_key') || "").trim();
-      if (!OPENROUTER_API_KEY) {
-        var inputKey = prompt("Enter your OpenRouter API Key (sk-or-v1-...):");
-        if (inputKey && inputKey.trim()) {
-          OPENROUTER_API_KEY = inputKey.trim();
-          localStorage.setItem('openrouter_key', OPENROUTER_API_KEY);
-        } else {
-          return;
+        var res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": "Bearer " + activeKey },
+          body: JSON.stringify({ model: MODEL_NAME, messages: payload, max_tokens: 150 })
+        });
+        if (res.ok) {
+          var data = await res.json();
+          if (data.choices && data.choices[0] && data.choices[0].message) {
+            localStorage.setItem('chat_summary', data.choices[0].message.content.trim());
+          }
         }
+      } catch (e) {
+        // Silent catch for background process
       }
-
-      var input = document.getElementById('promptInput');
-      var userText = input.value.trim();
-      if (!userText) return;
-
-      input.value = '';
-      input.style.height = '24px';
-      var userTime = formatTime();
-      chatHistory.push({ role: 'user', text: userText, time: userTime });
-      saveChatHistory();
-      renderFullChat();
-
-      await triggerAIResponse();
     }
 
+    // 5. Main Generation Loop with Silent Key Switching
     async function triggerAIResponse() {
+      var keys = getKeys();
+      if (keys.length === 0) {
+        alert("No API key configured. Tap Settings to add one.");
+        return;
+      }
+
       isGenerating = true;
       setStopButtonState(true);
       showTypingIndicator();
@@ -748,238 +398,118 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
       generationStartTime = Date.now();
       abortController = new AbortController();
 
-      var cleanKey = (OPENROUTER_API_KEY || "").trim();
-      var payloadMessages = buildOpenRouterPayload();
+      var attempts = 0;
+      var maxAttempts = Math.max(1, keys.length);
+      var success = false;
 
-      try {
-        var response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + cleanKey
-          },
-          signal: abortController.signal,
-          body: JSON.stringify({
-            model: MODEL_NAME,
-            messages: payloadMessages,
-            temperature: TEMPERATURE,
-            max_tokens: MAX_TOKENS
-          })
-        });
+      while (attempts < maxAttempts && !success) {
+        var currentIdx = getActiveIndex();
+        if (currentIdx >= keys.length) { currentIdx = 0; localStorage.setItem('openrouter_active_idx', "0"); }
+        var activeKey = keys[currentIdx];
 
-        if (!response.ok) {
-          var errorData = await response.json().catch(function() { return {}; });
-          var msg = (errorData && errorData.error && errorData.error.message) ? errorData.error.message : ("HTTP " + response.status);
-          
-          if (response.status === 401 || msg.toLowerCase().includes("user not found") || msg.toLowerCase().includes("invalid api key")) {
-            localStorage.removeItem('openrouter_key');
-            OPENROUTER_API_KEY = "";
+        try {
+          var response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + activeKey
+            },
+            signal: abortController.signal,
+            body: JSON.stringify({
+              model: MODEL_NAME,
+              messages: buildOpenRouterPayload(),
+              temperature: TEMPERATURE,
+              max_tokens: MAX_TOKENS
+            })
+          });
+
+          if (!response.ok) {
+            var errorData = await response.json().catch(function() { return {}; });
+            var msg = (errorData && errorData.error && errorData.error.message) ? errorData.error.message : ("HTTP " + response.status);
+
+            // Silent switch on rate limit (429) or invalid key (401)
+            if (response.status === 429 || response.status === 401 || msg.includes("rate") || msg.includes("quota")) {
+              rotateToNextKey();
+              attempts++;
+              continue;
+            }
+            throw new Error(msg);
           }
-          throw new Error(msg);
+
+          var data = await response.json();
+          var generatedText = data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content.trim() : "";
+
+          if (generatedText && !generatedText.startsWith('*')) {
+            generatedText = '*' + generatedText;
+          }
+
+          var durationSec = Math.round((Date.now() - generationStartTime) / 1000) + "s (Key #" + (currentIdx + 1) + ")";
+          chatHistory.push({ role: 'char', text: generatedText, time: formatTime(), duration: durationSec });
+          saveChatHistory();
+          renderFullChat();
+
+          triggerBackgroundSummary();
+          success = true;
+
+        } catch (err) {
+          if (err.name === 'AbortError') break;
+          if (attempts >= maxAttempts - 1) {
+            alert("All keys exhausted or request failed: " + err.message);
+          }
+          attempts++;
+          rotateToNextKey();
         }
-
-        var data = await response.json();
-        var generatedText = data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content.trim() : "";
-
-        if (!generatedText.startsWith('*')) {
-          generatedText = '*' + generatedText;
-        }
-
-        var durationSec = Math.round((Date.now() - generationStartTime) / 1000) + "s";
-        chatHistory.push({ role: 'char', text: generatedText, time: formatTime(), duration: durationSec });
-        saveChatHistory();
-        renderFullChat();
-
-        triggerBackgroundSummary();
-      } catch (err) {
-        if (err.name !== 'AbortError') {
-          alert("OpenRouter Error: " + err.message);
-        }
-      } finally {
-        removeTypingIndicator();
-        isGenerating = false;
-        setStopButtonState(false);
-        abortController = null;
       }
+
+      removeTypingIndicator();
+      isGenerating = false;
+      setStopButtonState(false);
+      abortController = null;
     }
 
-    function deleteMessage(idx) {
+    function handleSend() {
       if (isGenerating) return;
-      chatHistory.splice(idx, 1);
+      var input = document.getElementById('user-input');
+      var txt = input.value.trim();
+      if (!txt) return;
+
+      chatHistory.push({ role: 'user', text: txt, time: formatTime() });
       saveChatHistory();
       renderFullChat();
+
+      input.value = "";
+      triggerAIResponse();
     }
 
-    async function regenerateMessage(idx) {
-      if (isGenerating) return;
-      chatHistory.splice(idx, 1);
-      saveChatHistory();
-      renderFullChat();
-      await triggerAIResponse();
-    }
-
-    function openEditModal(idx) {
-      if (isGenerating) return;
-      editingMessageIndex = idx;
-      var msg = chatHistory[idx];
-      var titleText = msg.role === 'user' ? 'Edit Your Message' : "Edit Ashley's Message";
-      document.getElementById('edit-sheet-title').innerText = titleText;
-      document.getElementById('editMessageTextarea').value = msg.text;
-      document.getElementById('edit-sheet').style.display = 'flex';
-    }
-
-    function closeEditModal(e) {
-      if (e && e.target && e.target.id !== 'edit-sheet') return;
-      document.getElementById('edit-sheet').style.display = 'none';
-      editingMessageIndex = null;
-    }
-
-    async function saveEditedMessage() {
-      if (editingMessageIndex === null || isGenerating) return;
-      var newText = document.getElementById('editMessageTextarea').value.trim();
-      if (!newText) return;
-
-      var targetRole = chatHistory[editingMessageIndex].role;
-      var targetIdx = editingMessageIndex;
-
-      document.getElementById('edit-sheet').style.display = 'none';
-      editingMessageIndex = null;
-
-      if (targetRole === 'user') {
-        chatHistory.splice(targetIdx);
-        chatHistory.push({ role: 'user', text: newText, time: formatTime() });
-        saveChatHistory();
-        renderFullChat();
-        await triggerAIResponse();
-      } else {
-        chatHistory[targetIdx].text = newText;
-        saveChatHistory();
-        renderFullChat();
+    function handleStop() {
+      if (abortController) {
+        abortController.abort();
       }
     }
 
-    function openLightbox() {
-      document.getElementById('avatar-lightbox').style.display = 'flex';
+    // 6. Settings Modal Handlers
+    function openSettings() {
+      var keys = getKeys();
+      document.getElementById('keys-input').value = keys.join(', ');
+      var idx = getActiveIndex();
+      document.getElementById('active-key-info').innerText = keys.length > 0 ? ("Currently using Key #" + (idx + 1) + " of " + keys.length) : "No keys stored.";
+      document.getElementById('settings-modal').style.display = 'flex';
     }
 
-    function closeLightbox() {
-      document.getElementById('avatar-lightbox').style.display = 'none';
+    function closeSettings() {
+      document.getElementById('settings-modal').style.display = 'none';
     }
 
-    async function triggerBackgroundSummary() {
-      if (chatHistory.length < 16 || chatHistory.length % 10 !== 0 || !OPENROUTER_API_KEY) return;
-      var olderSlice = chatHistory.slice(-16, -6);
-      var textToSummarize = olderSlice.map(function(m) { return (m.role === 'user' ? 'Mathew' : 'Ashley') + ': ' + m.text; }).join('\n');
-
-      try {
-        var res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + OPENROUTER_API_KEY.trim()
-          },
-          body: JSON.stringify({
-            model: "meta-llama/llama-3.3-70b-instruct",
-            messages: [
-              { role: "system", content: "Summarize permanent facts, commitments, items, and changes in 2-3 bullet points." },
-              { role: "user", content: textToSummarize }
-            ],
-            max_tokens: 120,
-            temperature: 0.3
-          })
-        });
-        var data = await res.json();
-        if (data.choices && data.choices[0] && data.choices[0].message) {
-          backgroundSummary = (backgroundSummary + " " + data.choices[0].message.content).trim();
-          localStorage.setItem('ashley_bg_summary', backgroundSummary);
-        }
-      } catch (e) {}
+    function saveSettings() {
+      var val = document.getElementById('keys-input').value.trim();
+      localStorage.setItem('openrouter_keys', val);
+      localStorage.setItem('openrouter_active_idx', "0");
+      closeSettings();
+      alert("Settings saved successfully!");
     }
 
-    var appContainer = document.getElementById('app-container');
-    var promptInput = document.getElementById('promptInput');
-    var chatStream = document.getElementById('chat-stream');
-
-    function adjustViewport() {
-      if (window.visualViewport) {
-        appContainer.style.height = window.visualViewport.height + 'px';
-      } else {
-        appContainer.style.height = window.innerHeight + 'px';
-      }
-      chatStream.scrollTop = chatStream.scrollHeight;
-    }
-
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', adjustViewport);
-      window.visualViewport.addEventListener('scroll', adjustViewport);
-    } else {
-      window.addEventListener('resize', adjustViewport);
-    }
-
-    promptInput.addEventListener('focus', function() {
-      setTimeout(function() {
-        adjustViewport();
-        chatStream.scrollTop = chatStream.scrollHeight;
-      }, 250);
-    });
-
-    var canvas = document.getElementById('ambient-canvas');
-    var ctx = canvas.getContext('2d');
-    var width = canvas.width = window.innerWidth;
-    var height = canvas.height = window.innerHeight;
-
-    window.addEventListener('resize', function() {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-    });
-
-    var motes = [];
-    for (var i = 0; i < 18; i++) {
-      motes.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        r: Math.random() * 1.2 + 0.5,
-        speedY: (Math.random() * 0.15 + 0.05) * -1,
-        speedX: (Math.random() - 0.5) * 0.1,
-        opacity: Math.random() * 0.18 + 0.08
-      });
-    }
-
-    function drawAmbiance() {
-      ctx.clearRect(0, 0, width, height);
-      for (var j = 0; j < motes.length; j++) {
-        var m = motes[j];
-        ctx.beginPath();
-        ctx.arc(m.x, m.y, m.r, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(212, 175, 122, " + m.opacity + ")";
-        ctx.fill();
-        m.y += m.speedY;
-        m.x += m.speedX;
-        if (m.y < 0) { m.y = height + 5; m.x = Math.random() * width; }
-      }
-      requestAnimationFrame(drawAmbiance);
-    }
-    drawAmbiance();
-
-    function insertActionWrapper() {
-      var start = promptInput.selectionStart;
-      var end = promptInput.selectionEnd;
-      var val = promptInput.value;
-      promptInput.value = val.substring(0, start) + "**" + val.substring(end);
-      promptInput.focus();
-      promptInput.setSelectionRange(start + 1, start + 1);
-      autoExpandTextarea(promptInput);
-    }
-
-    promptInput.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') {
-        setTimeout(function() {
-          autoExpandTextarea(promptInput);
-        }, 10);
-      }
-    });
-
-    window.addEventListener('DOMContentLoaded', init);
+    // Render chat history on boot
+    renderFullChat();
   </script>
 </body>
 </html>
