@@ -504,7 +504,7 @@
     }
 
     var MODEL_NAME = "nousresearch/hermes-3-llama-3.1-405b";
-    var MAX_TOKENS = 500;
+    var MAX_TOKENS = 450;
     var TEMPERATURE = 0.85;
 
     var HARDCODED_GREETING = "*The heavy cabin door pushes open, letting in a brief gust of freezing mountain wind before I quickly pull it shut. I drop my roller suitcase and airline shoulder bag on the entryway mat, exhaling a long, frosty breath that instantly fogs up.*\n\n*Shaking the snow from the hood of my winter coat, I push my blonde hair out of my face and look up at you, a tired but genuine grin breaking out across my lips.*\n\nTell me you have something hot to drink on the stove, because I'm pretty sure my fingers froze solid on that mountain pass. It is so good to see you, Mathew.";
@@ -696,13 +696,13 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
       var fullSystemPrompt = HARDCODED_SYSTEM + "\n\n" + HARDCODED_PERSONA + "\n\n" + HARDCODED_SCENARIO;
 
       if (backgroundSummary) {
-        fullSystemPrompt += "\n\n[Persistent History / Established Memory: " + backgroundSummary + "]";
+        fullSystemPrompt += "\n\n[Persistent History / Established Memory: " + backgroundSummary.slice(-800) + "]";
       }
 
       var messages = [{ role: "system", content: fullSystemPrompt }];
 
-      // Kept to 12 messages (~6 full turns) to remain safely under OpenRouter's 5,044 free token limit
-      var recentSlice = chatHistory.slice(-12);
+      // Kept strictly to the last 6 messages (~3 turns) to stay under the 3,126 free token cap
+      var recentSlice = chatHistory.slice(-6);
       recentSlice.forEach(function(m) {
         messages.push({
           role: m.role === 'user' ? 'user' : 'assistant',
