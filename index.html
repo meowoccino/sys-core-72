@@ -476,10 +476,10 @@
       localStorage.setItem('openrouter_key', keyList.join(', '));
     }
 
-    // Forces prompt if fewer than 2 keys exist
+    // Prompts automatically if fewer than 4 keys are stored in browser storage
     var apiKeys = getApiKeys();
-    if (apiKeys.length < 2) {
-      var inputKeys = prompt("Enter your 2 OpenRouter API Keys separated by a comma:\n(sk-or-v1-key1..., sk-or-v1-key2...)");
+    if (apiKeys.length < 4) {
+      var inputKeys = prompt("Enter your 4 OpenRouter API Keys separated by commas:\n(sk-or-v1-key1..., sk-or-v1-key2..., ...)");
       if (inputKeys && inputKeys.trim()) {
         apiKeys = inputKeys.split(',').map(function(k) { return k.trim(); }).filter(Boolean);
         saveApiKeys(apiKeys);
@@ -746,7 +746,7 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
       
       apiKeys = getApiKeys();
       if (apiKeys.length === 0) {
-        var inputKeys = prompt("Enter your 2 OpenRouter API Keys separated by a comma:\n(sk-or-v1-key1..., sk-or-v1-key2...)");
+        var inputKeys = prompt("Enter your 4 OpenRouter API Keys separated by commas:\n(sk-or-v1-key1..., sk-or-v1-key2..., ...)");
         if (inputKeys && inputKeys.trim()) {
           apiKeys = inputKeys.split(',').map(function(k) { return k.trim(); }).filter(Boolean);
           saveApiKeys(apiKeys);
@@ -810,7 +810,7 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
             var errorData = await response.json().catch(function() { return {}; });
             var msg = (errorData && errorData.error && errorData.error.message) ? errorData.error.message : ("HTTP " + response.status);
 
-            // Silent failover to next key on rate limit or authorization errors
+            // Silent failover to next key on rate limit (429) or authorization errors (401)
             if (response.status === 429 || response.status === 401 || msg.toLowerCase().includes("rate limit") || msg.toLowerCase().includes("quota")) {
               rotateToNextKey();
               attempts++;
