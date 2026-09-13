@@ -701,7 +701,8 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
 
       var messages = [{ role: "system", content: fullSystemPrompt }];
 
-      var recentSlice = chatHistory.slice(-26);
+      // Kept to 12 messages (~6 full turns) to remain safely under OpenRouter's 5,044 free token limit
+      var recentSlice = chatHistory.slice(-12);
       recentSlice.forEach(function(m) {
         messages.push({
           role: m.role === 'user' ? 'user' : 'assistant',
@@ -814,7 +815,6 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
             var msg = (errorData && errorData.error && errorData.error.message) ? errorData.error.message : ("HTTP " + response.status);
             errorLog.push("Key #" + (currentIdx + 1) + ": " + msg);
 
-            // Failover to next key
             rotateToNextKey();
             attempts++;
             continue;
@@ -823,7 +823,7 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
           var data = await response.json();
           var generatedText = data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content.trim() : "";
 
-          // Automatically strip any remaining tilde markers from response
+          // Automatically strip any trailing tilde markers from model generation
           generatedText = generatedText.replace(/~+/g, '');
 
           if (!generatedText.startsWith('*')) {
