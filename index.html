@@ -476,7 +476,7 @@
       localStorage.setItem('openrouter_key', keyList.join(', '));
     }
 
-    // Prompts automatically if fewer than 4 keys are stored in browser storage
+    // Prompts automatically if fewer than 4 keys are stored
     var apiKeys = getApiKeys();
     if (apiKeys.length < 4) {
       var inputKeys = prompt("Enter your 4 OpenRouter API Keys separated by commas:\n(sk-or-v1-key1..., sk-or-v1-key2..., ...)");
@@ -592,7 +592,6 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
 
     function parseMessage(rawText) {
       if (!rawText) return '';
-      // Strip special tokens and unwanted tildes automatically
       var clean = rawText.replace(/<\|.*?\|>/g, '').replace(/~+/g, '').trim();
       var blocks = clean.split(/\n{2,}/);
       var outputHtml = '';
@@ -812,8 +811,8 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
             var errorData = await response.json().catch(function() { return {}; });
             var msg = (errorData && errorData.error && errorData.error.message) ? errorData.error.message : ("HTTP " + response.status);
 
-            // Silent failover to next key on rate limit (429) or authorization errors (401)
-            if (response.status === 429 || response.status === 401 || msg.toLowerCase().includes("rate limit") || msg.toLowerCase().includes("quota")) {
+            // Silent failover to next key on rate limit (429), bad key (401), or no credits/quota (402)
+            if (response.status === 429 || response.status === 401 || response.status === 402 || msg.toLowerCase().includes("credits") || msg.toLowerCase().includes("rate") || msg.toLowerCase().includes("quota")) {
               rotateToNextKey();
               attempts++;
               continue;
