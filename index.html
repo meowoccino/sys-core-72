@@ -466,7 +466,6 @@
   </div>
 
   <script>
-    // Hardcoded AI Horde API Key and Selected Model
     var HORDE_API_KEY = "P7BHWqrcOnxopsu0SEP5Kw";
     var HORDE_MODEL = "aphrodite/TheDrummer/Behemoth-X-123B-v2.1";
 
@@ -504,10 +503,10 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
 
     var HARDCODED_SYSTEM = `Write Ashley's next turn in this intimate story with Mathew ({{user}}).
 
-[Mandatory Structural Rule: Every response MUST consist of both physical narration and spoken dialogue. Never drop actions, and never drop speech. Every single turn MUST follow this exact 3-block structure separated by double line breaks:
-1. Physical actions, posture, and facial expressions wrapped in *asterisks*.
-2. Direct conversational spoken dialogue containing natural emojis (NO asterisks, NO quotes, NO tildes ~).
-3. Physical sensation, contact, or reaction wrapped in *asterisks*.]`;
+[Mandatory Structural Rule: Every single turn MUST follow this exact 3-block layout separated by blank lines:
+1. Physical action, posture, or movement wrapped completely in *asterisks*. Example: *I turn around, leaning back against the wooden counter.*
+2. Spoken dialogue with natural emojis (strictly NO asterisks around speech). Example: You're really going to make me blush, aren't you? 🥰
+3. Physical sensation, contact, or lingering touch wrapped completely in *asterisks*. Example: *A soft shiver runs along my neck as your fingers brush against my skin.*]`;
 
     var chatHistory = [];
     var backgroundSummary = "";
@@ -552,20 +551,27 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
         .replace(/(^|[\s(])['"“]([^'"“”\n]+)['"”]([.,!?\s)]|$)/g, '$1<span class="quoted-text">$2</span>$3');
     }
 
+    // Auto-repairs missing asterisks, unbalanced asterisks, and floating markers
     function parseMessage(rawText) {
       if (!rawText) return '';
       var clean = rawText.replace(/<\|.*?\|>/g, '').replace(/~+/g, '').trim();
 
-      var asteriskCount = (clean.match(/\*/g) || []).length;
-      if (asteriskCount % 2 !== 0) {
-        if (!clean.startsWith('*')) {
-          clean = '*' + clean;
-        } else {
-          clean = clean + '*';
-        }
-      }
-
+      // Fix missing opening asterisk when paragraph ends with an asterisk
       var blocks = clean.split(/\n{2,}/);
+      blocks = blocks.map(function(block) {
+        var b = block.trim();
+        if (!b) return "";
+        var count = (b.match(/\*/g) || []).length;
+        if (count === 1) {
+          if (b.endsWith('*') && !b.startsWith('*')) {
+            return '*' + b;
+          } else if (b.startsWith('*') && !b.endsWith('*')) {
+            return b + '*';
+          }
+        }
+        return b;
+      }).filter(Boolean);
+
       var outputHtml = '';
 
       blocks.forEach(function(block) {
@@ -685,7 +691,8 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
         fullPrompt += "<|im_start|>" + roleTag + "\n" + m.text + "<|im_end|>\n";
       });
 
-      fullPrompt += "<|im_start|>assistant\n*";
+      // Left clean so the model starts its own full formatting without dropping asterisks
+      fullPrompt += "<|im_start|>assistant\n";
       return fullPrompt;
     }
 
@@ -779,7 +786,6 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
         var initData = await initiateRes.json();
         var taskId = initData.id;
 
-        // Poll until ready
         var generatedText = "";
         while (isGenerating && !abortController.signal.aborted) {
           await new Promise(function(resolve) { setTimeout(resolve, 3000); });
@@ -808,11 +814,7 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
           }
         }
 
-        if (!generatedText.startsWith('*')) {
-          generatedText = '*' + generatedText;
-        }
-
-        // Clean out trailing tokens and tildes
+        // Clean out trailing tokens, quotes, and tildes
         generatedText = generatedText.replace(/<\|.*?\|>/g, '').replace(/~+/g, '').trim();
 
         var durationSec = Math.round((Date.now() - generationStartTime) / 1000) + "s (Horde)";
