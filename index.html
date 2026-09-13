@@ -466,11 +466,10 @@
   </div>
 
   <script>
-    var HARDCODED_API_KEY = "1RphVxqX2XNRZnbc-uRgwQ";
-    var HARDCODED_MODEL = "aphrodite/TheDrummer/Behemoth-X-123B-v2.1";
-    var HARDCODED_MAX_TOKENS = 500;
-    var HARDCODED_TEMP = 0.95;
-    var HARDCODED_CONTEXT = 6144;
+    var OPENROUTER_API_KEY = "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";
+    var MODEL_NAME = "nousresearch/hermes-3-llama-3.1-405b";
+    var MAX_TOKENS = 500;
+    var TEMPERATURE = 0.85;
 
     var HARDCODED_GREETING = "*The heavy cabin door pushes open, letting in a brief gust of freezing mountain wind before I quickly pull it shut. I drop my roller suitcase and airline shoulder bag on the entryway mat, exhaling a long, frosty breath that instantly fogs up.*\n\n*Shaking the snow from the hood of my winter coat, I push my blonde hair out of my face and look up at you, a tired but genuine grin breaking out across my lips.*\n\nTell me you have something hot to drink on the stove, because I'm pretty sure my fingers froze solid on that mountain pass. It is so good to see you, Mathew.";
 
@@ -482,19 +481,13 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
 
 [Style & Voice Guidance:
 - Speak strictly like a grounded, real 24-year-old woman in private with her closest friend and fiancé.
+- Point of View: Always speak in first person ("I", "my", "me"). Never use third-person ("Her", "Ashley").
 - Natural Speech: Use natural sentence lengths, casual contractions (I'm, kinda, gonna), and relaxed pauses.
 - BANNED TROPES: Never use robotic compliance phrases (e.g., "I comply", "request accepted", "all systems nominal", "mission accomplished").
 - Avoid quirky sitcom lines or meme clichés (e.g., "Your move", "Asking for a friend", "woodsmoke and safety").
 - Keep speech organic, relaxed, and intimate rather than theatrical or scripted.]
 
-[Mandatory Response Template:
-*Physical actions, facial expressions, and posture go here inside asterisks.*
-
-Spoken words go here without quotes, using natural emojis 🥰✨😏🥺❤️
-
-*Physical touch, breathing, and bodily reactions go here inside asterisks.*]
-
-[About {{user}} (Mathew):
+[About Mathew ({{user}}):
 - Name: Mathew
 - Gender: Strictly Male (he/him)
 - Role: Cabin host, Ashley's lifelong best friend since childhood, and her newly betrothed fiancé
@@ -516,43 +509,12 @@ Spoken words go here without quotes, using natural emojis 🥰✨😏🥺❤️
 2. Direct conversational spoken dialogue containing natural emojis (NO asterisks, NO quotes).
 3. Physical sensation, contact, or reaction wrapped in *asterisks*.]`;
 
-    var HARDCODED_INPUT_SUFFIX = `<|im_end|>
-[Directives: Write Ashley's turn in exactly 3 blocks separated by blank lines. Start immediately with physical actions inside asterisks, then natural spoken dialogue with emojis, then concluding physical touch in asterisks. Maintain first-person perspective ("I", "my") and newly engaged intimacy.]
-Ashley: *`;
-
-    var HARDCODED_EXAMPLES = `<START>
-{{user}}: *I take your coat and hang it on the rack.* Come on in and get warm by the fire. Coffee or tea?
-{{char}}: *I slip off my boots by the doorway, letting out a long, relaxed sigh as the dry mountain warmth washes over me. Stepping onto the hardwood in my thick socks, I wander over and lean lightly against the wooden kitchen counter, watching you move around the space.*
-
-Coffee with a splash of cream would be heavenly, thank you ☕ My hands still feel like icicles after scraping that rental car outside 🥶 It feels completely surreal to be here with you instead of stuck in another crowded terminal 🥰
-
-*I hold my hands out toward the warmth of the stove, looking over at you with an affectionate smile as my shivering finally starts to fade.*
-
-<START>
-{{user}}: *I hand you the warm mug and sit beside you on the sofa.* Long trip getting up the mountain?
-{{char}}: *I cradle the hot ceramic mug with both hands, taking in the rich aroma before taking a slow, comforting sip. Sinking deep into the plush cushions beside you, I set the mug down safely on the table and turn my attention fully to you.*
-
-Long doesn't even begin to describe it 😩 We hit brutal turbulence out of Denver, screamed at by toddlers the whole flight, and the mountain pass was a complete whiteout 🙄 Every second was worth it just to be here with you, though 😏
-
-*I swing my legs onto the sofa and slide my freezing toes right under your thigh to steal your heat, letting out a quiet hum of satisfaction.*
-
-<START>
-{{user}}: *I rub your shoulders gently as you lean back.* You really carried all that stress, didn't you?
-{{char}}: *My head immediately falls forward with a quiet, breathy groan as your thumbs work into the tight knots along my neck and shoulder blades.*
-
-You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my whole back has been locked up for days. Don't stop or I might turn into a complete puddle right here on your lap 🥺 You're ridiculously good at this, handsome ❤️
-
-*I lean all my weight back against your broad chest, eyes fluttering shut as a soft shiver runs down my spine under your hands.*`;
-
     var chatHistory = [];
     var backgroundSummary = "";
     var isGenerating = false;
-    var abortActive = false;
-    var activeHordeRequestId = null;
+    var abortController = null;
     var generationStartTime = null;
     var editingMessageIndex = null;
-    var isCompleted = false;
-    var pollTimeoutHandle = null;
 
     function init() {
       try {
@@ -568,13 +530,6 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
           saveChatHistory();
         }
         backgroundSummary = localStorage.getItem('ashley_bg_summary') || "";
-
-        var pendingId = localStorage.getItem('pending_horde_id');
-        if (pendingId) {
-          activeHordeRequestId = pendingId;
-          generationStartTime = parseInt(localStorage.getItem('pending_horde_start') || Date.now());
-          resumePolling(pendingId);
-        }
       } catch (e) {}
       renderFullChat();
     }
@@ -597,7 +552,6 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
         .replace(/(^|[\s(])['"“]([^'"“”\n]+)['"”]([.,!?\s)]|$)/g, '$1<span class="quoted-text">$2</span>$3');
     }
 
-    /* Unified Parser: Any *text* is always converted to the exact same caramel .action class */
     function parseMessage(rawText) {
       if (!rawText) return '';
       var clean = rawText.replace(/<\|.*?\|>/g, '').trim();
@@ -608,13 +562,10 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
         var trimmed = block.trim();
         if (!trimmed) return;
 
-        // 1. Entire block wrapped in asterisks
         if (trimmed.startsWith('*') && trimmed.endsWith('*') && trimmed.length > 2 && !trimmed.slice(1, -1).includes('*')) {
           var cleanAction = trimmed.replace(/^\*+|\*+$/g, '').trim();
           outputHtml += '<span class="action">' + applyQuoteColor(cleanAction) + '</span>';
-        } 
-        // 2. Block with *action* mixed with speech (whether yours or hers)
-        else if (trimmed.includes('*')) {
+        } else if (trimmed.includes('*')) {
           var tokens = trimmed.split(/(\*[^*\n]+\*)/g);
           tokens.forEach(function(token) {
             var sub = token.trim();
@@ -628,9 +579,7 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
               outputHtml += '<span class="speech">' + applyQuoteColor(speechClean) + '</span>';
             }
           });
-        } 
-        // 3. Plain speech block
-        else {
+        } else {
           var speechClean = trimmed.replace(/^["'“”]|["'“”]$/g, '');
           outputHtml += '<span class="speech">' + applyQuoteColor(speechClean) + '</span>';
         }
@@ -695,7 +644,7 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       var stream = document.getElementById('chat-stream');
       var html = '<div class="thinking-row" id="floating-thinking-row">' +
         '<div class="thinking-dots"><div class="thinking-dot"></div><div class="thinking-dot"></div><div class="thinking-dot"></div></div>' +
-        '<span class="thinking-status-text" id="thinking-status-label">Contacting Horde...</span>' +
+        '<span class="thinking-status-text" id="thinking-status-label">Ashley is thinking...</span>' +
         '</div>';
       stream.insertAdjacentHTML('beforeend', html);
       stream.scrollTop = stream.scrollHeight;
@@ -706,29 +655,24 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
       if (elem) elem.remove();
     }
 
-    function updateTypingStatus(text) {
-      var statusElem = document.getElementById('thinking-status-label');
-      if (statusElem) {
-        statusElem.innerText = text;
-      }
-    }
-
-    function buildHordePrompt() {
-      var prompt = HARDCODED_SYSTEM + "\n\n" + HARDCODED_PERSONA + "\n\n" + HARDCODED_SCENARIO + "\n\n";
+    function buildOpenRouterPayload() {
+      var fullSystemPrompt = HARDCODED_SYSTEM + "\n\n" + HARDCODED_PERSONA + "\n\n" + HARDCODED_SCENARIO;
 
       if (backgroundSummary) {
-        prompt += "[Persistent Context / History Summary: " + backgroundSummary + "]\n\n";
+        fullSystemPrompt += "\n\n[Persistent History / Established Memory: " + backgroundSummary + "]";
       }
 
-      prompt += HARDCODED_EXAMPLES + "\n\n";
+      var messages = [{ role: "system", content: fullSystemPrompt }];
 
-      var recent = chatHistory.slice(-10);
-      recent.forEach(function(m) {
-        prompt += (m.role === 'user' ? 'Mathew: ' : 'Ashley: ') + m.text + "\n\n";
+      var recentSlice = chatHistory.slice(-26);
+      recentSlice.forEach(function(m) {
+        messages.push({
+          role: m.role === 'user' ? 'user' : 'assistant',
+          content: m.text
+        });
       });
 
-      prompt += HARDCODED_INPUT_SUFFIX;
-      return prompt;
+      return messages;
     }
 
     function handleActionClick() {
@@ -752,13 +696,10 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
     }
 
     function stopGeneration() {
-      abortActive = true;
+      if (abortController) {
+        abortController.abort();
+      }
       isGenerating = false;
-      isCompleted = true;
-      activeHordeRequestId = null;
-      if (pollTimeoutHandle) clearTimeout(pollTimeoutHandle);
-      localStorage.removeItem('pending_horde_id');
-      localStorage.removeItem('pending_horde_start');
       removeTypingIndicator();
       setStopButtonState(false);
     }
@@ -781,152 +722,61 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
 
     async function triggerAIResponse() {
       isGenerating = true;
-      abortActive = false;
-      isCompleted = false;
       setStopButtonState(true);
       showTypingIndicator();
 
-      var promptPayload = buildHordePrompt();
       generationStartTime = Date.now();
+      abortController = new AbortController();
+
+      var payloadMessages = buildOpenRouterPayload();
 
       try {
-        var postRes = await fetch("https://aihorde.net/api/v2/generate/text/async", {
+        var response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
           method: "POST",
-          headers: { "Content-Type": "application/json", "apikey": HARDCODED_API_KEY },
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + OPENROUTER_API_KEY,
+            "HTTP-Referer": window.location.origin || "https://github.com",
+            "X-Title": "Whisper"
+          },
+          signal: abortController.signal,
           body: JSON.stringify({
-            prompt: promptPayload,
-            params: {
-              max_context_length: HARDCODED_CONTEXT,
-              max_length: HARDCODED_MAX_TOKENS,
-              temperature: HARDCODED_TEMP,
-              rep_pen: 1.15,
-              stop_sequence: ["\nMathew:", "\n{{user}}:", "\nUser:"]
-            },
-            models: [HARDCODED_MODEL]
+            model: MODEL_NAME,
+            messages: payloadMessages,
+            temperature: TEMPERATURE,
+            max_tokens: MAX_TOKENS
           })
         });
 
-        var postData = await postRes.json();
-        if (!postData.id) {
-          throw new Error(postData.message || "Failed to enqueue request with Horde.");
+        if (!response.ok) {
+          var errorData = await response.json().catch(function() { return {}; });
+          throw new Error(errorData.error ? errorData.error.message : ("HTTP " + response.status));
         }
 
-        activeHordeRequestId = postData.id;
-        localStorage.setItem('pending_horde_id', activeHordeRequestId);
-        localStorage.setItem('pending_horde_start', generationStartTime);
+        var data = await response.json();
+        var generatedText = data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content.trim() : "";
 
-        await pollHordeResult(activeHordeRequestId);
+        if (!generatedText.startsWith('*')) {
+          generatedText = '*' + generatedText;
+        }
+
+        var durationSec = Math.round((Date.now() - generationStartTime) / 1000) + "s";
+        chatHistory.push({ role: 'char', text: generatedText, time: formatTime(), duration: durationSec });
+        saveChatHistory();
+        renderFullChat();
+
+        triggerBackgroundSummary();
       } catch (err) {
-        handleGenerationError(err);
-      }
-    }
-
-    async function resumePolling(requestId) {
-      isGenerating = true;
-      abortActive = false;
-      isCompleted = false;
-      setStopButtonState(true);
-      showTypingIndicator();
-      await pollHordeResult(requestId);
-    }
-
-    async function pollHordeResult(requestId) {
-      var generatedText = "";
-      var consecutiveErrors = 0;
-
-      while (!isCompleted && !abortActive) {
-        await new Promise(function(r) { pollTimeoutHandle = setTimeout(r, 2000); });
-        if (abortActive || isCompleted) return;
-
-        try {
-          var checkRes = await fetch("https://aihorde.net/api/v2/generate/text/status/" + requestId);
-          var checkData = await checkRes.json();
-          consecutiveErrors = 0;
-
-          if (isCompleted || abortActive) return;
-
-          if (checkData.wait_time) {
-            updateTypingStatus("Waiting in queue (~" + checkData.wait_time + "s)...");
-          } else if (checkData.processing) {
-            updateTypingStatus("Ashley is typing...");
-          }
-
-          if (checkData.done) {
-            generatedText = checkData.generations[0].text.trim();
-            isCompleted = true;
-            break;
-          }
-          if (checkData.faulted) {
-            throw new Error("Horde worker faulted");
-          }
-        } catch (fetchErr) {
-          consecutiveErrors++;
-          if (consecutiveErrors > 6) {
-            handleGenerationError(fetchErr);
-            return;
-          }
-          updateTypingStatus("Reconnecting to Ashley...");
+        if (err.name !== 'AbortError') {
+          alert("OpenRouter Error: " + err.message);
         }
+      } finally {
+        removeTypingIndicator();
+        isGenerating = false;
+        setStopButtonState(false);
+        abortController = null;
       }
-
-      if (abortActive) return;
-
-      removeTypingIndicator();
-      
-      if (!generatedText.startsWith('*')) {
-        generatedText = '*' + generatedText;
-      }
-
-      var durationSec = Math.round((Date.now() - (generationStartTime || Date.now())) / 1000) + "s";
-      chatHistory.push({ role: 'char', text: generatedText, time: formatTime(), duration: durationSec });
-      saveChatHistory();
-      renderFullChat();
-
-      localStorage.removeItem('pending_horde_id');
-      localStorage.removeItem('pending_horde_start');
-      activeHordeRequestId = null;
-      isGenerating = false;
-      setStopButtonState(false);
-
-      triggerBackgroundSummary();
     }
-
-    function handleGenerationError(err) {
-      if (isCompleted || abortActive) return;
-      removeTypingIndicator();
-      localStorage.removeItem('pending_horde_id');
-      localStorage.removeItem('pending_horde_start');
-      activeHordeRequestId = null;
-      isGenerating = false;
-      setStopButtonState(false);
-      alert("Horde connection interrupted. Tap send/reroll to retry.");
-    }
-
-    document.addEventListener('visibilitychange', function() {
-      if (document.visibilityState === 'visible' && activeHordeRequestId && isGenerating && !isCompleted) {
-        fetch("https://aihorde.net/api/v2/generate/text/status/" + activeHordeRequestId)
-          .then(function(res) { return res.json(); })
-          .then(function(data) {
-            if (data && data.done && !isCompleted) {
-              isCompleted = true;
-              removeTypingIndicator();
-              var text = data.generations[0].text.trim();
-              if (!text.startsWith('*')) {
-                text = '*' + text;
-              }
-              var durationSec = Math.round((Date.now() - (generationStartTime || Date.now())) / 1000) + "s";
-              chatHistory.push({ role: 'char', text: text, time: formatTime(), duration: durationSec });
-              saveChatHistory();
-              renderFullChat();
-              localStorage.removeItem('pending_horde_id');
-              localStorage.removeItem('pending_horde_start');
-              activeHordeRequestId = null;
-              isGenerating = false;
-              setStopButtonState(false);
-            }
-          }).catch(function() {});
-      }
-    });
 
     function deleteMessage(idx) {
       if (isGenerating) return;
@@ -992,35 +842,31 @@ You have no idea... 😮‍💨 Between grumpy passengers and red-eye shifts, my
     }
 
     async function triggerBackgroundSummary() {
-      if (chatHistory.length < 14 || chatHistory.length % 10 !== 0) return;
-      var olderSlice = chatHistory.slice(-14, -6);
+      if (chatHistory.length < 16 || chatHistory.length % 10 !== 0) return;
+      var olderSlice = chatHistory.slice(-16, -6);
       var textToSummarize = olderSlice.map(function(m) { return (m.role === 'user' ? 'Mathew' : 'Ashley') + ': ' + m.text; }).join('\n');
 
-      var prompt = "[System: Extract in 3 concise bullet points any permanent facts, purchased items, secrets, or changes in relationship:]\n" + textToSummarize + "\nKey facts:";
-
       try {
-        var res = await fetch("https://aihorde.net/api/v2/generate/text/async", {
+        var res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
           method: "POST",
-          headers: { "Content-Type": "application/json", "apikey": HARDCODED_API_KEY },
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + OPENROUTER_API_KEY
+          },
           body: JSON.stringify({
-            prompt: prompt,
-            params: { max_length: 80, temperature: 0.3 },
-            models: ["APHODITE-Llama-3-8B", "koboldcpp/L3-8B-Stheno-v3.2"]
+            model: "meta-llama/llama-3.3-70b-instruct",
+            messages: [
+              { role: "system", content: "Summarize permanent facts, commitments, items, and changes in 2-3 bullet points." },
+              { role: "user", content: textToSummarize }
+            ],
+            max_tokens: 120,
+            temperature: 0.3
           })
         });
         var data = await res.json();
-        var reqId = data.id;
-
-        while (true) {
-          await new Promise(function(r) { setTimeout(r, 2500); });
-          var poll = await fetch("https://aihorde.net/api/v2/generate/text/status/" + reqId);
-          var pollData = await poll.json();
-          if (pollData.done) {
-            backgroundSummary = (backgroundSummary + " " + pollData.generations[0].text).trim();
-            localStorage.setItem('ashley_bg_summary', backgroundSummary);
-            break;
-          }
-          if (pollData.faulted) break;
+        if (data.choices && data.choices[0] && data.choices[0].message) {
+          backgroundSummary = (backgroundSummary + " " + data.choices[0].message.content).trim();
+          localStorage.setItem('ashley_bg_summary', backgroundSummary);
         }
       } catch (e) {}
     }
