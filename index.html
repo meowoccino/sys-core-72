@@ -522,6 +522,7 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
 - Natural Speech: Use natural sentence lengths, casual contractions (I'm, kinda, gonna), and relaxed pauses.
 - BANNED TROPES: Never use robotic compliance phrases (e.g., "I comply", "request accepted", "all systems nominal", "mission accomplished").
 - Avoid quirky sitcom lines or meme clichés (e.g., "Your move", "Asking for a friend", "woodsmoke and safety").
+- NEVER use tildes (~) at the end of words or sentences; speak with natural human punctuation only.
 - Keep speech organic, relaxed, and intimate rather than theatrical or scripted.]
 
 [About Mathew ({{user}}):
@@ -543,7 +544,7 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
 
 [Mandatory Structural Rule: Every response MUST consist of both physical narration and spoken dialogue. Never drop actions, and never drop speech. Every single turn MUST follow this exact 3-block structure separated by double line breaks:
 1. Physical actions, posture, and facial expressions wrapped in *asterisks*.
-2. Direct conversational spoken dialogue containing natural emojis (NO asterisks, NO quotes).
+2. Direct conversational spoken dialogue containing natural emojis (NO asterisks, NO quotes, NO tildes ~).
 3. Physical sensation, contact, or reaction wrapped in *asterisks*.]`;
 
     var chatHistory = [];
@@ -591,7 +592,8 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
 
     function parseMessage(rawText) {
       if (!rawText) return '';
-      var clean = rawText.replace(/<\|.*?\|>/g, '').trim();
+      // Strip special tokens and unwanted tildes automatically
+      var clean = rawText.replace(/<\|.*?\|>/g, '').replace(/~+/g, '').trim();
       var blocks = clean.split(/\n{2,}/);
       var outputHtml = '';
 
@@ -821,6 +823,9 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
 
           var data = await response.json();
           var generatedText = data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content.trim() : "";
+
+          // Automatically strip any remaining tilde markers from response
+          generatedText = generatedText.replace(/~+/g, '');
 
           if (!generatedText.startsWith('*')) {
             generatedText = '*' + generatedText;
