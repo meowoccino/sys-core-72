@@ -466,7 +466,15 @@
   </div>
 
   <script>
-    var OPENROUTER_API_KEY = "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";
+    // Retrieves your key safely from private phone storage (never pushed to GitHub)
+    var OPENROUTER_API_KEY = localStorage.getItem('openrouter_key') || "";
+    if (!OPENROUTER_API_KEY) {
+      OPENROUTER_API_KEY = prompt("Enter your OpenRouter API Key (sk-or-v1-...):") || "";
+      if (OPENROUTER_API_KEY) {
+        localStorage.setItem('openrouter_key', OPENROUTER_API_KEY.trim());
+      }
+    }
+
     var MODEL_NAME = "nousresearch/hermes-3-llama-3.1-405b";
     var MAX_TOKENS = 500;
     var TEMPERATURE = 0.85;
@@ -522,7 +530,7 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
         if (savedChat) {
           chatHistory = JSON.parse(savedChat);
           chatHistory = chatHistory.filter(function(m) {
-            return !m.text.includes("Failed to fetch") && !m.text.includes("Connection interrupted");
+            return !m.text.includes("Failed to fetch") && !m.text.includes("Connection interrupted") && !m.text.includes("OpenRouter Error");
           });
           saveChatHistory();
         } else {
@@ -706,6 +714,16 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
 
     async function sendMessage() {
       if (isGenerating) return;
+      
+      if (!OPENROUTER_API_KEY) {
+        OPENROUTER_API_KEY = prompt("Enter your OpenRouter API Key (sk-or-v1-...):") || "";
+        if (OPENROUTER_API_KEY) {
+          localStorage.setItem('openrouter_key', OPENROUTER_API_KEY.trim());
+        } else {
+          return;
+        }
+      }
+
       var input = document.getElementById('promptInput');
       var userText = input.value.trim();
       if (!userText) return;
@@ -750,6 +768,11 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
 
         if (!response.ok) {
           var errorData = await response.json().catch(function() { return {}; });
+          if (response.status === 401) {
+            localStorage.removeItem('openrouter_key');
+            OPENROUTER_API_KEY = "";
+            throw new Error("Invalid API Key (401). Please refresh and re-enter your key.");
+          }
           throw new Error(errorData.error ? errorData.error.message : ("HTTP " + response.status));
         }
 
@@ -768,7 +791,7 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
         triggerBackgroundSummary();
       } catch (err) {
         if (err.name !== 'AbortError') {
-          alert("OpenRouter Error: " + err.message);
+          alert(err.message);
         }
       } finally {
         removeTypingIndicator();
@@ -842,7 +865,7 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
     }
 
     async function triggerBackgroundSummary() {
-      if (chatHistory.length < 16 || chatHistory.length % 10 !== 0) return;
+      if (chatHistory.length < 16 || chatHistory.length % 10 !== 0 || !OPENROUTER_API_KEY) return;
       var olderSlice = chatHistory.slice(-16, -6);
       var textToSummarize = olderSlice.map(function(m) { return (m.role === 'user' ? 'Mathew' : 'Ashley') + ': ' + m.text; }).join('\n');
 
