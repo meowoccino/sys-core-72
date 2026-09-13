@@ -466,7 +466,6 @@
   </div>
 
   <script>
-    // Load and sanitize keys from storage (supports comma-separated list)
     function getApiKeys() {
       var raw = (localStorage.getItem('openrouter_key') || "").trim();
       if (!raw) return [];
@@ -477,11 +476,12 @@
       localStorage.setItem('openrouter_key', keyList.join(', '));
     }
 
+    // Forces prompt if fewer than 2 keys exist
     var apiKeys = getApiKeys();
-    if (apiKeys.length === 0) {
-      var inputKey = prompt("Enter your OpenRouter API Key(s) — separate multiple with a comma:");
-      if (inputKey && inputKey.trim()) {
-        apiKeys = inputKey.split(',').map(function(k) { return k.trim(); }).filter(Boolean);
+    if (apiKeys.length < 2) {
+      var inputKeys = prompt("Enter your 2 OpenRouter API Keys separated by a comma:\n(sk-or-v1-key1..., sk-or-v1-key2...)");
+      if (inputKeys && inputKeys.trim()) {
+        apiKeys = inputKeys.split(',').map(function(k) { return k.trim(); }).filter(Boolean);
         saveApiKeys(apiKeys);
         localStorage.setItem('openrouter_active_idx', "0");
       }
@@ -504,7 +504,7 @@
       localStorage.setItem('openrouter_active_idx', nextIdx.toString());
     }
 
-    var MODEL_NAME = "nousresearch/hermes-3-llama-3.1-405b:free";
+    var MODEL_NAME = "nousresearch/hermes-3-llama-3.1-405b";
     var MAX_TOKENS = 500;
     var TEMPERATURE = 0.85;
 
@@ -746,9 +746,9 @@ She thrives on lingering eye contact, teasing banter, and uninhibited physical c
       
       apiKeys = getApiKeys();
       if (apiKeys.length === 0) {
-        var inputKey = prompt("Enter your OpenRouter API Key(s) — separate multiple with a comma:");
-        if (inputKey && inputKey.trim()) {
-          apiKeys = inputKey.split(',').map(function(k) { return k.trim(); }).filter(Boolean);
+        var inputKeys = prompt("Enter your 2 OpenRouter API Keys separated by a comma:\n(sk-or-v1-key1..., sk-or-v1-key2...)");
+        if (inputKeys && inputKeys.trim()) {
+          apiKeys = inputKeys.split(',').map(function(k) { return k.trim(); }).filter(Boolean);
           saveApiKeys(apiKeys);
           localStorage.setItem('openrouter_active_idx', "0");
         } else {
