@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex, nofollow">
   <title>Ashley</title>
   <link rel="manifest" href="./manifest.json">
-  <meta name="theme-color" content="#08090c">
+  <meta name="theme-color" content="#0d1522">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Ashley">
@@ -17,9 +17,9 @@
   <style>
     :root {
       --bg-dark: #08090c;
-      --char-bubble: rgba(18, 22, 32, 0.94);
-      --char-border: rgba(212, 175, 122, 0.22);
-      --user-bubble: rgba(34, 25, 18, 0.94);
+      --char-bubble: rgba(16, 22, 34, 0.85);
+      --char-border: rgba(160, 195, 235, 0.25);
+      --user-bubble: rgba(30, 24, 20, 0.85);
       --user-border: rgba(224, 160, 96, 0.35);
       --gold-accent: #d4af7a;
       --action-color: #e2c4a2;
@@ -30,13 +30,13 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    html, body {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background-color: var(--bg-dark);
-      color: var(--speech-text);
-      font-family: 'Plus Jakarta Sans', sans-serif;
+    html, body { 
+      width: 100%; 
+      height: 100%; 
+      overflow: hidden; 
+      background-color: var(--bg-dark); 
+      color: var(--speech-text); 
+      font-family: 'Plus Jakarta Sans', sans-serif; 
     }
 
     #app-container {
@@ -49,12 +49,15 @@
       padding-bottom: env(safe-area-inset-bottom, 0px);
     }
 
-    /* Moonlight Timber / Subtle Frost: Static, non-distracting wash fading into #08090c */
+    /* True Mountain Frost Atmosphere: High-contrast slate gradient that breathes through bubbles */
     #ambient-bg {
       position: fixed;
       inset: 0;
       z-index: 0;
-      background: radial-gradient(ellipse 130% 40% at 50% 0%, rgba(30, 48, 75, 0.22) 0%, rgba(15, 24, 38, 0.08) 55%, #08090c 85%);
+      background: 
+        radial-gradient(circle at 80% 12%, rgba(55, 85, 130, 0.45) 0%, transparent 55%),
+        radial-gradient(circle at 20% 88%, rgba(30, 50, 80, 0.4) 0%, transparent 60%),
+        linear-gradient(180deg, #0d1522 0%, #08090c 45%, #06080d 100%);
       pointer-events: none;
     }
 
@@ -83,9 +86,7 @@
     }
 
     .msg-group.ashley {
-      display: flex;
       justify-content: flex-start;
-      width: 100%;
       padding-right: 4px;
     }
     .msg-group.ashley .ashley-wrapper {
@@ -97,9 +98,7 @@
     }
 
     .msg-group.user {
-      display: flex;
       justify-content: flex-end;
-      width: 100%;
       padding-left: 14%;
     }
     .msg-group.user .user-wrapper {
@@ -271,7 +270,7 @@
       background: #12141c;
       border-top: 1px solid var(--char-border);
       border-radius: 24px 24px 0 0;
-      padding: 22px 18px calc(24px + env(safe-area-inset-bottom, 0px));
+      padding: 22px 18px calc(34px + env(safe-area-inset-bottom, 0px));
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -328,7 +327,7 @@
     footer {
       position: relative;
       z-index: 10;
-      padding: 8px 12px calc(12px + env(safe-area-inset-bottom, 0px));
+      padding: 8px 12px calc(14px + env(safe-area-inset-bottom, 0px));
       background: transparent;
       display: flex;
       align-items: flex-end;
@@ -820,7 +819,7 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
               top_p: 0.95,
               rep_pen: 1.04,
               singleline: false,
-              stop_sequence: ["<|im_end|>", "<|im_start|>"]
+              stop_sequence: ["<|im_end|>", "<|im_start|>", "\nMathew:", "\nUser:"]
             },
             models: [HORDE_MODEL],
             workers: [],
