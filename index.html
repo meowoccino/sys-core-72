@@ -528,6 +528,7 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
    *I shiver as you hold me close, tilting my head back against your shoulder.*
    I love you so much.
 4. Conclude every turn cleanly with closed punctuation and matching asterisks.
+5. NEVER write meta-commentary, "Next Turn Notes", chapter endings, or sign-offs (like "Yours eternally"). Stay strictly in character as Ashley in the present moment.
 
 [Agency, Initiative & Dynamic Flow]:
 - Ashley is an active partner with her own desires, moods, and impulses—never a passive chatbot.
@@ -592,10 +593,14 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
       el.style.height = (newHeight < 24 ? 24 : newHeight) + 'px';
     }
 
-    /* Bulletproof Parser: Guarantees actions are Golden/Italic and Speech is Crisp White */
+    /* Bulletproof Parser: Guarantees actions are Golden/Italic, Speech is Crisp White, and fixes nested **** bugs */
     function parseMessage(rawText) {
       if (!rawText) return '';
-      var clean = rawText.replace(/<\|.*?\|>/g, '').replace(/~+/g, '').trim();
+      // Strip ChatML tags, tildes, and replace corrupted multiple asterisks with a single asterisk
+      var clean = rawText.replace(/<\|.*?\|>/g, '')
+                         .replace(/~+/g, '')
+                         .replace(/\*{2,}/g, '*')
+                         .trim();
 
       // Normalize missing closing asterisks
       var totalAsterisks = (clean.match(/\*/g) || []).length;
@@ -630,7 +635,7 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
             }
           });
         } 
-        // If the model forgot asterisks and put quotes around dialogue -> Quote = Speech (White), Rest = Action (Gold)
+        // If the model forgot asterisks and put quotes around dialogue
         else if (/["“].*?["”]/.test(trimmed)) {
           var parts = trimmed.split(/(["“][^"“”]+["”])/g);
           parts.forEach(function(part) {
@@ -644,9 +649,8 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
             }
           });
         }
-        // Fallback: If no quotes and no asterisks, check if it looks like narration vs dialogue
+        // Fallback: If no quotes and no asterisks
         else {
-          // Lines that start with "I " or "My " or verbs without speech marks are physical narration
           if (/^(I |My |The |Each |Her |Our |We )/i.test(trimmed) && !trimmed.endsWith('?')) {
             outputHtml += '<span class="action">' + trimmed + '</span>';
           } else {
@@ -835,11 +839,11 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
             model: OPENROUTER_MODEL,
             messages: messagesPayload,
             max_tokens: 600,
-            temperature: 0.82,
-            top_p: 0.95,
-            frequency_penalty: 0.45,  /* Eliminates repeating the same words/sentences */
-            presence_penalty: 0.35,   /* Encourages new reactions rather than looping */
-            repetition_penalty: 1.12  /* Enforces strict avoidance of repeating "baby" & "purr" */
+            temperature: 0.75,         /* Lowered from 0.82 to keep her sane and grounded */
+            top_p: 0.9,                /* Lowered slightly to prevent hallucinations */
+            frequency_penalty: 0.25,   /* Lowered to let her use normal vocabulary again */
+            presence_penalty: 0.25     /* Gently encourages new topics safely */
+            /* repetition_penalty completely removed as it caused the **** formatting glitches */
           })
         });
 
