@@ -5,12 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow">
   <title>Ashley</title>
-  <link rel="manifest" href="./manifest.json">
+
+  <!-- Force theme colors across mobile Chrome address bar and Android navbar keys -->
+  <meta name="theme-color" content="#060a0c" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#060a0c" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#060a0c">
+  
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Ashley">
   <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+  
+  <!-- Version query string forces Chrome to bypass cached manifest colors -->
+  <link rel="manifest" href="./manifest.json?v=2">
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
@@ -824,7 +832,7 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
               top_p: 0.95,
               rep_pen: 1.04,
               singleline: false,
-              stop_sequence: ["<|im_end|>", "<|im_start|>", "\nMathew:", "\nUser:"]
+              stop_sequence: ["<|im_end|>", "<|im_start|>"]
             },
             models: [HORDE_MODEL],
             workers: [],
@@ -1060,9 +1068,12 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
 
     window.addEventListener('DOMContentLoaded', init);
 
+    /* Bumping service worker registration version forces mobile Chrome to load new theme colors immediately */
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js').catch(function() {});
+        navigator.serviceWorker.register('./sw.js?v=2').then(function(reg) {
+          reg.update();
+        }).catch(function() {});
       });
     }
   </script>
