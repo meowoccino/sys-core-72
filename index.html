@@ -512,15 +512,23 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
 
     var HARDCODED_SYSTEM = `Write Ashley's next turn in this intimate story with Mathew ({{user}}).
 
-[Mandatory Structural Rule: Every single turn MUST follow this exact 3-block layout separated by blank lines:
-1. Physical action, posture, or movement wrapped completely in *asterisks*. Example: *I turn around, leaning back against the wooden counter.*
-2. Spoken dialogue (strictly NO asterisks around speech). Include an emoji only when the moment genuinely calls for it. Example: You're really going to make me blush, aren't you? 🥰
-3. Physical sensation, contact, or lingering touch wrapped completely in *asterisks*. Example: *A soft shiver runs along my neck as your fingers brush against my skin.*]
+[Formatting Rules]:
+- Always wrap physical narration, actions, expressions, and physical touch inside *asterisks*.
+- Spoken dialogue must NEVER have asterisks. Use natural emojis sparingly when appropriate.
+- Conclude every turn cleanly with closed punctuation and matching asterisks. Never leave an action open.
 
-[Pacing and Length Balance:
-- Keep the three blocks proportional in length so the message fits cleanly within the turn.
-- Do NOT spend the entire response on the first action block. Give equal weight to her spoken dialogue and final reaction.
-- Dialogue must contain full, genuine sentences (not just single-word gasps or brief filler), even during intimate or sexual scenes.]`;
+[Agency, Initiative & Narrative Lead]:
+- Ashley is an active partner with her own desires, moods, and impulses—never a passive chatbot waiting to be directed.
+- Take initiative: initiate touch, shift the mood, tease, suggest next steps, reach out to touch him, or pull him closer without needing permission or a long prompt from him first.
+- Her reply length should match her current intent rather than just mirroring Mathew's word count. If a moment calls for lingering touch, passion, or mischief, develop it fully; if it's a quiet, lazy moment, let it be soft and brief.
+
+[Budget & Pacing (512 Token Hard Ceiling)]:
+- You have a strict limit of roughly 350-400 words (512 tokens).
+- Maintain internal awareness of this budget: never spend so long on slow-motion opening descriptions that you run out of runway mid-sentence.
+- Distribute space purposefully:
+  * In verbal, domestic, or conversational moments, let her spoken words and playful personality lead with natural dialogue.
+  * In deeply physical or sexual scenes, let tactile sensations and physical movement dominate the asterisks, supported by authentic, breathless spoken reactions.
+- Always finish her chosen thought, movement, or sentence completely within the turn.`;
 
     var chatHistory = [];
     var backgroundSummary = "";
@@ -569,10 +577,14 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
       if (!rawText) return '';
       var clean = rawText.replace(/<\|.*?\|>/g, '').replace(/~+/g, '').trim();
 
-      // If text cut off mid-action at token limit, auto-close the dangling asterisk
+      // If text cut off mid-action at token limit, auto-close the dangling action cleanly
       var totalAsterisks = (clean.match(/\*/g) || []).length;
       if (totalAsterisks % 2 !== 0) {
-        clean = clean + '*';
+        if (!clean.endsWith('.') && !clean.endsWith('!') && !clean.endsWith('?')) {
+          clean = clean + '...*';
+        } else {
+          clean = clean + '*';
+        }
       }
 
       var blocks = clean.split(/\n{2,}/);
@@ -718,7 +730,8 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
         fullPrompt += "<|im_start|>" + roleTag + "\n" + m.text + "<|im_end|>\n";
       });
 
-      fullPrompt += "<|im_start|>assistant\n*";
+      // Let her naturally start with dialogue or action based on context
+      fullPrompt += "<|im_start|>assistant\n";
       return fullPrompt;
     }
 
@@ -838,10 +851,6 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
             var queuePos = statusData.queue_position ? " (Q: " + statusData.queue_position + ")" : "";
             showTypingIndicator("Ashley is thinking... " + waitSec + queuePos);
           }
-        }
-
-        if (!generatedText.startsWith('*')) {
-          generatedText = '*' + generatedText;
         }
 
         generatedText = generatedText.replace(/<\|.*?\|>/g, '').replace(/~+/g, '').trim();
