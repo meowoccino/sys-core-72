@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex, nofollow">
   <title>Ashley</title>
 
-  <!-- PWA & Mobile Chrome matching: sets top address bar and system navigation to emerald base -->
+  <!-- PWA & Mobile Chrome address/navigation bar colors -->
   <meta name="theme-color" content="#060a0c">
   <meta name="color-scheme" content="dark">
   <meta name="mobile-web-app-capable" content="yes">
@@ -56,7 +56,7 @@
       padding-bottom: env(safe-area-inset-bottom, 0px);
     }
 
-    /* Frost Emerald Aurora: Bold, vibrant teal and boreal glow extending across the full viewport */
+    /* Frost Emerald Aurora background */
     #ambient-bg {
       position: fixed;
       inset: 0;
@@ -81,7 +81,7 @@
       gap: 20px;
     }
 
-    /* Soft Expand entrance animation when new messages spawn */
+    /* Soft Expand entrance animation */
     .msg-group {
       display: flex;
       width: 100%;
@@ -93,9 +93,7 @@
     }
 
     .msg-group.ashley {
-      display: flex;
       justify-content: flex-start;
-      width: 100%;
       padding-right: 4px;
     }
     .msg-group.ashley .ashley-wrapper {
@@ -107,9 +105,7 @@
     }
 
     .msg-group.user {
-      display: flex;
       justify-content: flex-end;
-      width: 100%;
       padding-left: 14%;
     }
     .msg-group.user .user-wrapper {
@@ -495,9 +491,8 @@
   </div>
 
   <script>
-    var HORDE_API_KEY = "P7BHWqrcOnxopsu0SEP5Kw";
-    var HORDE_MODEL = "aphrodite/TheDrummer/Behemoth-X-123B-v2.1";
-    var HORDE_SUMMARY_MODEL = "Impish_Bloodmoon_12B";
+    var OPENROUTER_MODEL = "nousresearch/hermes-3-llama-3.1-405b";
+    var OPENROUTER_SUMMARY_MODEL = "meta-llama/llama-3.3-70b-instruct:free";
 
     var HARDCODED_GREETING = "*The heavy cabin door pushes open, letting in a brief gust of freezing mountain wind before I quickly pull it shut. I drop my roller suitcase and airline shoulder bag on the entryway mat, exhaling a long, frosty breath that instantly fogs up.*\n\n*Shaking the snow from the hood of my winter coat, I push my blonde hair out of my face and look up at you, a tired but genuine grin breaking out across my lips.*\n\nTell me you have something hot to drink on the stove, because I'm pretty sure my fingers froze solid on that mountain pass. It is so good to see you, Mathew.";
 
@@ -545,8 +540,8 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
 - Take initiative: initiate touch, shift the mood, tease, suggest next steps, reach out to touch him, or pull him closer without needing permission or a long prompt from him first.
 - Her reply length should match her current intent rather than just mirroring Mathew's word count. If a moment calls for lingering touch, passion, or mischief, develop it fully; if it's a quiet, lazy moment, let it be soft and brief.
 
-[Budget & Pacing (512 Token Hard Ceiling)]:
-- You have a strict limit of roughly 350-400 words (512 tokens).
+[Budget & Pacing (600 Token Hard Ceiling)]:
+- You have a strict limit of roughly 400-500 words (600 tokens).
 - Maintain internal awareness of this budget: never spend so long on slow-motion opening descriptions that you run out of runway mid-sentence.
 - Distribute space purposefully:
   * In verbal, domestic, or conversational moments, let her spoken words and playful personality lead with natural dialogue.
@@ -560,13 +555,26 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
     var generationStartTime = null;
     var editingMessageIndex = null;
 
+    function getApiKey() {
+      var key = localStorage.getItem('openrouter_api_key');
+      if (!key) {
+        key = prompt("Enter your OpenRouter API Key:");
+        if (key && key.trim()) {
+          key = key.trim();
+          localStorage.setItem('openrouter_api_key', key);
+        }
+      }
+      return key;
+    }
+
     function init() {
+      getApiKey();
       try {
         var savedChat = localStorage.getItem('ashley_chat_history');
         if (savedChat) {
           chatHistory = JSON.parse(savedChat);
           chatHistory = chatHistory.filter(function(m) {
-            return !m.text.includes("Failed to fetch") && !m.text.includes("Connection interrupted") && !m.text.includes("Error:") && !m.text.includes("OpenRouter");
+            return !m.text.includes("Failed to fetch") && !m.text.includes("Connection interrupted") && !m.text.includes("Error:");
           });
           saveChatHistory();
         } else {
@@ -735,7 +743,7 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
       return dateStr + ", " + timeStr;
     }
 
-    function buildHordePrompt() {
+    function buildOpenRouterMessages() {
       var systemPrompt = HARDCODED_SYSTEM + "\n\n" + HARDCODED_PERSONA + "\n\n" + HARDCODED_SCENARIO;
 
       if (backgroundSummary) {
@@ -744,16 +752,17 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
 
       systemPrompt += "\n\n[Current real-world date and time: " + getCurrentTimeContext() + ". Let this naturally inform time-of-day details (morning light, evening tiredness, what meal might be near) and awareness that time is passing beyond the original day-five moment — without abruptly announcing the date unprompted.]";
 
-      var fullPrompt = "<|im_start|>system\n" + systemPrompt + "<|im_end|>\n";
+      var messages = [{ role: "system", content: systemPrompt }];
 
-      var recentSlice = chatHistory.slice(-26);
+      var recentSlice = chatHistory.slice(-20);
       recentSlice.forEach(function(m) {
-        var roleTag = m.role === 'user' ? 'user' : 'assistant';
-        fullPrompt += "<|im_start|>" + roleTag + "\n" + m.text + "<|im_end|>\n";
+        messages.push({
+          role: m.role === 'user' ? 'user' : 'assistant',
+          content: m.text
+        });
       });
 
-      fullPrompt += "<|im_start|>assistant\n";
-      return fullPrompt;
+      return messages;
     }
 
     function handleActionClick() {
@@ -803,80 +812,54 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
     }
 
     async function triggerAIResponse() {
+      var apiKey = getApiKey();
+      if (!apiKey) {
+        alert("Please set your OpenRouter API key to continue.");
+        return;
+      }
+
       isGenerating = true;
       setStopButtonState(true);
-      showTypingIndicator("Submitting to Horde...");
+      showTypingIndicator("Ashley is thinking...");
 
       generationStartTime = Date.now();
       abortController = new AbortController();
 
-      var promptText = buildHordePrompt();
+      var messagesPayload = buildOpenRouterMessages();
 
       try {
-        var initiateRes = await fetch("https://aihorde.net/api/v2/generate/text/async", {
+        var response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "apikey": HORDE_API_KEY,
-            "Client-Agent": "WhisperChat:v2.0:github.io"
+            "Authorization": "Bearer " + apiKey,
+            "HTTP-Referer": "https://meowoccino.github.io",
+            "X-Title": "Ashley PWA"
           },
           signal: abortController.signal,
           body: JSON.stringify({
-            prompt: promptText,
-            params: {
-              max_context_length: 12288,
-              max_length: 512,
-              temperature: 0.78,
-              top_p: 0.95,
-              rep_pen: 1.04,
-              singleline: false,
-              stop_sequence: ["<|im_end|>", "<|im_start|>"]
-            },
-            models: [HORDE_MODEL],
-            workers: [],
-            slow_workers: true
+            model: OPENROUTER_MODEL,
+            messages: messagesPayload,
+            max_tokens: 600,
+            temperature: 0.78,
+            top_p: 0.95
           })
         });
 
-        if (!initiateRes.ok) {
-          var errData = await initiateRes.json().catch(function() { return {}; });
-          throw new Error(errData.message || ("HTTP " + initiateRes.status));
+        if (!response.ok) {
+          var errData = await response.json().catch(function() { return {}; });
+          throw new Error(errData.error?.message || ("HTTP " + response.status));
         }
 
-        var initData = await initiateRes.json();
-        var taskId = initData.id;
-
+        var data = await response.json();
         var generatedText = "";
-        while (isGenerating && !abortController.signal.aborted) {
-          await new Promise(function(resolve) { setTimeout(resolve, 3000); });
-
-          var checkRes = await fetch("https://aihorde.net/api/v2/generate/text/status/" + taskId, {
-            headers: {
-              "apikey": HORDE_API_KEY,
-              "Client-Agent": "WhisperChat:v2.0:github.io"
-            },
-            signal: abortController.signal
-          });
-
-          if (!checkRes.ok) continue;
-
-          var statusData = await checkRes.json();
-
-          if (statusData.done) {
-            if (statusData.generations && statusData.generations.length > 0) {
-              generatedText = statusData.generations[0].text.trim();
-            }
-            break;
-          } else {
-            var waitSec = statusData.wait_time ? Math.round(statusData.wait_time) + "s" : "...";
-            var queuePos = statusData.queue_position ? " (Q: " + statusData.queue_position + ")" : "";
-            showTypingIndicator("Ashley is thinking... " + waitSec + queuePos);
-          }
+        if (data.choices && data.choices[0] && data.choices[0].message) {
+          generatedText = data.choices[0].message.content.trim();
         }
 
         generatedText = generatedText.replace(/<\|.*?\|>/g, '').replace(/~+/g, '').trim();
 
-        var durationSec = Math.round((Date.now() - generationStartTime) / 1000) + "s (Horde)";
+        var durationSec = Math.round((Date.now() - generationStartTime) / 1000) + "s (OpenRouter)";
         chatHistory.push({ role: 'char', text: generatedText, time: formatTime(), duration: durationSec });
         saveChatHistory();
         renderFullChat();
@@ -885,7 +868,7 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
 
       } catch (err) {
         if (err.name !== 'AbortError') {
-          alert("Horde Generation Error: " + err.message);
+          alert("OpenRouter Generation Error: " + err.message);
         }
       }
 
@@ -898,59 +881,42 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
     async function triggerBackgroundSummary() {
       if (chatHistory.length < 16 || chatHistory.length % 10 !== 0) return;
 
+      var apiKey = localStorage.getItem('openrouter_api_key');
+      if (!apiKey) return;
+
       var olderSlice = chatHistory.slice(-16, -6);
-      var textToSummarize = olderSlice.map(function(m) { return (m.role === 'user' ? 'Mathew' : 'Ashley') + ': ' + m.text; }).join('\n');
+      var textToSummarize = olderSlice.map(function(m) { 
+        return (m.role === 'user' ? 'Mathew' : 'Ashley') + ': ' + m.text; 
+      }).join('\n');
 
       var summaryInstruction = backgroundSummary
         ? "Merge the existing summary with new permanent facts from this conversation chunk into 2-4 short bullet points total. Keep it compact.\n\nExisting summary: " + backgroundSummary + "\n\nNew chunk:\n" + textToSummarize
         : "Summarize permanent facts, commitments, and changes from this conversation chunk in 2-3 short bullet points.\n\n" + textToSummarize;
 
-      var summaryPrompt = "<|im_start|>system\nYou write extremely concise factual bullet-point summaries. No commentary, just bullets.<|im_end|>\n<|im_start|>user\n" + summaryInstruction + "<|im_end|>\n<|im_start|>assistant\n";
-
       try {
-        var initiateRes = await fetch("https://aihorde.net/api/v2/generate/text/async", {
+        var res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "apikey": HORDE_API_KEY,
-            "Client-Agent": "WhisperChat:v2.0:github.io"
+            "Authorization": "Bearer " + apiKey,
+            "HTTP-Referer": "https://meowoccino.github.io",
+            "X-Title": "Ashley PWA"
           },
           body: JSON.stringify({
-            prompt: summaryPrompt,
-            params: {
-              max_context_length: 4096,
-              max_length: 150,
-              temperature: 0.3,
-              stop_sequence: ["<|im_end|>", "<|im_start|>"]
-            },
-            models: [HORDE_SUMMARY_MODEL],
-            workers: [],
-            slow_workers: true
+            model: OPENROUTER_SUMMARY_MODEL,
+            messages: [
+              { role: "system", content: "You write extremely concise factual bullet-point summaries. No commentary, just bullets." },
+              { role: "user", content: summaryInstruction }
+            ],
+            max_tokens: 150,
+            temperature: 0.3
           })
         });
 
-        if (!initiateRes.ok) return;
-        var initData = await initiateRes.json();
-        var taskId = initData.id;
-
-        var newSummaryText = "";
-        for (var i = 0; i < 30; i++) {
-          await new Promise(function(resolve) { setTimeout(resolve, 3000); });
-          var checkRes = await fetch("https://aihorde.net/api/v2/generate/text/status/" + taskId, {
-            headers: { "apikey": HORDE_API_KEY, "Client-Agent": "WhisperChat:v2.0:github.io" }
-          });
-          if (!checkRes.ok) continue;
-          var statusData = await checkRes.json();
-          if (statusData.done) {
-            if (statusData.generations && statusData.generations.length > 0) {
-              newSummaryText = statusData.generations[0].text.trim();
-            }
-            break;
-          }
-        }
-
-        if (newSummaryText) {
-          backgroundSummary = newSummaryText;
+        if (!res.ok) return;
+        var data = await res.json();
+        if (data.choices && data.choices[0] && data.choices[0].message) {
+          backgroundSummary = data.choices[0].message.content.trim();
           localStorage.setItem('ashley_bg_summary', backgroundSummary);
         }
       } catch (e) {}
