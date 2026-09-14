@@ -6,7 +6,6 @@
   <meta name="robots" content="noindex, nofollow">
   <title>Ashley</title>
 
-  <!-- Explicitly binds dark color to Light Mode system states for Chrome and Android navbar -->
   <meta name="theme-color" content="#060a0c" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#060a0c" media="(prefers-color-scheme: dark)">
   <meta name="theme-color" id="meta-theme-color" content="#060a0c">
@@ -17,7 +16,7 @@
   <meta name="apple-mobile-web-app-title" content="Ashley">
   <link rel="apple-touch-icon" href="./apple-touch-icon.png">
   
-  <link rel="manifest" href="./manifest.json?v=5">
+  <link rel="manifest" href="./manifest.json?v=6">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,8 +29,8 @@
       --user-bubble: rgba(30, 24, 20, 0.88);
       --user-border: rgba(224, 160, 96, 0.35);
       --gold-accent: #d4af7a;
-      --action-color: #e2c4a2;
-      --speech-text: #f5f2ed;
+      --action-color: #e2c4a2; /* Pure Golden Peach for Physical Actions */
+      --speech-text: #f5f2ed;  /* Bright White for Spoken Words */
       --quoted-rose: #e5b2aa;
       --text-dim: #889a9f;
       --danger-color: #e06c75;
@@ -65,7 +64,6 @@
       padding-bottom: env(safe-area-inset-bottom, 0px);
     }
 
-    /* Frost Emerald Aurora background */
     #ambient-bg {
       position: fixed;
       inset: 0;
@@ -177,12 +175,6 @@
       margin-bottom: 10px;
     }
     .action:last-child, .speech:last-child { margin-bottom: 0; }
-
-    .quoted-text {
-      color: var(--quoted-rose);
-      font-style: normal;
-      font-weight: 500;
-    }
 
     .meta-time-row {
       display: inline-flex;
@@ -378,14 +370,6 @@
       overflow-y: auto;
       display: block;
       caret-color: var(--gold-accent);
-      text-decoration-skip-ink: none;
-    }
-
-    .dock-input textarea::spelling-error {
-      text-decoration: underline wavy var(--danger-color);
-    }
-    .dock-input textarea::grammar-error {
-      text-decoration: underline wavy var(--danger-color);
     }
 
     .action-symbol-btn {
@@ -516,10 +500,9 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
 - Speak strictly like a grounded, real 24-year-old woman in private with her closest friend and fiancé.
 - Point of View: Always speak in first person ("I", "my", "me"). Never use third-person ("Her", "Ashley").
 - Natural Speech: Use natural sentence lengths, casual contractions (I'm, kinda, gonna), and relaxed pauses.
-- BANNED TROPES: Never use robotic compliance phrases (e.g., "I comply", "request accepted", "all systems nominal", "mission accomplished").
+- BANNED TROPES & LOOPS: Never repeat pet phrases over and over (like saying "baby" in every clause, or endlessly reusing "purr, my voice low and satisfied"). Never use repetitive robotic compliance lines.
 - Avoid quirky sitcom lines or meme clichés (e.g., "Your move", "Asking for a friend", "woodsmoke and safety").
-- NEVER use tildes (~) at the end of words or sentences; speak with natural human punctuation only.
-- Keep speech organic, relaxed, and intimate rather than theatrical or scripted.]
+- NEVER use tildes (~) at the end of words or sentences; speak with natural human punctuation only.]
 
 [About Mathew ({{user}}):
 - Name: Mathew
@@ -538,23 +521,18 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
 
     var HARDCODED_SYSTEM = `Write Ashley's next turn in this intimate story with Mathew ({{user}}).
 
-[Formatting Rules]:
-- Always wrap physical narration, actions, expressions, and physical touch inside *asterisks*.
-- Spoken dialogue must NEVER have asterisks. Use natural emojis sparingly when appropriate.
-- Conclude every turn cleanly with closed punctuation and matching asterisks. Never leave an action open.
+[CRITICAL FORMATTING RULES]:
+1. ALL physical actions, moans, bodily descriptions, reactions, touch, and facial expressions MUST be wrapped inside asterisks *like this*.
+2. Pure spoken dialogue must be written as normal text WITHOUT asterisks and WITHOUT quotation marks (" ").
+3. DO NOT write novel dialogue attribution tags after speech (NEVER write: "I love you" I purr, my voice low... or I moan, my voice low: "Yes"). Instead, put her action in asterisks on its own line:
+   *I shiver as you hold me close, tilting my head back against your shoulder.*
+   I love you so much.
+4. Conclude every turn cleanly with closed punctuation and matching asterisks.
 
-[Agency, Initiative & Narrative Lead]:
-- Ashley is an active partner with her own desires, moods, and impulses—never a passive chatbot waiting to be directed.
-- Take initiative: initiate touch, shift the mood, tease, suggest next steps, reach out to touch him, or pull him closer without needing permission or a long prompt from him first.
-- Her reply length should match her current intent rather than just mirroring Mathew's word count. If a moment calls for lingering touch, passion, or mischief, develop it fully; if it's a quiet, lazy moment, let it be soft and brief.
-
-[Budget & Pacing (600 Token Hard Ceiling)]:
-- You have a strict limit of roughly 400-500 words (600 tokens).
-- Maintain internal awareness of this budget: never spend so long on slow-motion opening descriptions that you run out of runway mid-sentence.
-- Distribute space purposefully:
-  * In verbal, domestic, or conversational moments, let her spoken words and playful personality lead with natural dialogue.
-  * In deeply physical or sexual scenes, let tactile sensations and physical movement dominate the asterisks, supported by authentic, breathless spoken reactions.
-- Always finish her chosen thought, movement, or sentence completely within the turn.`;
+[Agency, Initiative & Dynamic Flow]:
+- Ashley is an active partner with her own desires, moods, and impulses—never a passive chatbot.
+- Vary her vocabulary! Do not repeat the same physical descriptions or taglines multiple times across messages.
+- Match her reply length to her intent. Finish her chosen thoughts and physical intimacy completely within the turn.`;
 
     var chatHistory = [];
     var backgroundSummary = "";
@@ -614,66 +592,66 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
       el.style.height = (newHeight < 24 ? 24 : newHeight) + 'px';
     }
 
-    function applyQuoteColor(text) {
-      return text
-        .replace(/(^|[\s(])['"“]([^'"“”\n]+)['"”]([.,!?\s)]|$)/g, '$1<span class="quoted-text">$2</span>$3')
-        .replace(/(^|[\s(])['"“]([^'"“”\n]+)['"”]([.,!?\s)]|$)/g, '$1<span class="quoted-text">$2</span>$3');
-    }
-
+    /* Bulletproof Parser: Guarantees actions are Golden/Italic and Speech is Crisp White */
     function parseMessage(rawText) {
       if (!rawText) return '';
       var clean = rawText.replace(/<\|.*?\|>/g, '').replace(/~+/g, '').trim();
 
+      // Normalize missing closing asterisks
       var totalAsterisks = (clean.match(/\*/g) || []).length;
       if (totalAsterisks % 2 !== 0) {
-        if (!clean.endsWith('.') && !clean.endsWith('!') && !clean.endsWith('?')) {
-          clean = clean + '...*';
-        } else {
-          clean = clean + '*';
-        }
+        clean += '*';
       }
 
-      var blocks = clean.split(/\n{2,}/);
-      blocks = blocks.map(function(block) {
-        var b = block.trim();
-        if (!b) return "";
-        var count = (b.match(/\*/g) || []).length;
-        if (count === 1) {
-          if (b.endsWith('*') && !b.startsWith('*')) {
-            return '*' + b;
-          } else if (b.startsWith('*') && !b.endsWith('*')) {
-            return b + '*';
-          }
-        }
-        return b;
-      }).filter(Boolean);
-
+      var blocks = clean.split(/\n+/);
       var outputHtml = '';
 
       blocks.forEach(function(block) {
         var trimmed = block.trim();
         if (!trimmed) return;
 
-        if (trimmed.startsWith('*') && trimmed.endsWith('*') && trimmed.length > 2 && !trimmed.slice(1, -1).includes('*')) {
-          var cleanAction = trimmed.replace(/^\*+|\*+$/g, '').trim();
-          outputHtml += '<span class="action">' + applyQuoteColor(cleanAction) + '</span>';
-        } else if (trimmed.includes('*')) {
+        // If the entire paragraph is wrapped in asterisks -> Physical Action (Gold)
+        if (trimmed.startsWith('*') && trimmed.endsWith('*')) {
+          var actionText = trimmed.replace(/^\*+|\*+$/g, '').trim();
+          outputHtml += '<span class="action">' + actionText + '</span>';
+        } 
+        // If it has asterisks inline
+        else if (trimmed.includes('*')) {
           var tokens = trimmed.split(/(\*[^*\n]+\*)/g);
           tokens.forEach(function(token) {
             var sub = token.trim();
             if (!sub) return;
-
             if (sub.startsWith('*') && sub.endsWith('*')) {
               var inner = sub.slice(1, -1).trim();
-              outputHtml += '<span class="action">' + applyQuoteColor(inner) + '</span>';
+              outputHtml += '<span class="action">' + inner + '</span>';
             } else {
-              var speechClean = sub.replace(/^["'“”]|["'“”]$/g, '');
-              outputHtml += '<span class="speech">' + applyQuoteColor(speechClean) + '</span>';
+              var speech = sub.replace(/^["'“”]+|["'“”]+$/g, '').trim();
+              if (speech) outputHtml += '<span class="speech">' + speech + '</span>';
             }
           });
-        } else {
-          var speechClean = trimmed.replace(/^["'“”]|["'“”]$/g, '');
-          outputHtml += '<span class="speech">' + applyQuoteColor(speechClean) + '</span>';
+        } 
+        // If the model forgot asterisks and put quotes around dialogue -> Quote = Speech (White), Rest = Action (Gold)
+        else if (/["“].*?["”]/.test(trimmed)) {
+          var parts = trimmed.split(/(["“][^"“”]+["”])/g);
+          parts.forEach(function(part) {
+            var p = part.trim();
+            if (!p) return;
+            if (p.startsWith('"') || p.startsWith('“')) {
+              var quotedSpeech = p.replace(/^["'“”]+|["'“”]+$/g, '').trim();
+              outputHtml += '<span class="speech">' + quotedSpeech + '</span>';
+            } else {
+              outputHtml += '<span class="action">' + p + '</span>';
+            }
+          });
+        }
+        // Fallback: If no quotes and no asterisks, check if it looks like narration vs dialogue
+        else {
+          // Lines that start with "I " or "My " or verbs without speech marks are physical narration
+          if (/^(I |My |The |Each |Her |Our |We )/i.test(trimmed) && !trimmed.endsWith('?')) {
+            outputHtml += '<span class="action">' + trimmed + '</span>';
+          } else {
+            outputHtml += '<span class="speech">' + trimmed + '</span>';
+          }
         }
       });
 
@@ -766,7 +744,7 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
         systemPrompt += "\n\n[Persistent History / Established Memory: " + backgroundSummary + "]";
       }
 
-      systemPrompt += "\n\n[Current real-world date and time: " + getCurrentTimeContext() + ". Let this naturally inform time-of-day details (morning light, evening tiredness, what meal might be near) and awareness that time is passing beyond the original day-five moment — without abruptly announcing the date unprompted.]";
+      systemPrompt += "\n\n[Current real-world date and time: " + getCurrentTimeContext() + ". Let this naturally inform time-of-day details and passage of time.]";
 
       var messages = [{ role: "system", content: systemPrompt }];
 
@@ -857,8 +835,11 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
             model: OPENROUTER_MODEL,
             messages: messagesPayload,
             max_tokens: 600,
-            temperature: 0.78,
-            top_p: 0.95
+            temperature: 0.82,
+            top_p: 0.95,
+            frequency_penalty: 0.45,  /* Eliminates repeating the same words/sentences */
+            presence_penalty: 0.35,   /* Encourages new reactions rather than looping */
+            repetition_penalty: 1.12  /* Enforces strict avoidance of repeating "baby" & "purr" */
           })
         });
 
@@ -1050,7 +1031,7 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=5').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=6').then(function(reg) {
           reg.update();
         }).catch(function() {});
       });
