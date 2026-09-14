@@ -6,16 +6,18 @@
   <meta name="robots" content="noindex, nofollow">
   <title>Ashley</title>
 
-  <!-- PWA & Mobile Chrome address/navigation bar colors -->
-  <meta name="theme-color" content="#060a0c">
-  <meta name="color-scheme" content="dark">
+  <!-- Explicitly binds dark color to Light Mode system states for Chrome and Android navbar -->
+  <meta name="theme-color" content="#060a0c" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#060a0c" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" id="meta-theme-color" content="#060a0c">
+  
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Ashley">
   <link rel="apple-touch-icon" href="./apple-touch-icon.png">
   
-  <link rel="manifest" href="./manifest.json?v=3">
+  <link rel="manifest" href="./manifest.json?v=5">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,7 +30,7 @@
       --user-bubble: rgba(30, 24, 20, 0.88);
       --user-border: rgba(224, 160, 96, 0.35);
       --gold-accent: #d4af7a;
-      --action-color: #e2c4a2; /* Restored original warm action text */
+      --action-color: #e2c4a2;
       --speech-text: #f5f2ed;
       --quoted-rose: #e5b2aa;
       --text-dim: #889a9f;
@@ -37,9 +39,16 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     
-    html, body { 
+    html {
+      background-color: #060a0c;
+      height: 100%;
+    }
+
+    body { 
       width: 100%; 
       height: 100%; 
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
       overflow: hidden; 
       background-color: #060a0c; 
       color: var(--speech-text); 
@@ -81,7 +90,6 @@
       gap: 20px;
     }
 
-    /* Soft Expand entrance animation */
     .msg-group {
       display: flex;
       width: 100%;
@@ -555,6 +563,13 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
     var generationStartTime = null;
     var editingMessageIndex = null;
 
+    function applyForcedThemeColor() {
+      var metaTheme = document.getElementById('meta-theme-color');
+      if (metaTheme) {
+        metaTheme.setAttribute('content', '#060a0c');
+      }
+    }
+
     function getApiKey() {
       var key = localStorage.getItem('openrouter_api_key');
       if (!key) {
@@ -568,6 +583,7 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
     }
 
     function init() {
+      applyForcedThemeColor();
       getApiKey();
       try {
         var savedChat = localStorage.getItem('ashley_chat_history');
@@ -1034,7 +1050,7 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=3').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=5').then(function(reg) {
           reg.update();
         }).catch(function() {});
       });
