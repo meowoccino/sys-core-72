@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow">
   <title>Ashley</title>
   <link rel="manifest" href="./manifest.json">
-  <meta name="theme-color" content="#08090c">
+  <meta name="theme-color" content="#05080e">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Ashley">
@@ -16,21 +16,28 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-dark: #08090c;
-      --char-bubble: rgba(18, 22, 32, 0.94);
-      --char-border: rgba(212, 175, 122, 0.22);
-      --user-bubble: rgba(34, 25, 18, 0.94);
+      --bg-dark: #05080e;
+      --char-bubble: rgba(16, 22, 32, 0.94);
+      --char-border: rgba(160, 195, 235, 0.25);
+      --user-bubble: rgba(30, 24, 22, 0.94);
       --user-border: rgba(224, 160, 96, 0.35);
       --gold-accent: #d4af7a;
-      --action-color: #e2c4a2;
+      --action-color: #d1dced;
       --speech-text: #f5f2ed;
       --quoted-rose: #e5b2aa;
-      --text-dim: #8b92a2;
+      --text-dim: #8893a7;
       --danger-color: #e06c75;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    html, body { width: 100%; height: 100%; overflow: hidden; background-color: var(--bg-dark); color: var(--speech-text); font-family: 'Plus Jakarta Sans', sans-serif; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-dark);
+      color: var(--speech-text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
 
     #app-container {
       position: fixed;
@@ -38,13 +45,17 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
     }
 
+    /* Mountain Frost Atmosphere: Deep glacial slate aura matching address & nav bars */
     #ambient-bg {
       position: fixed;
       inset: 0;
       z-index: 0;
-      background: radial-gradient(circle at 50% 12%, #141722 0%, #090a0f 65%, #040507 100%);
+      background: radial-gradient(ellipse 130% 65% at 50% 0%, #122336 0%, #09131f 45%, #05080e 85%);
+      box-shadow: inset 0 35px 70px rgba(50, 90, 140, 0.22);
       pointer-events: none;
     }
 
@@ -68,10 +79,19 @@
       gap: 20px;
     }
 
-    .msg-group.ashley {
+    /* Soft Expand entrance animation when new messages spawn */
+    .msg-group {
       display: flex;
-      justify-content: flex-start;
       width: 100%;
+      animation: softExpand 0.32s cubic-bezier(0.2, 1, 0.4, 1) forwards;
+    }
+    @keyframes softExpand {
+      from { opacity: 0; transform: scale(0.97) translateY(6px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .msg-group.ashley {
+      justify-content: flex-start;
       padding-right: 4px;
     }
     .msg-group.ashley .ashley-wrapper {
@@ -83,9 +103,7 @@
     }
 
     .msg-group.user {
-      display: flex;
       justify-content: flex-end;
-      width: 100%;
       padding-left: 14%;
     }
     .msg-group.user .user-wrapper {
@@ -118,7 +136,7 @@
       border-radius: 18px;
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.45);
       font-size: 0.95rem;
       line-height: 1.62;
       word-break: break-word;
@@ -254,10 +272,10 @@
     .sheet-content {
       width: 100%;
       max-height: 75vh;
-      background: #12141c;
+      background: #0f141f;
       border-top: 1px solid var(--char-border);
       border-radius: 24px 24px 0 0;
-      padding: 22px 18px 34px;
+      padding: 22px 18px calc(24px + env(safe-area-inset-bottom, 0px));
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -314,7 +332,7 @@
     footer {
       position: relative;
       z-index: 10;
-      padding: 8px 12px 14px;
+      padding: 8px 12px calc(12px + env(safe-area-inset-bottom, 0px));
       background: transparent;
       display: flex;
       align-items: flex-end;
@@ -324,8 +342,8 @@
 
     .dock-input {
       flex: 1;
-      background: rgba(12, 14, 20, 0.95);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(11, 16, 26, 0.95);
+      border: 1px solid rgba(160, 195, 235, 0.15);
       border-radius: 22px;
       padding: 8px 14px;
       display: flex;
@@ -398,7 +416,7 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(4, 5, 8, 0.94);
+      background: rgba(3, 5, 8, 0.94);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       z-index: 10000;
@@ -577,7 +595,6 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
       if (!rawText) return '';
       var clean = rawText.replace(/<\|.*?\|>/g, '').replace(/~+/g, '').trim();
 
-      // If text cut off mid-action at token limit, auto-close the dangling action cleanly
       var totalAsterisks = (clean.match(/\*/g) || []).length;
       if (totalAsterisks % 2 !== 0) {
         if (!clean.endsWith('.') && !clean.endsWith('!') && !clean.endsWith('?')) {
@@ -730,7 +747,6 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
         fullPrompt += "<|im_start|>" + roleTag + "\n" + m.text + "<|im_end|>\n";
       });
 
-      // Let her naturally start with dialogue or action based on context
       fullPrompt += "<|im_start|>assistant\n";
       return fullPrompt;
     }
@@ -1025,6 +1041,7 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
       }, 250);
     });
 
+    /* Gentle Frost Snowdrift Engine */
     var canvas = document.getElementById('ambient-canvas');
     var ctx = canvas.getContext('2d');
     var width = canvas.width = window.innerWidth;
@@ -1035,29 +1052,36 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
       height = canvas.height = window.innerHeight;
     });
 
-    var motes = [];
-    for (var i = 0; i < 18; i++) {
-      motes.push({
+    var flakes = [];
+    for (var i = 0; i < 26; i++) {
+      flakes.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        r: Math.random() * 1.2 + 0.5,
-        speedY: (Math.random() * 0.15 + 0.05) * -1,
-        speedX: (Math.random() - 0.5) * 0.1,
-        opacity: Math.random() * 0.18 + 0.08
+        r: Math.random() * 1.5 + 0.6,
+        speedY: Math.random() * 0.45 + 0.15,
+        speedX: (Math.random() - 0.5) * 0.2,
+        opacity: Math.random() * 0.45 + 0.15
       });
     }
 
     function drawAmbiance() {
       ctx.clearRect(0, 0, width, height);
-      for (var j = 0; j < motes.length; j++) {
-        var m = motes[j];
+      for (var j = 0; j < flakes.length; j++) {
+        var f = flakes[j];
         ctx.beginPath();
-        ctx.arc(m.x, m.y, m.r, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(212, 175, 122, " + m.opacity + ")";
+        ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(205, 225, 255, " + f.opacity + ")";
+        ctx.shadowColor = "rgba(180, 215, 255, 0.6)";
+        ctx.shadowBlur = 4;
         ctx.fill();
-        m.y += m.speedY;
-        m.x += m.speedX;
-        if (m.y < 0) { m.y = height + 5; m.x = Math.random() * width; }
+
+        f.y += f.speedY;
+        f.x += Math.sin(f.y * 0.015) * 0.25 + f.speedX;
+
+        if (f.y > height + 10) {
+          f.y = -10;
+          f.x = Math.random() * width;
+        }
       }
       requestAnimationFrame(drawAmbiance);
     }
