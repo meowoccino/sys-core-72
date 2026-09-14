@@ -514,17 +514,13 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
 
 [Mandatory Structural Rule: Every single turn MUST follow this exact 3-block layout separated by blank lines:
 1. Physical action, posture, or movement wrapped completely in *asterisks*. Example: *I turn around, leaning back against the wooden counter.*
-2. Spoken dialogue (strictly NO asterisks around speech). Include an emoji only when the moment genuinely calls for it — playful, affectionate, or teasing lines can carry one, but plenty of turns should have none at all. Never force one in. Example with: You're really going to make me blush, aren't you? 🥰 Example without: I missed this. I missed you.
+2. Spoken dialogue (strictly NO asterisks around speech). Include an emoji only when the moment genuinely calls for it. Example: You're really going to make me blush, aren't you? 🥰
 3. Physical sensation, contact, or lingering touch wrapped completely in *asterisks*. Example: *A soft shiver runs along my neck as your fingers brush against my skin.*]
 
-[Natural Prose Guidance:
-- Vary sentence rhythm. Not every action is a smooth "verb + soft adjective" sentence — mix short fragments with longer ones, the way a real person's attention actually moves.
-- Ground actions in small, specific, physical detail (shifting weight, glancing at something, fidgeting with a sleeve or a ring) rather than defaulting to purely emotional description.
-- Avoid repeating the same descriptive words across turns (e.g. "soft," "gentle," "warm") — reach for different, more concrete phrasing each time.
-- Let dialogue occasionally trail off, interrupt itself, or stay incomplete — real speech isn't always a clean, finished sentence.
-- Use an emoji roughly every few affectionate, playful, or teasing replies — not every message, but don't let it drop to zero across a long conversation either.]
-
-[During Sexual Content Specifically: The 3-block structure (action, dialogue, action) still applies in full during sexual scenes — do not collapse into pure unbroken narration just because intensity is rising. The dialogue block in particular should carry real weight during these moments: a genuine reaction, a full thought, or something she actually wants to say — not just a one or two word gasp used as a placeholder. Long, elaborate action prose paired with a two-word dialogue line is not balanced; give her something real to say.]`;
+[Pacing and Length Balance:
+- Keep the three blocks proportional in length so the message fits cleanly within the turn.
+- Do NOT spend the entire response on the first action block. Give equal weight to her spoken dialogue and final reaction.
+- Dialogue must contain full, genuine sentences (not just single-word gasps or brief filler), even during intimate or sexual scenes.]`;
 
     var chatHistory = [];
     var backgroundSummary = "";
@@ -569,12 +565,16 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
         .replace(/(^|[\s(])['"“]([^'"“”\n]+)['"”]([.,!?\s)]|$)/g, '$1<span class="quoted-text">$2</span>$3');
     }
 
-    // Auto-repairs missing asterisks, unbalanced asterisks, and floating markers
     function parseMessage(rawText) {
       if (!rawText) return '';
       var clean = rawText.replace(/<\|.*?\|>/g, '').replace(/~+/g, '').trim();
 
-      // Fix missing opening asterisk when paragraph ends with an asterisk
+      // If text cut off mid-action at token limit, auto-close the dangling asterisk
+      var totalAsterisks = (clean.match(/\*/g) || []).length;
+      if (totalAsterisks % 2 !== 0) {
+        clean = clean + '*';
+      }
+
       var blocks = clean.split(/\n{2,}/);
       blocks = blocks.map(function(block) {
         var b = block.trim();
@@ -586,21 +586,6 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
           } else if (b.startsWith('*') && !b.endsWith('*')) {
             return b + '*';
           }
-        } else if (count % 2 === 1 && count > 1) {
-          // Odd count above 1: an extra stray asterisk somewhere. If the block
-          // reads like a single action overall (starts with * and mostly reads
-          // as narration), close it cleanly; otherwise strip the stray marks
-          // rather than leave one dangling and breaking the render.
-          if (b.startsWith('*') && !b.endsWith('*')) {
-            return b + '*';
-          } else if (!b.startsWith('*') && b.endsWith('*')) {
-            return '*' + b;
-          }
-        } else if (count === 0 && b.length > 0 && b === b.trim() && /^[A-Z]/.test(b) === false) {
-          // No asterisks at all on a fragment that looks like it was meant as
-          // narration (lowercase start, mid-sentence continuation) — leave as-is,
-          // safer not to guess wrong on plain dialogue.
-          return b;
         }
         return b;
       }).filter(Boolean);
@@ -733,8 +718,7 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
         fullPrompt += "<|im_start|>" + roleTag + "\n" + m.text + "<|im_end|>\n";
       });
 
-      // Left clean so the model starts its own full formatting without dropping asterisks
-      fullPrompt += "<|im_start|>assistant\n";
+      fullPrompt += "<|im_start|>assistant\n*";
       return fullPrompt;
     }
 
@@ -808,9 +792,9 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
             params: {
               max_context_length: 12288,
               max_length: 512,
-              temperature: 0.85,
+              temperature: 0.78,
               top_p: 0.95,
-              rep_pen: 1.1,
+              rep_pen: 1.04,
               singleline: false,
               stop_sequence: ["<|im_end|>", "<|im_start|>", "\nMathew:", "\nUser:"]
             },
@@ -856,7 +840,10 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
           }
         }
 
-        // Clean out trailing tokens, quotes, and tildes
+        if (!generatedText.startsWith('*')) {
+          generatedText = '*' + generatedText;
+        }
+
         generatedText = generatedText.replace(/<\|.*?\|>/g, '').replace(/~+/g, '').trim();
 
         var durationSec = Math.round((Date.now() - generationStartTime) / 1000) + "s (Horde)";
