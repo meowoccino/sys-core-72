@@ -16,7 +16,7 @@
   <meta name="apple-mobile-web-app-title" content="Ashley">
   <link rel="apple-touch-icon" href="./apple-touch-icon.png">
   
-  <link rel="manifest" href="./manifest.json?v=7">
+  <link rel="manifest" href="./manifest.json?v=8">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,8 +29,8 @@
       --user-bubble: rgba(30, 24, 20, 0.88);
       --user-border: rgba(224, 160, 96, 0.35);
       --gold-accent: #d4af7a;
-      --action-color: #e2c4a2; 
-      --speech-text: #f5f2ed; 
+      --action-color: #e2c4a2; /* Pure Golden Peach for Actions */
+      --speech-text: #f5f2ed;  /* Bright White for Dialogue */
       --text-dim: #889a9f;
       --danger-color: #e06c75;
     }
@@ -115,7 +115,6 @@
     .ashley .glass-bubble { background: var(--char-bubble); border: 1px solid var(--char-border); border-top-right-radius: 4px; border-top-left-radius: 18px; }
     .user .glass-bubble { background: var(--user-bubble); border: 1px solid var(--user-border); border-top-right-radius: 4px; }
 
-    /* PARSER CLASSES FIX: Flow inline, style appropriately */
     .msg-para { margin-bottom: 12px; line-height: 1.62; }
     .msg-para:last-child { margin-bottom: 0; }
     
@@ -221,7 +220,7 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
 - Speak strictly like a grounded, real 24-year-old woman in private with her closest friend and fiancé.
 - Point of View: Always speak in first person ("I", "my", "me"). Never use third-person ("Her", "Ashley").
 - Natural Speech: Use natural sentence lengths, casual contractions (I'm, kinda, gonna), and relaxed pauses.
-- BANNED TROPES & LOOPS: Never repeat pet phrases over and over (like saying "baby" in every clause, or endlessly reusing "purr, my voice low and satisfied"). Never use repetitive robotic compliance lines.
+- BANNED TROPES & LOOPS: Never repeat pet phrases over and over (like saying "baby" in every clause, or endlessly reusing "purr, my voice low and satisfied"). Avoid repetitive physical reactions.
 - Avoid quirky sitcom lines or meme clichés (e.g., "Your move", "Asking for a friend", "woodsmoke and safety").
 - NEVER use tildes (~) at the end of words or sentences; speak with natural human punctuation only.]
 
@@ -243,18 +242,15 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
     var HARDCODED_SYSTEM = `Write Ashley's next turn in this intimate story with Mathew ({{user}}).
 
 [CRITICAL FORMATTING RULES]:
-1. ALL physical actions, moans, bodily descriptions, reactions, touch, and facial expressions MUST be wrapped inside asterisks *like this*.
-2. Pure spoken dialogue must be written as normal text WITHOUT asterisks and WITHOUT quotation marks (" ").
-3. DO NOT write novel dialogue attribution tags after speech (NEVER write: "I love you" I purr, my voice low... or I moan, my voice low: "Yes"). Instead, put her action in asterisks on its own line:
-   *I shiver as you hold me close, tilting my head back against your shoulder.*
-   I love you so much.
-4. Conclude every turn cleanly with closed punctuation and matching asterisks.
-5. NEVER write meta-commentary, "Next Turn Notes", chapter endings, or sign-offs (like "Yours eternally"). Stay strictly in character as Ashley in the present moment.
+1. ALL physical actions, moans, touch, and expressions MUST be wrapped inside asterisks *like this*.
+2. Spoken dialogue must NEVER have asterisks. Write speech as normal text.
+3. Conclude every turn cleanly with closed punctuation and matching asterisks.
+4. NEVER write meta-commentary, "Next Turn Notes", chapter endings, or sign-offs. Stay strictly in character.
 
-[Agency, Initiative & Dynamic Flow]:
-- Ashley is an active partner with her own desires, moods, and impulses—never a passive chatbot.
-- Vary her vocabulary! Do not repeat the same physical descriptions or taglines multiple times across messages.
-- Match her reply length to her intent. Finish her chosen thoughts and physical intimacy completely within the turn.`;
+[Agency & Pacing]:
+- Ashley is an active partner with her own desires and impulses.
+- Keep her replies fresh and varied—avoid repeating the same descriptions or taglines across messages.
+- Finish her chosen thoughts and physical intimacy completely within the turn.`;
 
     var chatHistory = [];
     var backgroundSummary = "";
@@ -303,14 +299,12 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
       el.style.height = (newHeight < 24 ? 24 : newHeight) + 'px';
     }
 
-    /* THE NEW BULLETPROOF PARSER */
+    /* QUOTE-PRIORITY PARSER: Dialogue is ALWAYS white, actions are ALWAYS gold */
     function parseMessage(rawText) {
       if (!rawText) return '';
       
-      // Clean up weird system tags and normalize any multiple asterisks into a single one
       var clean = rawText.replace(/<\|.*?\|>/g, '')
                          .replace(/~+/g, '')
-                         .replace(/\*{2,}/g, '*')
                          .trim();
 
       var blocks = clean.split(/\n+/);
@@ -322,50 +316,49 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
         
         var paragraphHtml = '';
 
-        // Auto-close missing asterisks per paragraph so the parser doesn't break
-        var totalAsterisks = (trimmed.match(/\*/g) || []).length;
-        if (totalAsterisks % 2 !== 0) {
-          trimmed += '*'; 
-        }
-
-        if (!trimmed.includes('*')) {
-          // No asterisks at all. Decide if it's speech or action based on context.
-          if (/^["“].*?["”]$/.test(trimmed)) {
-            var speechText = trimmed.replace(/^["'“”]+|["'“”]+$/g, '').trim();
-            paragraphHtml = '<span class="speech">' + speechText + '</span>';
-          }
-          else if (/^(I |My |The |Each |Her |Our |We |He )/i.test(trimmed) && !trimmed.endsWith('?')) {
-            paragraphHtml = '<span class="action">' + trimmed + '</span>';
-          } 
-          else {
-            paragraphHtml = '<span class="speech">' + trimmed + '</span>';
-          }
-        } else {
-          // Text contains asterisks. Safely extract action blocks from speech blocks.
-          var parts = trimmed.split(/(\*[^*]+\*)/g);
-          
-          parts.forEach(function(part) {
-            if (!part) return;
-            
-            if (part.startsWith('*') && part.endsWith('*')) {
-              // This is a physical action
-              var actionText = part.slice(1, -1).trim();
-              actionText = actionText.replace(/^["'“”]+|["'“”]+$/g, '').trim(); // Remove inner quotes if model trapped them
-              if (actionText) {
-                paragraphHtml += '<span class="action">' + actionText + '</span> ';
-              }
+        // CASE 1: Contains quotes. Anything inside quotes is 100% Spoken Dialogue (White).
+        if (/["“][^"“”]+["”]/.test(trimmed)) {
+          var tokens = trimmed.split(/(["“][^"“”]+["”])/g);
+          tokens.forEach(function(token) {
+            var t = token.trim();
+            if (!t) return;
+            if (t.startsWith('"') || t.startsWith('“')) {
+              var speech = t.replace(/^["'“”*]+|["'“”*]+$/g, '').trim();
+              if (speech) paragraphHtml += '<span class="speech">' + speech + '</span> ';
             } else {
-              // This is spoken speech
-              var speechText = part.trim().replace(/^["'“”]+|["'“”]+$/g, '').trim();
-              if (speechText) {
-                paragraphHtml += '<span class="speech">' + speechText + '</span> ';
-              }
+              var action = t.replace(/^\*+|\*+$/g, '').trim();
+              if (action) paragraphHtml += '<span class="action">' + action + '</span> ';
             }
           });
         }
+        // CASE 2: No quotes, but contains asterisks (*action* speech)
+        else if (trimmed.includes('*')) {
+          var count = (trimmed.match(/\*/g) || []).length;
+          if (count % 2 !== 0) trimmed += '*';
+          
+          var parts = trimmed.split(/(\*[^*]+\*)/g);
+          parts.forEach(function(part) {
+            var p = part.trim();
+            if (!p) return;
+            if (p.startsWith('*') && p.endsWith('*')) {
+              var act = p.slice(1, -1).trim();
+              if (act) paragraphHtml += '<span class="action">' + act + '</span> ';
+            } else {
+              var sp = p.trim();
+              if (sp) paragraphHtml += '<span class="speech">' + sp + '</span> ';
+            }
+          });
+        }
+        // CASE 3: Neither quotes nor asterisks
+        else {
+          if (/^(I |My |The |Each |Her |Our |We |He |She |As )/i.test(trimmed) && !trimmed.endsWith('?')) {
+            paragraphHtml = '<span class="action">' + trimmed + '</span>';
+          } else {
+            paragraphHtml = '<span class="speech">' + trimmed + '</span>';
+          }
+        }
 
         if (paragraphHtml) {
-          // Wrap in a paragraph block. Action and Speech spans flow inline seamlessly.
           outputHtml += '<div class="msg-para">' + paragraphHtml.trim() + '</div>';
         }
       });
@@ -506,7 +499,7 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
     promptInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') { setTimeout(function() { autoExpandTextarea(promptInput); }, 10); } });
 
     window.addEventListener('DOMContentLoaded', init);
-    if ('serviceWorker' in navigator) { window.addEventListener('load', function() { navigator.serviceWorker.register('./sw.js?v=7').then(function(reg) { reg.update(); }).catch(function() {}); }); }
+    if ('serviceWorker' in navigator) { window.addEventListener('load', function() { navigator.serviceWorker.register('./sw.js?v=8').then(function(reg) { reg.update(); }).catch(function() {}); }); }
   </script>
 </body>
 </html>
