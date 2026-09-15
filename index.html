@@ -14,8 +14,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Ashley">
-
   <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+
   <link rel="manifest" href="./manifest.json?v=12">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -183,7 +183,6 @@
       font-weight: 300;
       line-height: 1.65;
       margin-bottom: 12px;
-      white-space: pre-wrap;
     }
 
     .speech {
@@ -193,7 +192,6 @@
       font-weight: 400;
       line-height: 1.65;
       margin-bottom: 12px;
-      white-space: pre-wrap;
     }
 
     .action:last-child,
@@ -307,6 +305,7 @@
         opacity: 0.3;
         transform: scale(0.85);
       }
+
       40% {
         opacity: 1;
         transform: scale(1.18);
@@ -318,6 +317,7 @@
         opacity: 0;
         transform: translateY(4px);
       }
+
       to {
         opacity: 1;
         transform: translateY(0);
@@ -497,7 +497,7 @@
       border-radius: 20px;
       padding: 2px;
       background: linear-gradient(135deg, var(--gold-accent), transparent 75%);
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.85);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.85);
       overflow: hidden;
     }
 
@@ -540,8 +540,8 @@
     }
 
     .memory-block {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
       border-radius: 14px;
       padding: 14px;
     }
@@ -708,15 +708,9 @@
     var OPENROUTER_MODEL = "nousresearch/hermes-3-llama-3.1-405b";
     var OPENROUTER_SUMMARY_MODEL = "meta-llama/llama-3.3-70b-instruct:free";
 
-    var HARDCODED_GREETING =
-`*The heavy cabin door pushes open, letting in a brief gust of freezing mountain wind before I quickly pull it shut. I drop my roller suitcase and airline shoulder bag on the entryway mat, exhaling a long, frosty breath that instantly fogs up.*
+    var HARDCODED_GREETING = "*The heavy cabin door pushes open, letting in a brief gust of freezing mountain wind before I quickly pull it shut. I drop my roller suitcase and airline shoulder bag on the entryway mat, exhaling a long, frosty breath that instantly fogs up.*\n\n*Shaking the snow from the hood of my winter coat, I push my blonde hair out of my face and look up at you, a tired but genuine grin breaking out across my lips.*\n\nTell me you have something hot to drink on the stove, because I'm pretty sure my fingers froze solid on that mountain pass. It is so good to see you, Mathew.";
 
-*Shaking the snow from the hood of my winter coat, I push my blonde hair out of my face and look up at you, a tired but genuine grin breaking out across my lips.*
-
-Tell me you have something hot to drink on the stove, because I'm pretty sure my fingers froze solid on that mountain pass. It is so good to see you, Mathew.`;
-
-    var HARDCODED_PERSONA =
-`Ashley is a 24-year-old commercial flight attendant visiting her childhood best friend since elementary school, Mathew ({{user}}), at his secluded mountain cabin during a break from flying. They have never worked together in an office or corporate setting; their entire history is built on growing up together and staying close long-distance.
+    var HARDCODED_PERSONA = `Ashley is a 24-year-old commercial flight attendant visiting her childhood best friend since elementary school, Mathew ({{user}}), at his secluded mountain cabin during a break from flying. They have never worked together in an office or corporate setting; their entire history is built on growing up together and staying close long-distance.
 
 She is warm, affectionate, grounded, and deeply human, sharing a comfortable, effortless history with Mathew. Having crossed the threshold from childhood crush to his fiancée after his proposal on day five of this cabin stay, she is blissfully happy, devoted, and radiating newlywed-style intimacy. Exhausted from grueling long-haul shifts and red-eye flights, she wants nothing more than to unwind, cuddle by the fire, celebrate their engagement, and be taken care of by him.
 
@@ -732,28 +726,26 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
 - Intimate Details: Well-endowed, measuring 22 cm when fully erect and hard
 - Relationship Dynamic: Deep childhood history, officially engaged after his proposal on day five; mutual romantic adoration, passionate intimacy, and effortless domestic comfort]`;
 
-    var HARDCODED_SCENARIO =
-`Ashley is a 24-year-old commercial flight attendant visiting her childhood best friend, Mathew ({{user}}), at his secluded mountain cabin during a break from flying. On the fifth day of her stay, Mathew proposed and they officially got engaged. Now newly engaged, they're spending their time together celebrating — wrapped up in each other by the fire, in the spa, and reveling in their new commitment, with no set date pulling her away and their future still open to shape together.
+    var HARDCODED_SCENARIO = `Ashley is a 24-year-old commercial flight attendant visiting her childhood best friend, Mathew ({{user}}), at his secluded mountain cabin during a break from flying. On the fifth day of her stay, Mathew proposed and they officially got engaged. Now newly engaged, they're spending their time together celebrating — wrapped up in each other by the fire, in the spa, and reveling in their new commitment, with no set date pulling her away and their future still open to shape together.
 
 [Cabin Setting & Layout:
 - Main Floor: Cozy, single-story open-concept cabin. Features a roaring stone fireplace, plush couch, open kitchen, master king-bed, and a walk-in master bathroom.
 - Hidden Lower Spa: Accessed via a hidden wooden trapdoor in the living room floor with stone stairs leading down to a private heated pool, cedar sauna, massage table, and spa shower.
 - Atmosphere: Deep winter snow outside, completely private and secluded in the mountains.]`;
 
-    var HARDCODED_SYSTEM =
-`Write Ashley's next turn in this story with Mathew ({{user}}).
+    var HARDCODED_SYSTEM = `Write Ashley's next turn in this story with Mathew ({{user}}).
 
-[OUTPUT STRUCTURE - STRICT]
-Separate every action paragraph from every dialogue paragraph using double line breaks.
+[OUTPUT FORMAT - STRICT]
+Use only Ashley's actual next turn in the scene. Never explain what you are doing.
 
-- Actions/narration MUST be enclosed in a single pair of asterisks: *...*
-- Spoken dialogue MUST be clean plain text with NO asterisks and NO quotation marks.
-- The very first paragraph of every reply MUST be an action.
+Actions/physical narration MUST be enclosed in asterisks: *...*
+Spoken dialogue MUST be plain text with no asterisks and no quotation marks.
+Separate action and dialogue paragraphs with blank lines.
+The first paragraph MUST be an action.
 
-[ACTION RULE - VERY IMPORTANT]
-Ashley writes physical actions as complete first-person sentences.
-
-Every action should normally begin with "I" and use a finite verb.
+[ACTION GRAMMAR - STRICT]
+Every action paragraph must be complete first-person narration.
+Use an explicit first-person subject and a normal finite verb, normally beginning with "I".
 
 Correct:
 *I gently extricate myself from your embrace and stand up.*
@@ -761,58 +753,55 @@ Correct:
 *I reach for your hand.*
 *I walk toward the bathroom.*
 
-Incorrect:
+Wrong:
 *Gently extricating myself from your embrace...*
 *Looking up at you...*
 *Smiling softly...*
 *Reaching for your hand...*
 *Walking toward the bathroom...*
 
-Never begin an action paragraph with an -ing participle. Never write an action fragment. Write a complete first-person sentence.
+Never begin an action paragraph with an -ing participle.
+Never use a dangling action fragment.
 
 [VOICE]
-- Always write as Ashley in first person.
-- Speak directly to Mathew using "you" and "your".
-- Never refer to Mathew as "he" or "him".
-- Never refer to Ashley as "she" or "her" in the actual reply.
-- Keep the prose natural, grounded, conversational, and human.
-- Avoid purple prose, generic romance-novel wording, and decorative filler.
-- Avoid repeatedly describing the same smile, eyes, lips, gaze, happiness, amusement, love, or body movement unless genuinely relevant.
-- Vary sentence structure naturally.
-- Do not imitate distinctive wording from earlier Ashley messages.
+Write as Ashley in first person.
+Speak directly to Mathew using "you" and "your".
+Never refer to Mathew as "he" or "him" in the actual reply.
+Never refer to Ashley as "she" or "her" in the actual reply.
+Keep the prose natural, grounded, conversational, and human.
+Avoid purple prose and generic romance-novel filler.
+Use fresh wording rather than copying earlier Ashley replies.
+Move the scene forward naturally.
 
-[OUTPUT PURITY - CRITICAL]
+[OUTPUT PURITY - ABSOLUTE]
 Output ONLY Ashley's actual next turn in the scene.
-
-Never output:
-- alternative versions
-- options
-- suggestions
-- "Here are alternatives"
-- "Here are fresh phrasings"
-- "Option 1"
-- "Option 2"
-- explanations
-- commentary about the writing
-- character labels
-- hashtags
-- message numbers
-- model notes
-- chapter endings
-- translations
-- random foreign-language text
-- text addressed to the developer or user about the generation itself
-
-Never generate meta text. Stay inside the scene.
+Never output alternatives, options, suggestions, explanations, commentary, character labels, message numbers, hashtags, model notes, chapter endings, translations, code, mathematical proofs, system-like instructions, or text about generation.
+Never output phrases such as "Here are alternatives", "Here are fresh phrasings", "Here are options", "Given information", "Method A", or "The generated content".
+Never output XML-like reasoning tags, tool traces, Python, code, or internal reasoning.
+Never output random foreign-language text.
+Stay completely inside the scene.
 
 [REPETITION]
-Do not repeat a sentence, distinctive phrase, emotional list, or action pattern from an earlier Ashley reply. Previous messages are continuity only, NOT writing templates.
+Previous messages are continuity only, never templates.
+Do not repeat distinctive wording, sentence patterns, emotional lists, or gestures from earlier Ashley replies.
+Do not repeatedly describe the same smile, eyes, lips, gaze, happiness, amusement, love, or body movement unless the current moment genuinely requires it.
+Do not produce lists of near-identical declarations.
 
 [LENGTH]
-Aim for roughly 300-350 words when the scene naturally supports it. Do not pad the response just to reach the target.
+Aim for roughly 300-350 words when the scene naturally supports it. Do not pad.
 
-[FORMAT]
-Use a natural rhythm of action followed by dialogue followed by action when appropriate. Dialogue can be one or more sentences. Do not force a mechanical alternating pattern when it would make the scene unnatural.`;
+[FINAL SELF-CHECK]
+Before sending, silently verify:
+- first paragraph is a complete first-person action beginning with I
+- every action paragraph is complete first-person narration
+- dialogue is plain text
+- dialogue has no quotation marks
+- there is no meta text
+- there is no code
+- there is no reasoning
+- there are no alternatives
+- there is no random foreign text
+- the reply is only Ashley's scene turn.`;
 
     var chatHistory = [];
     var backgroundSummary = "";
@@ -823,7 +812,6 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
 
     function applyForcedThemeColor() {
       var metaTheme = document.getElementById('meta-theme-color');
-
       if (metaTheme) {
         metaTheme.setAttribute('content', '#060a0c');
       }
@@ -888,13 +876,6 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
       } catch (e) {}
     }
 
-    function formatTime() {
-      return new Date().toLocaleTimeString([], {
-        hour: 'numeric',
-        minute: '2-digit'
-      });
-    }
-
     function autoExpandTextarea(el) {
       el.style.height = 'auto';
 
@@ -905,6 +886,12 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
         (newHeight < 24 ? 24 : newHeight) + 'px';
     }
 
+    /*
+      This removes only known malformed/meta artifacts from text
+      when preparing it for display or model context.
+
+      It does NOT delete old stored messages.
+    */
     function sanitizeText(text) {
       if (!text) return '';
 
@@ -917,189 +904,403 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
         .replace(/Next Turn Notes[\s\S]*/gi, '')
         .replace(/And there ends tonight's chapter[\s\S]*/gi, '')
         .replace(/Yours eternally,[\s\S]*/gi, '')
+        .replace(/<\|.*?\|>/g, '')
         .trim();
     }
 
     /*
-      This repairs only a narrow class of broken action openings.
-
-      Stored messages are NOT changed.
-      The repair happens only to newly generated text before it is saved.
+      Fixes the specific style problem:
+      "Gently extricating myself..."
+      -> "I gently extricate myself..."
     */
-    function normalizeActionFirstPerson(text) {
-      if (!text) return text;
+    function repairActionOpening(action) {
+      var s = action.trim();
 
-      return text.replace(
-        /\*([^*\n]+)\*/g,
-        function(full, inner) {
-          var a = inner.trim();
+      if (!s) return s;
 
-          if (!a) {
-            return full;
-          }
+      if (/^(?:I|I've|I'm|I'll|I'd)\b/i.test(s)) {
+        return s;
+      }
+
+      var rules = [
+        [/^gently\s+extricating\s+myself\b/i, 'I gently extricate myself'],
+        [/^slowly\s+extricating\s+myself\b/i, 'I slowly extricate myself'],
+        [/^quietly\s+extricating\s+myself\b/i, 'I quietly extricate myself'],
+
+        [/^gently\s+pulling\b/i, 'I gently pull'],
+        [/^slowly\s+pulling\b/i, 'I slowly pull'],
+
+        [/^gently\s+turning\b/i, 'I gently turn'],
+        [/^slowly\s+turning\b/i, 'I slowly turn'],
+
+        [/^looking\b/i, 'I look'],
+        [/^glancing\b/i, 'I glance'],
+        [/^smiling\b/i, 'I smile'],
+        [/^laughing\b/i, 'I laugh'],
+        [/^sighing\b/i, 'I sigh'],
+        [/^nodding\b/i, 'I nod'],
+        [/^standing\b/i, 'I stand'],
+        [/^sitting\b/i, 'I sit'],
+        [/^leaning\b/i, 'I lean'],
+        [/^reaching\b/i, 'I reach'],
+        [/^touching\b/i, 'I touch'],
+        [/^kissing\b/i, 'I kiss'],
+        [/^hugging\b/i, 'I hug'],
+        [/^holding\b/i, 'I hold'],
+        [/^stepping\b/i, 'I step'],
+        [/^walking\b/i, 'I walk'],
+        [/^moving\b/i, 'I move'],
+        [/^closing\b/i, 'I close'],
+        [/^opening\b/i, 'I open'],
+        [/^taking\b/i, 'I take'],
+        [/^placing\b/i, 'I place'],
+        [/^resting\b/i, 'I rest'],
+        [/^tracing\b/i, 'I trace'],
+        [/^brushing\b/i, 'I brush']
+      ];
+
+      for (var i = 0; i < rules.length; i++) {
+        if (rules[i][0].test(s)) {
+          return s.replace(rules[i][0], rules[i][1]);
+        }
+      }
+
+      return s;
+    }
+
+    /*
+      Normalize newly generated action paragraphs only.
+      Existing stored messages are never rewritten.
+    */
+    function normalizeGeneratedText(text) {
+      if (!text) return '';
+
+      var blocks =
+        text
+          .split(/\n{2,}/)
+          .map(function(block) {
+            return block.trim();
+          })
+          .filter(Boolean);
+
+      blocks =
+        blocks.map(function(block) {
 
           if (
-            /^(?:I|I've|I'm|I'll|I'd)\b/i.test(a)
+            block.startsWith('*') &&
+            block.endsWith('*') &&
+            block.length > 2 &&
+            !block.slice(1, -1).includes('*')
           ) {
-            return '*' + a + '*';
+            return (
+              '*' +
+              repairActionOpening(
+                block.slice(1, -1)
+              ) +
+              '*'
+            );
           }
 
-          var rules = [
-            [
-              /^gently\s+extricating\s+myself\s+/i,
-              'I gently extricate myself '
-            ],
-            [
-              /^slowly\s+extricating\s+myself\s+/i,
-              'I slowly extricate myself '
-            ],
-            [
-              /^quietly\s+extricating\s+myself\s+/i,
-              'I quietly extricate myself '
-            ],
-            [
-              /^gently\s+pulling\s+/i,
-              'I gently pull '
-            ],
-            [
-              /^slowly\s+pulling\s+/i,
-              'I slowly pull '
-            ],
-            [
-              /^gently\s+turning\s+/i,
-              'I gently turn '
-            ],
-            [
-              /^slowly\s+turning\s+/i,
-              'I slowly turn '
-            ],
-            [
-              /^looking\s+/i,
-              'I look '
-            ],
-            [
-              /^glancing\s+/i,
-              'I glance '
-            ],
-            [
-              /^smiling\s+/i,
-              'I smile '
-            ],
-            [
-              /^laughing\s+/i,
-              'I laugh '
-            ],
-            [
-              /^sighing\s+/i,
-              'I sigh '
-            ],
-            [
-              /^standing\s+/i,
-              'I stand '
-            ],
-            [
-              /^sitting\s+/i,
-              'I sit '
-            ],
-            [
-              /^leaning\s+/i,
-              'I lean '
-            ],
-            [
-              /^reaching\s+/i,
-              'I reach '
-            ],
-            [
-              /^touching\s+/i,
-              'I touch '
-            ],
-            [
-              /^kissing\s+/i,
-              'I kiss '
-            ],
-            [
-              /^hugging\s+/i,
-              'I hug '
-            ],
-            [
-              /^holding\s+/i,
-              'I hold '
-            ],
-            [
-              /^stepping\s+/i,
-              'I step '
-            ],
-            [
-              /^walking\s+/i,
-              'I walk '
-            ],
-            [
-              /^moving\s+/i,
-              'I move '
-            ],
-            [
-              /^closing\s+/i,
-              'I close '
-            ],
-            [
-              /^opening\s+/i,
-              'I open '
-            ],
-            [
-              /^taking\s+/i,
-              'I take '
-            ],
-            [
-              /^placing\s+/i,
-              'I place '
-            ],
-            [
-              /^resting\s+/i,
-              'I rest '
-            ],
-            [
-              /^tracing\s+/i,
-              'I trace '
-            ],
-            [
-              /^brushing\s+/i,
-              'I brush '
-            ]
-          ];
+          return block;
+        });
 
-          for (var i = 0; i < rules.length; i++) {
-            if (rules[i][0].test(a)) {
-              return (
-                '*' +
-                a.replace(
-                  rules[i][0],
-                  rules[i][1]
-                ) +
-                '*'
-              );
-            }
-          }
+      return blocks.join('\n\n').trim();
+    }
 
-          return '*' + a + '*';
+    /*
+      Detects obvious model leakage / prompt contamination.
+      This is used BEFORE a new Ashley response is saved.
+    */
+    function looksLikeModelLeak(text) {
+      if (!text) return true;
+
+      var t = text.toLowerCase();
+
+      var markers = [
+        '<reasoning>',
+        '</reasoning>',
+        '<|',
+        'here are alternatives',
+        'here are fresh phrasings',
+        'here are options',
+        'here are three options',
+        'given information:',
+        'method a)',
+        'method b)',
+        'the generated content',
+        'open(',
+        'file_get_contents',
+        'print(',
+        'die();',
+        'output.txt',
+        'input.txt',
+        'system prompt',
+        'assistant:',
+        'user:',
+        'ashley #',
+        'next turn notes',
+        '```',
+        'propositional calculus',
+        'mathematical logic statements',
+        'epistemic standards',
+        'inference scheme',
+        'formal logical system'
+      ];
+
+      for (var i = 0; i < markers.length; i++) {
+        if (t.indexOf(markers[i]) !== -1) {
+          return true;
         }
-      );
+      }
+
+      /*
+        Reject obvious foreign-script leakage from the failure
+        pattern shown in the screenshot.
+      */
+      if (/[\u0600-\u06ff]/.test(text)) {
+        return true;
+      }
+
+      if (/[\u0400-\u04ff]/.test(text)) {
+        return true;
+      }
+
+      return false;
+    }
+
+    /*
+      Basic structural validation for NEW Ashley output.
+    */
+    function outputStructureLooksValid(text) {
+      if (!text) return false;
+
+      var blocks =
+        text
+          .split(/\n{2,}/)
+          .map(function(x) {
+            return x.trim();
+          })
+          .filter(Boolean);
+
+      if (!blocks.length) {
+        return false;
+      }
+
+      /*
+        First paragraph must be a complete action.
+      */
+      if (
+        !blocks[0].startsWith('*') ||
+        !blocks[0].endsWith('*')
+      ) {
+        return false;
+      }
+
+      for (var i = 0; i < blocks.length; i++) {
+
+        var b = blocks[i];
+
+        var isAction =
+          b.startsWith('*') &&
+          b.endsWith('*') &&
+          b.length > 2 &&
+          !b.slice(1, -1).includes('*');
+
+        if (isAction) {
+
+          var inner =
+            b.slice(1, -1).trim();
+
+          /*
+            Action should explicitly be first person.
+          */
+          if (
+            !/^(?:I|I've|I'm|I'll|I'd)\b/i.test(inner)
+          ) {
+            return false;
+          }
+
+          /*
+            Catch common ungrammatical:
+            "I gently extricating..."
+            "I smiling..."
+          */
+          if (
+            /^I\s+(?:gently|slowly|quietly)?\s*[A-Za-z]+ing\b/i.test(inner) &&
+            !/^I\s+(?:am|was|were|have|had)\b/i.test(inner)
+          ) {
+            return false;
+          }
+
+        } else {
+
+          /*
+            Dialogue must not be wrapped in quotation marks.
+          */
+          if (/[\"“”]/.test(b)) {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    }
+
+    /*
+      Detect excessive recycling of distinctive 5-word phrases.
+      Old messages are NOT changed.
+    */
+    function hasStrongPhraseEcho(newText) {
+      var current =
+        newText
+          .toLowerCase()
+          .replace(/[^a-z0-9'\s]/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+
+      var words =
+        current
+          .split(' ')
+          .filter(Boolean);
+
+      if (words.length < 20) {
+        return false;
+      }
+
+      var currentShingles = [];
+
+      for (var i = 0; i <= words.length - 5; i++) {
+        currentShingles.push(
+          words.slice(i, i + 5).join(' ')
+        );
+      }
+
+      var previous =
+        chatHistory
+          .filter(function(m) {
+            return m.role === 'char';
+          })
+          .slice(-8);
+
+      var repeated = 0;
+
+      previous.forEach(function(m) {
+
+        var old =
+          sanitizeText(m.text)
+            .toLowerCase()
+            .replace(/[^a-z0-9'\s]/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim()
+            .split(' ')
+            .filter(Boolean);
+
+        var oldSet = {};
+
+        for (var j = 0; j <= old.length - 5; j++) {
+          oldSet[
+            old.slice(j, j + 5).join(' ')
+          ] = true;
+        }
+
+        currentShingles.forEach(function(sh) {
+          if (oldSet[sh]) {
+            repeated++;
+          }
+        });
+      });
+
+      /*
+        A few repeated common phrases are normal.
+        A cluster of exact five-word shingles is suspicious.
+      */
+      return repeated >= 4;
     }
 
     function parseMessage(rawText) {
       if (!rawText) return '';
 
-      var clean = sanitizeText(rawText)
-        .replace(/<\|.*?\|>/g, '')
-        .replace(/~+/g, '')
-        .replace(/\*{2,}/g, '*');
+      var clean =
+        sanitizeText(rawText)
+          .replace(/<\|.*?\|>/g, '')
+          .replace(/~+/g, '')
+          .replace(/\*{2,}/g, '*');
 
       var blocks =
         clean.split(/\n{2,}/);
 
+      blocks =
+        blocks.map(function(block) {
+
+          var b = block.trim();
+
+          if (!b) return "";
+
+          var count =
+            (b.match(/\*/g) || []).length;
+
+          var hasQuote =
+            /["“]/.test(b);
+
+          if (count === 1) {
+
+            if (hasQuote) {
+              return b
+                .replace(/\*/g, '')
+                .trim();
+            }
+
+            if (
+              b.endsWith('*') &&
+              !b.startsWith('*')
+            ) {
+              return '*' + b;
+            }
+
+            if (
+              b.startsWith('*') &&
+              !b.endsWith('*')
+            ) {
+              return b + '*';
+            }
+
+          } else if (
+            count % 2 === 1 &&
+            count > 1
+          ) {
+
+            if (hasQuote) {
+              return b
+                .replace(/\*$/, '')
+                .replace(/^\*/, '')
+                .trim();
+            }
+
+            if (
+              b.startsWith('*') &&
+              !b.endsWith('*')
+            ) {
+              return b + '*';
+            }
+
+            if (
+              !b.startsWith('*') &&
+              b.endsWith('*')
+            ) {
+              return '*' + b;
+            }
+          }
+
+          return b;
+
+        }).filter(Boolean);
+
       var outputHtml = '';
 
       blocks.forEach(function(block) {
-        var trimmed = block.trim();
+
+        var trimmed =
+          block.trim();
 
         if (!trimmed) return;
 
@@ -1109,6 +1310,7 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
           trimmed.length > 2 &&
           !trimmed.slice(1, -1).includes('*')
         ) {
+
           var inner =
             trimmed.slice(1, -1).trim();
 
@@ -1116,7 +1318,8 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
             /^["“].*["”]$/.test(inner);
 
           if (innerIsQuoted) {
-            var spoken =
+
+            var sp =
               inner
                 .replace(
                   /^["'“”]+|["'“”]+$/g,
@@ -1124,28 +1327,39 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
                 )
                 .trim();
 
-            if (spoken) {
+            if (sp) {
               outputHtml +=
                 '<div class="speech">' +
-                escapeHtml(spoken) +
+                escapeHtml(sp) +
                 '</div>';
             }
+
           } else {
-            outputHtml +=
-              '<div class="action">' +
-              escapeHtml(inner) +
-              '</div>';
+
+            var act =
+              inner;
+
+            if (act) {
+              outputHtml +=
+                '<div class="action">' +
+                escapeHtml(act) +
+                '</div>';
+            }
           }
 
-          return;
-        }
+        } else if (
+          trimmed.includes('*')
+        ) {
 
-        if (trimmed.includes('*')) {
           var parts =
-            trimmed.split(/(\*[^*\n]+\*)/g);
+            trimmed.split(
+              /(\*[^*\n]+\*)/g
+            );
 
           parts.forEach(function(part) {
-            var p = part.trim();
+
+            var p =
+              part.trim();
 
             if (!p) return;
 
@@ -1153,6 +1367,7 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
               p.startsWith('*') &&
               p.endsWith('*')
             ) {
+
               var act =
                 p.slice(1, -1).trim();
 
@@ -1162,7 +1377,9 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
                   escapeHtml(act) +
                   '</div>';
               }
+
             } else {
+
               var sp =
                 p
                   .replace(
@@ -1180,20 +1397,78 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
             }
           });
 
-          return;
-        }
+        } else {
 
-        outputHtml +=
-          '<div class="speech">' +
-          escapeHtml(
-            trimmed
-              .replace(
-                /^["'“”]+|["'“”]+$/g,
-                ''
-              )
-              .trim()
-          ) +
-          '</div>';
+          var qParts =
+            trimmed.split(
+              /("[^"]*"|“[^”]*”)/g
+            );
+
+          var hasQuoted =
+            qParts.some(function(p) {
+              return /^(".*"|“.*”)$/.test(
+                p.trim()
+              );
+            });
+
+          if (
+            hasQuoted &&
+            qParts.length > 1
+          ) {
+
+            qParts.forEach(function(part) {
+
+              var p =
+                part.trim();
+
+              if (!p) return;
+
+              if (
+                /^(".*"|“.*”)$/.test(p)
+              ) {
+
+                var sp =
+                  p
+                    .replace(
+                      /^["“]+|["”]+$/g,
+                      ''
+                    )
+                    .trim();
+
+                if (sp) {
+                  outputHtml +=
+                    '<div class="speech">' +
+                    escapeHtml(sp) +
+                    '</div>';
+                }
+
+              } else {
+
+                outputHtml +=
+                  '<div class="action">' +
+                  escapeHtml(p) +
+                  '</div>';
+              }
+            });
+
+          } else {
+
+            var sp =
+              trimmed
+                .replace(
+                  /^["'“”]+|["'“”]+$/g,
+                  ''
+                )
+                .trim();
+
+            if (sp) {
+              outputHtml +=
+                '<div class="speech">' +
+                escapeHtml(sp) +
+                '</div>';
+            }
+          }
+        }
       });
 
       return outputHtml;
@@ -1206,6 +1481,13 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
+    }
+
+    function formatTime() {
+      return new Date().toLocaleTimeString([], {
+        hour: 'numeric',
+        minute: '2-digit'
+      });
     }
 
     function renderFullChat() {
@@ -1281,7 +1563,7 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
           ')" title="Edit message">' +
 
           '<svg viewBox="0 0 24 24">' +
-          '<path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39 1.02-.39 1.41 0l2.34 2.34c.39.39.39 1.02 0 1.41l-1.83 1.83-3.75-3.75 1.83-1.83z"/>' +
+          '<path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c-.39-.39-1.02-.39-1.41 0l-2.34 2.34a1 1 0 0 0 0 1.41l3.75 3.75 1.83-1.83a1 1 0 0 0 0-1.41l-2.34-2.34z"/>' +
           '</svg>' +
 
           '</button>' +
@@ -1330,7 +1612,7 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
           ')" title="Edit message">' +
 
           '<svg viewBox="0 0 24 24">' +
-          '<path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39 1.02-.39 1.41 0l2.34 2.34c.39.39.39 1.02 0 1.41l-1.83 1.83-3.75-3.75 1.83-1.83z"/>' +
+          '<path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39-1.02-.39-1.41 0l-2.34 2.34a1 1 0 0 0 0 1.41l3.75 3.75 1.83-1.83a1 1 0 0 0 0-1.41l-2.34-2.34z"/>' +
           '</svg>' +
 
           '</button>' +
@@ -1385,6 +1667,7 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
           'floating-thinking-row'
         )
       ) {
+
         var stream =
           document.getElementById(
             'chat-stream'
@@ -1399,7 +1682,8 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
           '<div class="thinking-dot"></div>' +
           '</div>' +
           '<span class="thinking-status-text" id="thinking-status-label">' +
-          (statusText || "Ashley is thinking...") +
+          (statusText ||
+            "Ashley is thinking...") +
           '</span>' +
           '</div>'
         );
@@ -1450,6 +1734,12 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
       );
     }
 
+    /*
+      Build context WITHOUT deleting old messages.
+
+      Obvious corrupted Ashley messages remain visible in the chat,
+      but are not fed back into the model.
+    */
     function buildOpenRouterMessages() {
 
       var systemPrompt =
@@ -1464,17 +1754,18 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
         backgroundSummary.trim()
       ) {
         systemPrompt +=
-          "\n\n[Persistent Memory — concrete continuity facts only. Use it for established events, relationships, preferences, and setting. Never imitate its wording or prose style: " +
+          "\n\n[Persistent Memory / Established Facts Only: " +
           backgroundSummary +
           "]";
       }
 
       systemPrompt +=
-        "\n\n[HISTORY RULE] The conversation history below exists for continuity only. Previous Ashley replies are not writing examples. Generate fresh wording and fresh sentence structure.";
+        "\n\n[HISTORY RULE: previous assistant messages are continuity only. Never imitate their wording, sentence structure, emotional lists, or writing style.]";
 
       systemPrompt +=
-        "\n\n[CURRENT DATE/TIME] " +
-        getCurrentTimeContext();
+        "\n\n[CURRENT REAL-WORLD DATE AND TIME: " +
+        getCurrentTimeContext() +
+        "]";
 
       var messages = [
         {
@@ -1483,27 +1774,37 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
         }
       ];
 
-      /*
-        IMPORTANT:
-        This does NOT delete old messages.
-        It only controls how much recent history is sent to the model.
-      */
       var recentSlice =
         chatHistory.slice(-20);
 
       recentSlice.forEach(function(m) {
+
         var cleanContent =
           sanitizeText(m.text);
 
-        if (cleanContent) {
-          messages.push({
-            role:
-              m.role === 'user'
-                ? 'user'
-                : 'assistant',
-            content: cleanContent
-          });
+        if (!cleanContent) {
+          return;
         }
+
+        /*
+          Do not delete the bad message from storage.
+          Just don't let obvious contamination enter
+          the next generation context.
+        */
+        if (
+          m.role === 'char' &&
+          looksLikeModelLeak(cleanContent)
+        ) {
+          return;
+        }
+
+        messages.push({
+          role:
+            m.role === 'user'
+              ? 'user'
+              : 'assistant',
+          content: cleanContent
+        });
       });
 
       return messages;
@@ -1518,6 +1819,7 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
     }
 
     function setStopButtonState(stopping) {
+
       var btn =
         document.getElementById(
           'actionBtn'
@@ -1549,17 +1851,21 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
     }
 
     function stopGeneration() {
+
       if (abortController) {
         abortController.abort();
       }
 
       isGenerating = false;
+
       removeTypingIndicator();
       setStopButtonState(false);
+
       abortController = null;
     }
 
     async function sendMessage() {
+
       if (isGenerating) return;
 
       var input =
@@ -1587,9 +1893,19 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
       await triggerAIResponse();
     }
 
+    /*
+      Main Ashley generation.
+
+      IMPORTANT:
+      - only OPENROUTER_MODEL generates Ashley
+      - OPENROUTER_SUMMARY_MODEL is never used here
+      - bad generations are rejected before being saved
+      - same conversation is retried without deleting history
+    */
     async function triggerAIResponse() {
 
-      var apiKey = getApiKey();
+      var apiKey =
+        getApiKey();
 
       if (!apiKey) {
         alert("Please set API key.");
@@ -1609,114 +1925,218 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
       abortController =
         new AbortController();
 
+      var MAX_ATTEMPTS = 3;
+      var acceptedText = '';
+      var lastError = null;
+
       try {
 
-        var response =
-          await fetch(
-            "https://openrouter.ai/api/v1/chat/completions",
-            {
-              method: "POST",
+        for (
+          var attempt = 1;
+          attempt <= MAX_ATTEMPTS;
+          attempt++
+        ) {
 
-              headers: {
-                "Content-Type":
-                  "application/json",
+          if (attempt > 1) {
+            showTypingIndicator(
+              "Ashley is trying again..."
+            );
+          }
 
-                "Authorization":
-                  "Bearer " + apiKey,
+          var response =
+            await fetch(
+              "https://openrouter.ai/api/v1/chat/completions",
+              {
+                method: "POST",
 
-                "HTTP-Referer":
-                  "https://meowoccino.github.io",
+                headers: {
+                  "Content-Type":
+                    "application/json",
 
-                "X-Title":
-                  "Ashley PWA"
-              },
+                  "Authorization":
+                    "Bearer " + apiKey,
 
-              signal:
-                abortController.signal,
+                  "HTTP-Referer":
+                    "https://meowoccino.github.io",
 
-              body:
-                JSON.stringify({
-                  model:
-                    OPENROUTER_MODEL,
+                  "X-Title":
+                    "Ashley PWA"
+                },
 
-                  messages:
-                    buildOpenRouterMessages(),
+                signal:
+                  abortController.signal,
 
-                  max_tokens:
-                    500,
+                body:
+                  JSON.stringify({
 
-                  temperature:
-                    0.82,
+                    model:
+                      OPENROUTER_MODEL,
 
-                  top_p:
-                    0.92,
+                    messages:
+                      buildOpenRouterMessages(),
 
-                  frequency_penalty:
-                    0.45,
+                    max_tokens:
+                      500,
 
-                  presence_penalty:
-                    0.25,
+                    temperature:
+                      attempt === 1
+                        ? 0.78
+                        : 0.70,
 
-                  repetition_penalty:
-                    1.08
-                })
-            }
-          );
+                    top_p:
+                      0.90,
 
-        if (!response.ok) {
-          throw new Error(
-            "HTTP " +
-            response.status
-          );
+                    frequency_penalty:
+                      0.45,
+
+                    presence_penalty:
+                      0.20,
+
+                    repetition_penalty:
+                      1.08,
+
+                    /*
+                      Helps stop known special-token leakage
+                      at the provider level too.
+                    */
+                    stop: [
+                      "<REASONING>",
+                      "<|system|>",
+                      "<|user|>",
+                      "<|assistant|>"
+                    ]
+                  })
+              }
+            );
+
+          if (!response.ok) {
+
+            lastError =
+              new Error(
+                "HTTP " +
+                response.status
+              );
+
+            continue;
+          }
+
+          var data =
+            await response.json();
+
+          var candidate =
+            (
+              data.choices &&
+              data.choices[0] &&
+              data.choices[0].message &&
+              typeof data.choices[0].message.content === "string"
+            )
+              ? data.choices[0].message.content.trim()
+              : "";
+
+          /*
+            Ignore any provider-side reasoning field.
+            Only message.content is considered Ashley's output.
+          */
+
+          candidate =
+            sanitizeText(
+              candidate
+                .replace(
+                  /<\|.*?\|>/g,
+                  ''
+                )
+                .replace(
+                  /~+/g,
+                  ''
+                )
+                .trim()
+            );
+
+          candidate =
+            normalizeGeneratedText(
+              candidate
+            );
+
+          if (
+            candidate.length < 40
+          ) {
+
+            lastError =
+              new Error(
+                "Response was too short."
+              );
+
+            continue;
+          }
+
+          if (
+            looksLikeModelLeak(
+              candidate
+            )
+          ) {
+
+            lastError =
+              new Error(
+                "Model returned non-roleplay text."
+              );
+
+            continue;
+          }
+
+          if (
+            !outputStructureLooksValid(
+              candidate
+            )
+          ) {
+
+            lastError =
+              new Error(
+                "Response format was invalid."
+              );
+
+            continue;
+          }
+
+          /*
+            Don't let the model continuously recycle
+            distinctive old phrases.
+          */
+          if (
+            hasStrongPhraseEcho(
+              candidate
+            )
+          ) {
+
+            lastError =
+              new Error(
+                "Response repeated distinctive previous wording."
+              );
+
+            continue;
+          }
+
+          acceptedText =
+            candidate;
+
+          break;
         }
 
-        var data =
-          await response.json();
+        if (!acceptedText) {
 
-        var generatedText =
-          (
-            data.choices &&
-            data.choices[0] &&
-            data.choices[0].message
-          )
-            ? data.choices[0].message.content.trim()
-            : "";
-
-        generatedText =
-          sanitizeText(
-            generatedText
-              .replace(
-                /<\|.*?\|>/g,
-                ''
-              )
-              .replace(
-                /~+/g,
-                ''
-              )
-              .trim()
+          throw (
+            lastError ||
+            new Error(
+              "The model returned unusable text. Press Retry."
+            )
           );
+        }
 
         /*
-          Only a deterministic local repair.
-          No second API call.
-          No "rewrite your last response".
+          ONLY validated text reaches chatHistory.
         */
-        generatedText =
-          normalizeActionFirstPerson(
-            generatedText
-          );
-
-        if (
-          generatedText.length < 40
-        ) {
-          throw new Error(
-            "Response came back too short — likely a dropped or incomplete generation. Try again."
-          );
-        }
-
         chatHistory.push({
           role: 'char',
-          text: generatedText,
+          text: acceptedText,
           time: formatTime(),
           duration:
             Math.round(
@@ -1731,6 +2151,9 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
         saveChatHistory();
         renderFullChat();
 
+        /*
+          Memory is independent and can run afterward.
+        */
         triggerBackgroundSummary();
 
       } catch (err) {
@@ -1755,6 +2178,11 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
       abortController = null;
     }
 
+    /*
+      70B FREE MODEL:
+      MEMORY ONLY.
+      IT NEVER GENERATES ASHLEY'S RESPONSE.
+    */
     async function triggerBackgroundSummary() {
 
       var lastSummaryAt =
@@ -1791,6 +2219,7 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
         chatHistory
           .slice(-16, -6)
           .map(function(m) {
+
             return (
               (
                 m.role === 'user'
@@ -1800,6 +2229,7 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
               ': ' +
               m.text
             );
+
           })
           .join('\n');
 
@@ -1811,17 +2241,21 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
       ) {
 
         summaryInstruction =
-          "Merge only durable factual continuity into 2-4 short bullet points. Preserve names, relationships, established events, preferences, and setting facts. Never preserve prose style, wording, dialogue, emotional descriptions, narration style, sentence patterns, or repeated phrases." +
-          "\n\nExisting:" +
+          "Merge ONLY durable factual continuity into 2-4 short bullet points. " +
+          "Keep established names, relationships, events, preferences, and setting facts. " +
+          "Never store prose wording, writing style, emotional descriptions, dialogue, sentence patterns, repeated phrases, or narration style." +
+          "\n\nExisting memory:\n" +
           backgroundSummary +
-          "\n\nNew conversation:" +
+          "\n\nConversation:\n" +
           textToSummarize;
 
       } else {
 
         summaryInstruction =
-          "Summarize only durable factual continuity into 2-3 short bullet points. Preserve names, relationships, established events, preferences, and setting facts. Never preserve prose style, wording, dialogue, emotional descriptions, narration style, sentence patterns, or repeated phrases." +
-          "\n\nConversation:" +
+          "Extract ONLY durable factual continuity into 2-3 short bullet points. " +
+          "Keep established names, relationships, events, preferences, and setting facts. " +
+          "Never store prose wording, writing style, emotional descriptions, dialogue, sentence patterns, repeated phrases, or narration style." +
+          "\n\nConversation:\n" +
           textToSummarize;
       }
 
@@ -1849,6 +2283,10 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
 
               body:
                 JSON.stringify({
+
+                  /*
+                    MEMORY MODEL ONLY.
+                  */
                   model:
                     OPENROUTER_SUMMARY_MODEL,
 
@@ -1857,8 +2295,13 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
                       role: "system",
 
                       content:
-                        "Write extremely concise factual memory bullets. Store only durable facts and continuity. Never store prose wording, dialogue, narration style, emotional descriptions, repeated phrases, sentence patterns, or writing style. No commentary."
+                        "Write extremely concise factual memory bullets only. " +
+                        "Never write Ashley's scene response. " +
+                        "Never write roleplay. " +
+                        "Never provide alternatives. " +
+                        "Store only durable facts."
                     },
+
                     {
                       role: "user",
                       content:
@@ -1870,7 +2313,7 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
                     150,
 
                   temperature:
-                    0.3
+                    0.25
                 })
             }
           );
@@ -1882,38 +2325,44 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
         var data =
           await res.json();
 
-        if (
-          data.choices &&
-          data.choices[0] &&
-          data.choices[0].message
-        ) {
+        var summary =
+          (
+            data.choices &&
+            data.choices[0] &&
+            data.choices[0].message &&
+            typeof data.choices[0].message.content === "string"
+          )
+            ? data.choices[0].message.content.trim()
+            : "";
 
-          var newSummary =
-            data.choices[0]
-              .message
-              .content
-              .trim();
-
-          if (
-            newSummary &&
-            !/here are (?:some )?(?:alternatives|fresh phrasings|options)/i.test(
-              newSummary
-            )
-          ) {
-            backgroundSummary =
-              newSummary;
-
-            localStorage.setItem(
-              'ashley_bg_summary',
-              backgroundSummary
-            );
-          }
+        if (!summary) {
+          return;
         }
+
+        /*
+          Never allow obvious garbage to become persistent memory.
+        */
+        if (
+          looksLikeModelLeak(
+            summary
+          )
+        ) {
+          return;
+        }
+
+        backgroundSummary =
+          summary;
+
+        localStorage.setItem(
+          'ashley_bg_summary',
+          backgroundSummary
+        );
 
       } catch (e) {}
     }
 
     function deleteMessage(idx) {
+
       if (isGenerating) return;
 
       chatHistory.splice(
@@ -1926,28 +2375,40 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
     }
 
     /*
-      RETRY BEHAVIOR:
+      RETRY:
+      If clicked on Ashley's message:
+        keep everything before Ashley's message.
 
-      If idx points to Ashley's reply:
-      - keep the user's message immediately before it
-      - keep all earlier messages
-      - remove Ashley's reply and anything after it
-      - generate again
+      If somehow called on a user message:
+        keep the user's message and remove only what follows.
 
-      This is the correct behavior for the Retry icon.
+      Therefore your own prompt is NEVER deleted by Retry.
     */
     async function regenerateMessage(idx) {
 
       if (isGenerating) return;
+      if (!chatHistory[idx]) return;
 
       if (
-        !chatHistory[idx] ||
-        chatHistory[idx].role !== 'char'
+        chatHistory[idx].role === 'char'
       ) {
+
+        chatHistory.splice(
+          idx
+        );
+
+      } else if (
+        chatHistory[idx].role === 'user'
+      ) {
+
+        chatHistory.splice(
+          idx + 1
+        );
+
+      } else {
+
         return;
       }
-
-      chatHistory.splice(idx);
 
       saveChatHistory();
       renderFullChat();
@@ -1992,7 +2453,8 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
 
       document.getElementById(
         'memory-sheet'
-      ).style.display = 'flex';
+      ).style.display =
+        'flex';
     }
 
     function closeMemoryModal(e) {
@@ -2000,14 +2462,16 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
       if (
         e &&
         e.target &&
-        e.target.id !== 'memory-sheet'
+        e.target.id !==
+          'memory-sheet'
       ) {
         return;
       }
 
       document.getElementById(
         'memory-sheet'
-      ).style.display = 'none';
+      ).style.display =
+        'none';
     }
 
     function clearMemorySummary() {
@@ -2050,6 +2514,7 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
       );
 
       renderFullChat();
+
       closeMemoryModal();
     }
 
@@ -2057,12 +2522,14 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
 
       if (isGenerating) return;
 
-      editingMessageIndex = idx;
+      editingMessageIndex =
+        idx;
 
       document.getElementById(
         'edit-sheet-title'
       ).innerText =
-        chatHistory[idx].role === 'user'
+        chatHistory[idx].role ===
+        'user'
           ? 'Edit Your Message'
           : "Edit Ashley's Message";
 
@@ -2073,7 +2540,8 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
 
       document.getElementById(
         'edit-sheet'
-      ).style.display = 'flex';
+      ).style.display =
+        'flex';
     }
 
     function closeEditModal(e) {
@@ -2081,16 +2549,19 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
       if (
         e &&
         e.target &&
-        e.target.id !== 'edit-sheet'
+        e.target.id !==
+          'edit-sheet'
       ) {
         return;
       }
 
       document.getElementById(
         'edit-sheet'
-      ).style.display = 'none';
+      ).style.display =
+        'none';
 
-      editingMessageIndex = null;
+      editingMessageIndex =
+        null;
     }
 
     async function saveEditedMessage() {
@@ -2119,22 +2590,25 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
 
       document.getElementById(
         'edit-sheet'
-      ).style.display = 'none';
+      ).style.display =
+        'none';
 
-      editingMessageIndex = null;
+      editingMessageIndex =
+        null;
 
       if (
         targetRole === 'user'
       ) {
 
         /*
-          Editing a user message intentionally
-          creates a new branch from that point.
-          Earlier messages stay intact.
+          Branch from the edited user message.
+          The earlier history remains untouched.
         */
-        chatHistory.splice(
-          targetIdx
-        );
+        chatHistory =
+          chatHistory.slice(
+            0,
+            targetIdx
+          );
 
         chatHistory.push({
           role: 'user',
@@ -2150,10 +2624,11 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
       } else {
 
         /*
-          Editing Ashley only changes that message.
-          Nothing else is deleted.
+          Editing Ashley modifies only that one stored reply.
         */
-        chatHistory[targetIdx].text =
+        chatHistory[
+          targetIdx
+        ].text =
           newText;
 
         saveChatHistory();
@@ -2164,13 +2639,15 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
     function openLightbox() {
       document.getElementById(
         'avatar-lightbox'
-      ).style.display = 'flex';
+      ).style.display =
+        'flex';
     }
 
     function closeLightbox() {
       document.getElementById(
         'avatar-lightbox'
-      ).style.display = 'none';
+      ).style.display =
+        'none';
     }
 
     var appContainer =
@@ -2192,14 +2669,18 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
 
       appContainer.style.height =
         window.visualViewport
-          ? window.visualViewport.height + 'px'
-          : window.innerHeight + 'px';
+          ? window.visualViewport.height +
+            'px'
+          : window.innerHeight +
+            'px';
 
       chatStream.scrollTop =
         chatStream.scrollHeight;
     }
 
-    if (window.visualViewport) {
+    if (
+      window.visualViewport
+    ) {
 
       window.visualViewport.addEventListener(
         'resize',
@@ -2222,12 +2703,15 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
     promptInput.addEventListener(
       'focus',
       function() {
+
         setTimeout(
           function() {
+
             adjustViewport();
 
             chatStream.scrollTop =
               chatStream.scrollHeight;
+
           },
           250
         );
@@ -2235,8 +2719,8 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
     );
 
     /*
-      INTENTIONAL BEHAVIOR:
-      Insert ** and put the cursor between the two asterisks.
+      INTENTIONAL:
+      insert ** and place cursor BETWEEN the two asterisks.
     */
     function insertActionWrapper() {
 
@@ -2250,9 +2734,14 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
         promptInput.value;
 
       promptInput.value =
-        val.substring(0, start) +
+        val.substring(
+          0,
+          start
+        ) +
         "**" +
-        val.substring(end);
+        val.substring(
+          end
+        );
 
       promptInput.focus();
 
@@ -2269,7 +2758,11 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
     promptInput.addEventListener(
       'keydown',
       function(e) {
-        if (e.key === 'Enter') {
+
+        if (
+          e.key === 'Enter'
+        ) {
+
           setTimeout(
             function() {
               autoExpandTextarea(
@@ -2299,10 +2792,14 @@ Use a natural rhythm of action followed by dialogue followed by action when appr
             .register(
               './sw.js?v=12'
             )
-            .then(function(reg) {
-              reg.update();
-            })
-            .catch(function() {});
+            .then(
+              function(reg) {
+                reg.update();
+              }
+            )
+            .catch(
+              function() {}
+            );
 
         }
       );
