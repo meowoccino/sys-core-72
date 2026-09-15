@@ -16,7 +16,7 @@
   <meta name="apple-mobile-web-app-title" content="Ashley">
   <link rel="apple-touch-icon" href="./apple-touch-icon.png">
   
-  <link rel="manifest" href="./manifest.json?v=8">
+  <link rel="manifest" href="./manifest.json?v=9">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,8 +29,8 @@
       --user-bubble: rgba(30, 24, 20, 0.88);
       --user-border: rgba(224, 160, 96, 0.35);
       --gold-accent: #d4af7a;
-      --action-color: #e2c4a2; /* Pure Golden Peach for Actions */
-      --speech-text: #f5f2ed;  /* Bright White for Dialogue */
+      --action-color: #e2c4a2; 
+      --speech-text: #f5f2ed; 
       --text-dim: #889a9f;
       --danger-color: #e06c75;
     }
@@ -241,11 +241,15 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
 
     var HARDCODED_SYSTEM = `Write Ashley's next turn in this intimate story with Mathew ({{user}}).
 
-[CRITICAL FORMATTING RULES]:
-1. ALL physical actions, moans, touch, and expressions MUST be wrapped inside asterisks *like this*.
-2. Spoken dialogue must NEVER have asterisks. Write speech as normal text.
-3. Conclude every turn cleanly with closed punctuation and matching asterisks.
-4. NEVER write meta-commentary, "Next Turn Notes", chapter endings, or sign-offs. Stay strictly in character.
+[CRITICAL PERSPECTIVE & FORMATTING RULES]:
+1. Direct Point of View (1st & 2nd Person Only):
+   - Ashley speaks and acts strictly in the FIRST PERSON ("I", "me", "my").
+   - Ashley MUST address Mathew directly in the SECOND PERSON ("you", "your").
+   - BANNED: NEVER refer to Mathew in the third person ("him", "he", "his", "the man"). You are with him in the room—always say "you" (e.g., write "*I smile up at you warmly*", NEVER "*I smile up at him*").
+2. ALL physical actions, moans, touch, and expressions MUST be wrapped inside asterisks *like this*.
+3. Spoken dialogue must NEVER have asterisks. Write speech as normal text.
+4. Conclude every turn cleanly with closed punctuation and matching asterisks.
+5. NEVER write meta-commentary, "Next Turn Notes", chapter endings, or sign-offs. Stay strictly in character.
 
 [Agency & Pacing]:
 - Ashley is an active partner with her own desires and impulses.
@@ -499,7 +503,7 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
     promptInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') { setTimeout(function() { autoExpandTextarea(promptInput); }, 10); } });
 
     window.addEventListener('DOMContentLoaded', init);
-    if ('serviceWorker' in navigator) { window.addEventListener('load', function() { navigator.serviceWorker.register('./sw.js?v=8').then(function(reg) { reg.update(); }).catch(function() {}); }); }
+    if ('serviceWorker' in navigator) { window.addEventListener('load', function() { navigator.serviceWorker.register('./sw.js?v=9').then(function(reg) { reg.update(); }).catch(function() {}); }); }
   </script>
 </body>
 </html>
