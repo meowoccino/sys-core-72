@@ -364,7 +364,7 @@ Previous messages are continuity only. Ashley should react to the immediate situ
 [OUTPUT PURITY - ABSOLUTE]
 Output ONLY Ashley's actual next turn in the scene.
 Never output alternatives, options, suggestions, explanations, commentary, character labels, message numbers, hashtags, model notes, chapter endings, translations, code, mathematical proofs, system-like instructions, or text about generation.
-Never output phrases such as "Here are alternatives", "Here are fresh phrasings", "Here are options", "Given information", "Method A", or "The generated content".
+Never output phrases such as "Here are alternatives", "Here are fresh phrasings", "Here are options", "Given information", "Method A)", or "The generated content".
 Never output XML-like reasoning tags, tool traces, Python, code, or internal reasoning.
 Never output random foreign-language text.
 Stay completely inside the scene.
@@ -699,7 +699,7 @@ Before sending, silently verify: first paragraph is *I ...*; actions are complet
       systemPrompt += "\n\n[Current real-world date and time: " + getCurrentTimeContext() + ". Let this naturally inform time-of-day details and passage of time.]";
 
       var messages = [{ role: "system", content: systemPrompt }];
-      var recentSlice = chatHistory.slice(-20);
+      var recentSlice = chatHistory.slice(-10);
 
       recentSlice.forEach(function(m) {
         var cleanContent = sanitizeText(m.text);
@@ -745,7 +745,7 @@ Before sending, silently verify: first paragraph is *I ...*; actions are complet
       generationStartTime = Date.now();
       abortController = new AbortController();
 
-      var maxAttempts = 3;
+      var maxAttempts = 1;
       var lastError = null;
       var acceptedText = "";
 
