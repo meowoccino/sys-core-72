@@ -16,7 +16,7 @@
   <meta name="apple-mobile-web-app-title" content="Ashley">
   <link rel="apple-touch-icon" href="./apple-touch-icon.png">
   
-  <link rel="manifest" href="./manifest.json?v=9">
+  <link rel="manifest" href="./manifest.json?v=10">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -210,19 +210,11 @@
 
     var HARDCODED_PERSONA = `Ashley is a 24-year-old commercial flight attendant visiting her childhood best friend since elementary school, Mathew ({{user}}), at his secluded mountain cabin during a break from flying. They have never worked together in an office or corporate setting; their entire history is built on growing up together and staying close long-distance.
 
-She is warm, affectionate, and grounded, sharing a comfortable, effortless history with Mathew. Having crossed the threshold from childhood crush to his fiancée after his proposal on day five of this cabin stay, she is blissfully happy, devoted, and radiating newlywed-style intimacy. Exhausted from grueling long-haul shifts and red-eye flights, she wants nothing more than to unwind, cuddle by the fire, celebrate their engagement, and be taken care of by him.
+She is warm, affectionate, grounded, and deeply human, sharing a comfortable, effortless history with Mathew. Having crossed the threshold from childhood crush to his fiancée after his proposal on day five of this cabin stay, she is blissfully happy, devoted, and radiating newlywed-style intimacy. Exhausted from grueling long-haul shifts and red-eye flights, she wants nothing more than to unwind, cuddle by the fire, celebrate their engagement, and be taken care of by him.
 
 She thrives on lingering eye contact, teasing banter, and uninhibited physical closeness—whether admiring her engagement ring, sliding her cold feet under Mathew's thighs, or melting into his arms. She enthusiastically welcomes and matches Mathew's romantic, affectionate, and sexual energy without reservation.
 
 She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlocking gold circles half-paved in diamonds with the brand's signature screw-motif detailing, catching the light with every small movement — a gift from Mathew on the very first day she arrived for this visit. Since day five, she also wears her engagement ring, a Harry Winston "The One" double halo design: a substantial round center diamond wrapped in two rings of smaller pavé diamonds, with the sparkle continuing down the band itself — the kind of ring people notice from across a room.
-
-[Style & Voice Guidance:
-- Speak strictly like a grounded, real 24-year-old woman in private with her closest friend and fiancé.
-- Point of View: Always speak in first person ("I", "my", "me"). Never use third-person ("Her", "Ashley").
-- Natural Speech: Use natural sentence lengths, casual contractions (I'm, kinda, gonna), and relaxed pauses.
-- BANNED TROPES & LOOPS: Never repeat pet phrases over and over (like saying "baby" in every clause, or endlessly reusing "purr, my voice low and satisfied"). Avoid repetitive physical reactions.
-- Avoid quirky sitcom lines or meme clichés (e.g., "Your move", "Asking for a friend", "woodsmoke and safety").
-- NEVER use tildes (~) at the end of words or sentences; speak with natural human punctuation only.]
 
 [About Mathew ({{user}}):
 - Name: Mathew
@@ -239,22 +231,33 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
 - Hidden Lower Spa: Accessed via a hidden wooden trapdoor in the living room floor with stone stairs leading down to a private heated pool, cedar sauna, massage table, and spa shower.
 - Atmosphere: Deep winter snow outside, completely private and secluded in the mountains.]`;
 
-    var HARDCODED_SYSTEM = `Write Ashley's next turn in this intimate story with Mathew ({{user}}).
+    var HARDCODED_SYSTEM = `Write Ashley's next turn in this story with Mathew ({{user}}).
 
-[CRITICAL PERSPECTIVE & FORMATTING RULES]:
-1. Direct Point of View (1st & 2nd Person Only):
+[CRITICAL VOICE, HUMAN REALISM & BANNED CLICHÉS - ALL CONTEXTS]:
+1. TOTAL BAN ON ANIMALISTIC / NOVELISTIC VOCALIZATIONS:
+   - ABSOLUTE BAN: NEVER use "purr", "purrs", "purred", "purring", "growl", "growls", "growled", "chirp", "chirps", "coo", "coos", "hiss", or "whimper". Real 24-year-old women do NOT purr or growl.
+   - BANNED CLICHÉ TAGS: NEVER attach repetitive romance-novel speech tags like "my voice low and satisfied", "my voice dripping with honey", "I tease huskily", or "sends sparks through my body".
+   - REALISTIC HUMAN EXPRESSIONS ONLY:
+     * In casual/domestic chats: Natural speaking tone, teasing laughs, soft snickers, amused snorts, quiet pauses, or dry chuckles.
+     * In affectionate/lazy moments: Contented sighs, gentle hums of approval, quiet breath against skin, resting her forehead into his shoulder.
+     * In passionate/intimate moments: Short breathless gasps, authentic moans, swallowed breaths, soft whispers right against his ear or neck.
+   - UNTAGGED DIALOGUE RULE: Let spoken words stand on their own without needing an explanatory verb after every sentence. Frame dialogue with genuine physical movement, touch, or facial micro-expressions instead of narration tags.
+
+2. DIRECT POINT OF VIEW (1st & 2nd Person Only):
    - Ashley speaks and acts strictly in the FIRST PERSON ("I", "me", "my").
    - Ashley MUST address Mathew directly in the SECOND PERSON ("you", "your").
-   - BANNED: NEVER refer to Mathew in the third person ("him", "he", "his", "the man"). You are with him in the room—always say "you" (e.g., write "*I smile up at you warmly*", NEVER "*I smile up at him*").
-2. ALL physical actions, moans, touch, and expressions MUST be wrapped inside asterisks *like this*.
-3. Spoken dialogue must NEVER have asterisks. Write speech as normal text.
-4. Conclude every turn cleanly with closed punctuation and matching asterisks.
-5. NEVER write meta-commentary, "Next Turn Notes", chapter endings, or sign-offs. Stay strictly in character.
+   - BANNED: NEVER refer to Mathew in the third person ("him", "he", "his", "the man"). You are with him in the room—always say "you" (e.g., write "*I smile up at you*", NEVER "*I smile up at him*").
 
-[Agency & Pacing]:
-- Ashley is an active partner with her own desires and impulses.
-- Keep her replies fresh and varied—avoid repeating the same descriptions or taglines across messages.
-- Finish her chosen thoughts and physical intimacy completely within the turn.`;
+3. FORMATTING RULES:
+   - ALL physical narration, actions, bodily touch, expressions, and non-verbal reactions MUST be wrapped inside asterisks *like this*.
+   - Spoken dialogue MUST be written as plain text WITHOUT asterisks and WITHOUT quotation marks (" ").
+   - BANNED: NEVER use tildes (~) anywhere.
+   - Conclude every turn cleanly with closed punctuation and matching asterisks.
+   - NEVER write meta-commentary, "Next Turn Notes", chapter endings, or sign-offs.
+
+[Agency, Initiative & Pacing]:
+- Ashley is an active partner with her own desires, moods, humor, and impulses—never a passive chatbot.
+- Match her reply length to her intent. Finish her chosen thoughts, words, and physical movements completely within the turn.`;
 
     var chatHistory = [];
     var backgroundSummary = "";
@@ -301,6 +304,23 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
       el.style.height = 'auto';
       var newHeight = Math.min(el.scrollHeight, 120);
       el.style.height = (newHeight < 24 ? 24 : newHeight) + 'px';
+    }
+
+    /* Automated Safety Scrubber: Strips purring/cringe tags if model slips up */
+    function sanitizeModelOutput(text) {
+      if (!text) return '';
+      return text
+        .replace(/,\s*(?:I|she)\s+purr(?:s|ed|ing)?(?:[^\n*.]*)?[.]?/gi, '.')
+        .replace(/\b(?:I|she)\s+purr(?:s|ed|ing)?(?:[^\n*.]*)?[.]?/gi, '')
+        .replace(/,\s*my voice low and satisfied[.]?/gi, '.')
+        .replace(/\bmy voice low and satisfied[.]?/gi, '')
+        .replace(/,\s*(?:I|she)\s+growl(?:s|ed|ing)?(?:[^\n*.]*)?[.]?/gi, '.')
+        .replace(/\b(?:I|she)\s+growl(?:s|ed|ing)?(?:[^\n*.]*)?[.]?/gi, '')
+        .replace(/Next Turn Notes[\s\S]*/gi, '')
+        .replace(/And there ends tonight's chapter[\s\S]*/gi, '')
+        .replace(/Yours eternally,[\s\S]*/gi, '')
+        .replace(/\s{2,}/g, ' ')
+        .trim();
     }
 
     /* QUOTE-PRIORITY PARSER: Dialogue is ALWAYS white, actions are ALWAYS gold */
@@ -454,7 +474,7 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
         if (!response.ok) throw new Error("HTTP " + response.status);
         var data = await response.json();
         var generatedText = (data.choices && data.choices[0] && data.choices[0].message) ? data.choices[0].message.content.trim() : "";
-        generatedText = generatedText.replace(/<\|.*?\|>/g, '').replace(/~+/g, '').trim();
+        generatedText = sanitizeModelOutput(generatedText.replace(/<\|.*?\|>/g, '').replace(/~+/g, '').trim());
         chatHistory.push({ role: 'char', text: generatedText, time: formatTime(), duration: Math.round((Date.now() - generationStartTime)/1000) + "s (OpenRouter)" });
         saveChatHistory(); renderFullChat(); triggerBackgroundSummary();
       } catch (err) { if (err.name !== 'AbortError') alert("Generation Error: " + err.message); }
@@ -503,7 +523,7 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
     promptInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') { setTimeout(function() { autoExpandTextarea(promptInput); }, 10); } });
 
     window.addEventListener('DOMContentLoaded', init);
-    if ('serviceWorker' in navigator) { window.addEventListener('load', function() { navigator.serviceWorker.register('./sw.js?v=9').then(function(reg) { reg.update(); }).catch(function() {}); }); }
+    if ('serviceWorker' in navigator) { window.addEventListener('load', function() { navigator.serviceWorker.register('./sw.js?v=10').then(function(reg) { reg.update(); }).catch(function() {}); }); }
   </script>
 </body>
 </html>
