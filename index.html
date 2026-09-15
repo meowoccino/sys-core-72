@@ -16,7 +16,7 @@
   <meta name="apple-mobile-web-app-title" content="Ashley">
   <link rel="apple-touch-icon" href="./apple-touch-icon.png">
   
-  <link rel="manifest" href="./manifest.json?v=6">
+  <link rel="manifest" href="./manifest.json?v=7">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,20 +29,16 @@
       --user-bubble: rgba(30, 24, 20, 0.88);
       --user-border: rgba(224, 160, 96, 0.35);
       --gold-accent: #d4af7a;
-      --action-color: #e2c4a2; /* Pure Golden Peach for Physical Actions */
-      --speech-text: #f5f2ed;  /* Bright White for Spoken Words */
-      --quoted-rose: #e5b2aa;
+      --action-color: #e2c4a2; 
+      --speech-text: #f5f2ed; 
       --text-dim: #889a9f;
       --danger-color: #e06c75;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     
-    html {
-      background-color: #060a0c;
-      height: 100%;
-    }
-
+    html { background-color: #060a0c; height: 100%; }
+    
     body { 
       width: 100%; 
       height: 100%; 
@@ -98,365 +94,92 @@
       to { opacity: 1; transform: scale(1) translateY(0); }
     }
 
-    .msg-group.ashley {
-      justify-content: flex-start;
-      padding-right: 4px;
-    }
-    .msg-group.ashley .ashley-wrapper {
-      max-width: 96%;
-      display: flex;
-      flex-direction: row;
-      align-items: flex-start;
-      gap: 8px;
-    }
+    .msg-group.ashley { justify-content: flex-start; padding-right: 4px; }
+    .msg-group.ashley .ashley-wrapper { max-width: 96%; display: flex; flex-direction: row; align-items: flex-start; gap: 8px; }
 
-    .msg-group.user {
-      justify-content: flex-end;
-      padding-left: 14%;
-    }
-    .msg-group.user .user-wrapper {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-    }
+    .msg-group.user { justify-content: flex-end; padding-left: 14%; }
+    .msg-group.user .user-wrapper { width: 100%; display: flex; flex-direction: column; align-items: flex-end; }
 
     .ashley-msg-avatar {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 1.5px solid var(--gold-accent);
-      flex-shrink: 0;
-      margin-top: 4px;
-      cursor: pointer;
+      width: 34px; height: 34px; border-radius: 50%; object-fit: cover;
+      border: 1.5px solid var(--gold-accent); flex-shrink: 0; margin-top: 4px; cursor: pointer;
     }
 
-    .bubble-wrapper {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-    }
+    .bubble-wrapper { display: flex; flex-direction: column; flex: 1; }
 
     .glass-bubble {
-      width: 100%;
-      padding: 14px 16px;
-      border-radius: 18px;
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.45);
-      font-size: 0.95rem;
-      line-height: 1.62;
-      word-break: break-word;
+      width: 100%; padding: 14px 16px; border-radius: 18px;
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.45); font-size: 0.95rem; word-break: break-word;
     }
-    .ashley .glass-bubble {
-      background: var(--char-bubble);
-      border: 1px solid var(--char-border);
-      border-top-right-radius: 4px;
-      border-top-left-radius: 18px;
-    }
-    .user .glass-bubble {
-      background: var(--user-bubble);
-      border: 1px solid var(--user-border);
-      border-top-right-radius: 4px;
-    }
+    .ashley .glass-bubble { background: var(--char-bubble); border: 1px solid var(--char-border); border-top-right-radius: 4px; border-top-left-radius: 18px; }
+    .user .glass-bubble { background: var(--user-bubble); border: 1px solid var(--user-border); border-top-right-radius: 4px; }
 
-    .action {
-      display: block;
-      color: var(--action-color);
-      font-style: italic;
-      font-weight: 300;
-      margin-bottom: 10px;
-    }
-    .speech {
-      display: block;
-      color: var(--speech-text);
-      font-weight: 400;
-      margin-bottom: 10px;
-    }
-    .action:last-child, .speech:last-child { margin-bottom: 0; }
+    /* PARSER CLASSES FIX: Flow inline, style appropriately */
+    .msg-para { margin-bottom: 12px; line-height: 1.62; }
+    .msg-para:last-child { margin-bottom: 0; }
+    
+    .action, .speech { display: inline; }
+    .action { color: var(--action-color); font-style: italic; font-weight: 300; }
+    .speech { color: var(--speech-text); font-weight: 400; }
 
     .meta-time-row {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.72rem;
-      margin-top: 6px;
-      padding: 0 6px;
-      color: var(--text-dim);
+      display: inline-flex; align-items: center; gap: 8px; font-size: 0.72rem;
+      margin-top: 6px; padding: 0 6px; color: var(--text-dim);
     }
-    
-    .user .meta-time-row {
-      align-self: flex-start;
-      margin-left: 2px;
-    }
-
-    .ashley .meta-time-row {
-      align-self: flex-end;
-      margin-right: 6px;
-    }
-
+    .user .meta-time-row { align-self: flex-start; margin-left: 2px; }
+    .ashley .meta-time-row { align-self: flex-end; margin-right: 6px; }
     .meta-time-row svg { width: 12px; height: 12px; fill: currentColor; flex-shrink: 0; }
 
     .msg-action-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-dim);
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 3px 5px;
-      border-radius: 4px;
+      background: transparent; border: none; color: var(--text-dim); cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; padding: 3px 5px; border-radius: 4px;
     }
     .msg-action-btn:active { color: var(--gold-accent); }
     .msg-action-btn.delete-btn:active { color: var(--danger-color); }
     .msg-action-btn svg { width: 13px; height: 13px; }
 
-    .msg-counter {
-      font-size: 0.68rem;
-      color: var(--text-dim);
-      opacity: 0.75;
-      font-weight: 500;
-    }
+    .msg-counter { font-size: 0.68rem; color: var(--text-dim); opacity: 0.75; font-weight: 500; }
 
-    .thinking-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 6px 14px;
-      animation: fadeIn 0.3s ease;
-    }
-    .thinking-dots {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .thinking-dot {
-      width: 6px;
-      height: 6px;
-      background: var(--gold-accent);
-      border-radius: 50%;
-      opacity: 0.35;
-      animation: pulseDot 1.4s infinite ease-in-out;
-    }
+    .thinking-row { display: flex; align-items: center; gap: 10px; padding: 6px 14px; animation: fadeIn 0.3s ease; }
+    .thinking-dots { display: inline-flex; align-items: center; gap: 6px; }
+    .thinking-dot { width: 6px; height: 6px; background: var(--gold-accent); border-radius: 50%; opacity: 0.35; animation: pulseDot 1.4s infinite ease-in-out; }
     .thinking-dot:nth-child(1) { animation-delay: 0s; }
     .thinking-dot:nth-child(2) { animation-delay: 0.2s; }
     .thinking-dot:nth-child(3) { animation-delay: 0.4s; }
+    .thinking-status-text { font-size: 0.76rem; color: var(--text-dim); letter-spacing: 0.3px; font-style: italic; }
 
-    .thinking-status-text {
-      font-size: 0.76rem;
-      color: var(--text-dim);
-      letter-spacing: 0.3px;
-      font-style: italic;
-    }
+    @keyframes pulseDot { 0%, 80%, 100% { opacity: 0.3; transform: scale(0.85); } 40% { opacity: 1; transform: scale(1.18); } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-    @keyframes pulseDot {
-      0%, 80%, 100% { opacity: 0.3; transform: scale(0.85); }
-      40% { opacity: 1; transform: scale(1.18); }
-    }
+    .sheet-overlay { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.82); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 9999; align-items: flex-end; }
+    .sheet-content { width: 100%; max-height: 75vh; background: #0f1719; border-top: 1px solid var(--char-border); border-radius: 24px 24px 0 0; padding: 22px 18px calc(34px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 12px; }
+    .sheet-title { font-size: 0.78rem; color: var(--gold-accent); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+    .edit-textarea { width: 100%; background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 12px; color: var(--speech-text); font-family: inherit; font-size: 0.95rem; resize: vertical; min-height: 120px; outline: none; line-height: 1.5; }
+    .sheet-btn-row { display: flex; gap: 10px; margin-top: 6px; }
+    .sheet-save-btn { flex: 1; background: var(--gold-accent); border: none; padding: 12px; border-radius: 12px; color: #12100d; font-weight: 600; font-size: 0.92rem; cursor: pointer; }
+    .sheet-cancel-btn { flex: 1; background: transparent; border: 1px solid rgba(255, 255, 255, 0.12); color: var(--text-dim); padding: 12px; border-radius: 12px; font-weight: 600; font-size: 0.92rem; cursor: pointer; }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .sheet-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.82);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      z-index: 9999;
-      align-items: flex-end;
-    }
-    .sheet-content {
-      width: 100%;
-      max-height: 75vh;
-      background: #0f1719;
-      border-top: 1px solid var(--char-border);
-      border-radius: 24px 24px 0 0;
-      padding: 22px 18px calc(34px + env(safe-area-inset-bottom, 0px));
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .sheet-title {
-      font-size: 0.78rem;
-      color: var(--gold-accent);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-weight: 600;
-    }
-    .edit-textarea {
-      width: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 14px;
-      padding: 12px;
-      color: var(--speech-text);
-      font-family: inherit;
-      font-size: 0.95rem;
-      resize: vertical;
-      min-height: 120px;
-      outline: none;
-      line-height: 1.5;
-    }
-    .sheet-btn-row {
-      display: flex;
-      gap: 10px;
-      margin-top: 6px;
-    }
-    .sheet-save-btn {
-      flex: 1;
-      background: var(--gold-accent);
-      border: none;
-      padding: 12px;
-      border-radius: 12px;
-      color: #12100d;
-      font-weight: 600;
-      font-size: 0.92rem;
-      cursor: pointer;
-    }
-    .sheet-cancel-btn {
-      flex: 1;
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      color: var(--text-dim);
-      padding: 12px;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 0.92rem;
-      cursor: pointer;
-    }
-
-    footer {
-      position: relative;
-      z-index: 10;
-      padding: 8px 12px calc(14px + env(safe-area-inset-bottom, 0px));
-      background: transparent;
-      display: flex;
-      align-items: flex-end;
-      gap: 8px;
-      flex-shrink: 0;
-    }
-
-    .dock-input {
-      flex: 1;
-      background: rgba(10, 18, 20, 0.95);
-      border: 1px solid rgba(45, 140, 125, 0.2);
-      border-radius: 22px;
-      padding: 8px 14px;
-      display: flex;
-      align-items: flex-end;
-      gap: 8px;
-      min-height: 42px;
-    }
-
-    .dock-input textarea {
-      flex: 1;
-      background: transparent;
-      border: none;
-      outline: none;
-      color: #fff;
-      font-family: inherit;
-      font-size: 0.95rem;
-      resize: none;
-      height: 24px;
-      max-height: 120px;
-      line-height: 1.4;
-      padding: 2px 0;
-      overflow-y: auto;
-      display: block;
-      caret-color: var(--gold-accent);
-    }
-
-    .action-symbol-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-dim);
-      font-size: 0.95rem;
-      padding: 4px 6px;
-      cursor: pointer;
-      flex-shrink: 0;
-      margin-bottom: 2px;
-    }
+    footer { position: relative; z-index: 10; padding: 8px 12px calc(14px + env(safe-area-inset-bottom, 0px)); background: transparent; display: flex; align-items: flex-end; gap: 8px; flex-shrink: 0; }
+    .dock-input { flex: 1; background: rgba(10, 18, 20, 0.95); border: 1px solid rgba(45, 140, 125, 0.2); border-radius: 22px; padding: 8px 14px; display: flex; align-items: flex-end; gap: 8px; min-height: 42px; }
+    .dock-input textarea { flex: 1; background: transparent; border: none; outline: none; color: #fff; font-family: inherit; font-size: 0.95rem; resize: none; height: 24px; max-height: 120px; line-height: 1.4; padding: 2px 0; overflow-y: auto; display: block; caret-color: var(--gold-accent); }
+    .action-symbol-btn { background: transparent; border: none; color: var(--text-dim); font-size: 0.95rem; padding: 4px 6px; cursor: pointer; flex-shrink: 0; margin-bottom: 2px; }
     .action-symbol-btn:active { color: var(--action-color); }
-
-    .send-pill {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #dfb479, #b88b48);
-      border: none;
-      color: #12100d;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      flex-shrink: 0;
-      transition: background 0.2s ease, border-radius 0.2s ease;
-    }
-
-    .send-pill.is-stopping {
-      background: #3a2224;
-      border: 1.5px solid var(--danger-color);
-      color: var(--danger-color);
-      border-radius: 14px;
-    }
-
-    #avatar-lightbox {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(4, 8, 10, 0.95);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      z-index: 10000;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .lightbox-frame {
-      max-width: 90vw;
-      max-height: 78vh;
-      border-radius: 20px;
-      padding: 2px;
-      background: linear-gradient(135deg, var(--gold-accent), transparent 75%);
-      box-shadow: 0 10px 40px rgba(0,0,0,0.85);
-      overflow: hidden;
-    }
-
-    .lightbox-frame img {
-      width: 100%;
-      height: 100%;
-      max-height: 76vh;
-      object-fit: cover;
-      display: block;
-      border-radius: 18px;
-    }
-
+    .send-pill { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #dfb479, #b88b48); border: none; color: #12100d; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: background 0.2s ease, border-radius 0.2s ease; }
+    .send-pill.is-stopping { background: #3a2224; border: 1.5px solid var(--danger-color); color: var(--danger-color); border-radius: 14px; }
+    #avatar-lightbox { display: none; position: fixed; inset: 0; background: rgba(4, 8, 10, 0.95); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); z-index: 10000; align-items: center; justify-content: center; padding: 20px; }
+    .lightbox-frame { max-width: 90vw; max-height: 78vh; border-radius: 20px; padding: 2px; background: linear-gradient(135deg, var(--gold-accent), transparent 75%); box-shadow: 0 10px 40px rgba(0,0,0,0.85); overflow: hidden; }
+    .lightbox-frame img { width: 100%; height: 100%; max-height: 76vh; object-fit: cover; display: block; border-radius: 18px; }
     .icon { width: 20px; height: 20px; fill: currentColor; }
   </style>
 </head>
 <body>
-
   <div id="ambient-bg"></div>
-
   <div id="app-container">
     <main id="chat-stream"></main>
-
     <footer id="input-footer">
       <div class="dock-input">
-        <textarea id="promptInput" rows="1" 
-          placeholder="Type a message or action..." 
-          spellcheck="true" 
-          autocorrect="on" 
-          autocomplete="on" 
-          autocapitalize="sentences"
-          oninput="autoExpandTextarea(this)"></textarea>
+        <textarea id="promptInput" rows="1" placeholder="Type a message or action..." spellcheck="true" autocorrect="on" autocomplete="on" autocapitalize="sentences" oninput="autoExpandTextarea(this)"></textarea>
         <button type="button" class="action-symbol-btn" onclick="insertActionWrapper()">* *</button>
       </div>
       <button type="button" class="send-pill" id="actionBtn" onclick="handleActionClick()">
@@ -477,9 +200,7 @@
   </div>
 
   <div id="avatar-lightbox" onclick="closeLightbox()">
-    <div class="lightbox-frame" onclick="event.stopPropagation()">
-      <img src="./ashley.png" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80'" alt="">
-    </div>
+    <div class="lightbox-frame" onclick="event.stopPropagation()"><img src="./ashley.png" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80'" alt=""></div>
   </div>
 
   <script>
@@ -544,19 +265,14 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
 
     function applyForcedThemeColor() {
       var metaTheme = document.getElementById('meta-theme-color');
-      if (metaTheme) {
-        metaTheme.setAttribute('content', '#060a0c');
-      }
+      if (metaTheme) metaTheme.setAttribute('content', '#060a0c');
     }
 
     function getApiKey() {
       var key = localStorage.getItem('openrouter_api_key');
       if (!key) {
         key = prompt("Enter your OpenRouter API Key:");
-        if (key && key.trim()) {
-          key = key.trim();
-          localStorage.setItem('openrouter_api_key', key);
-        }
+        if (key && key.trim()) { key = key.trim(); localStorage.setItem('openrouter_api_key', key); }
       }
       return key;
     }
@@ -568,9 +284,7 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
         var savedChat = localStorage.getItem('ashley_chat_history');
         if (savedChat) {
           chatHistory = JSON.parse(savedChat);
-          chatHistory = chatHistory.filter(function(m) {
-            return !m.text.includes("Failed to fetch") && !m.text.includes("Connection interrupted") && !m.text.includes("Error:");
-          });
+          chatHistory = chatHistory.filter(function(m) { return !m.text.includes("Failed to fetch") && !m.text.includes("Error:"); });
           saveChatHistory();
         } else {
           chatHistory.push({ role: 'char', text: HARDCODED_GREETING, time: formatTime() });
@@ -581,11 +295,7 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
       renderFullChat();
     }
 
-    function saveChatHistory() {
-      try {
-        localStorage.setItem('ashley_chat_history', JSON.stringify(chatHistory));
-      } catch (e) {}
-    }
+    function saveChatHistory() { try { localStorage.setItem('ashley_chat_history', JSON.stringify(chatHistory)); } catch (e) {} }
 
     function autoExpandTextarea(el) {
       el.style.height = 'auto';
@@ -593,20 +303,15 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
       el.style.height = (newHeight < 24 ? 24 : newHeight) + 'px';
     }
 
-    /* Bulletproof Parser: Guarantees actions are Golden/Italic, Speech is Crisp White, and fixes nested **** bugs */
+    /* THE NEW BULLETPROOF PARSER */
     function parseMessage(rawText) {
       if (!rawText) return '';
-      // Strip ChatML tags, tildes, and replace corrupted multiple asterisks with a single asterisk
+      
+      // Clean up weird system tags and normalize any multiple asterisks into a single one
       var clean = rawText.replace(/<\|.*?\|>/g, '')
                          .replace(/~+/g, '')
                          .replace(/\*{2,}/g, '*')
                          .trim();
-
-      // Normalize missing closing asterisks
-      var totalAsterisks = (clean.match(/\*/g) || []).length;
-      if (totalAsterisks % 2 !== 0) {
-        clean += '*';
-      }
 
       var blocks = clean.split(/\n+/);
       var outputHtml = '';
@@ -614,65 +319,66 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
       blocks.forEach(function(block) {
         var trimmed = block.trim();
         if (!trimmed) return;
+        
+        var paragraphHtml = '';
 
-        // If the entire paragraph is wrapped in asterisks -> Physical Action (Gold)
-        if (trimmed.startsWith('*') && trimmed.endsWith('*')) {
-          var actionText = trimmed.replace(/^\*+|\*+$/g, '').trim();
-          outputHtml += '<span class="action">' + actionText + '</span>';
-        } 
-        // If it has asterisks inline
-        else if (trimmed.includes('*')) {
-          var tokens = trimmed.split(/(\*[^*\n]+\*)/g);
-          tokens.forEach(function(token) {
-            var sub = token.trim();
-            if (!sub) return;
-            if (sub.startsWith('*') && sub.endsWith('*')) {
-              var inner = sub.slice(1, -1).trim();
-              outputHtml += '<span class="action">' + inner + '</span>';
-            } else {
-              var speech = sub.replace(/^["'“”]+|["'“”]+$/g, '').trim();
-              if (speech) outputHtml += '<span class="speech">' + speech + '</span>';
-            }
-          });
-        } 
-        // If the model forgot asterisks and put quotes around dialogue
-        else if (/["“].*?["”]/.test(trimmed)) {
-          var parts = trimmed.split(/(["“][^"“”]+["”])/g);
+        // Auto-close missing asterisks per paragraph so the parser doesn't break
+        var totalAsterisks = (trimmed.match(/\*/g) || []).length;
+        if (totalAsterisks % 2 !== 0) {
+          trimmed += '*'; 
+        }
+
+        if (!trimmed.includes('*')) {
+          // No asterisks at all. Decide if it's speech or action based on context.
+          if (/^["“].*?["”]$/.test(trimmed)) {
+            var speechText = trimmed.replace(/^["'“”]+|["'“”]+$/g, '').trim();
+            paragraphHtml = '<span class="speech">' + speechText + '</span>';
+          }
+          else if (/^(I |My |The |Each |Her |Our |We |He )/i.test(trimmed) && !trimmed.endsWith('?')) {
+            paragraphHtml = '<span class="action">' + trimmed + '</span>';
+          } 
+          else {
+            paragraphHtml = '<span class="speech">' + trimmed + '</span>';
+          }
+        } else {
+          // Text contains asterisks. Safely extract action blocks from speech blocks.
+          var parts = trimmed.split(/(\*[^*]+\*)/g);
+          
           parts.forEach(function(part) {
-            var p = part.trim();
-            if (!p) return;
-            if (p.startsWith('"') || p.startsWith('“')) {
-              var quotedSpeech = p.replace(/^["'“”]+|["'“”]+$/g, '').trim();
-              outputHtml += '<span class="speech">' + quotedSpeech + '</span>';
+            if (!part) return;
+            
+            if (part.startsWith('*') && part.endsWith('*')) {
+              // This is a physical action
+              var actionText = part.slice(1, -1).trim();
+              actionText = actionText.replace(/^["'“”]+|["'“”]+$/g, '').trim(); // Remove inner quotes if model trapped them
+              if (actionText) {
+                paragraphHtml += '<span class="action">' + actionText + '</span> ';
+              }
             } else {
-              outputHtml += '<span class="action">' + p + '</span>';
+              // This is spoken speech
+              var speechText = part.trim().replace(/^["'“”]+|["'“”]+$/g, '').trim();
+              if (speechText) {
+                paragraphHtml += '<span class="speech">' + speechText + '</span> ';
+              }
             }
           });
         }
-        // Fallback: If no quotes and no asterisks
-        else {
-          if (/^(I |My |The |Each |Her |Our |We )/i.test(trimmed) && !trimmed.endsWith('?')) {
-            outputHtml += '<span class="action">' + trimmed + '</span>';
-          } else {
-            outputHtml += '<span class="speech">' + trimmed + '</span>';
-          }
+
+        if (paragraphHtml) {
+          // Wrap in a paragraph block. Action and Speech spans flow inline seamlessly.
+          outputHtml += '<div class="msg-para">' + paragraphHtml.trim() + '</div>';
         }
       });
 
       return outputHtml;
     }
 
-    function formatTime() {
-      var d = new Date();
-      return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-    }
+    function formatTime() { return new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); }
 
     function renderFullChat() {
       var stream = document.getElementById('chat-stream');
       stream.innerHTML = '';
-      chatHistory.forEach(function(msg, idx) {
-        appendMessageDOM(msg.role, msg.text, msg.time, msg.duration, idx);
-      });
+      chatHistory.forEach(function(msg, idx) { appendMessageDOM(msg.role, msg.text, msg.time, msg.duration, idx); });
       stream.scrollTop = stream.scrollHeight;
     }
 
@@ -683,363 +389,124 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
       var html = '';
 
       if (role === 'user') {
-        html = '<div class="msg-group user" id="msg-' + idx + '"><div class="user-wrapper"><div class="glass-bubble">' +
-          parseMessage(text) + '</div><div class="meta-time-row">' + msgCountLabel +
-          '<svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.2 3.1.8-1.3-4.5-2.7z"/></svg><span>' +
-          metaStr + '</span>' +
-          '<button class="msg-action-btn" onclick="openEditModal(' + idx + ')" title="Edit message"><svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></button>' +
-          '<button class="msg-action-btn delete-btn" onclick="deleteMessage(' + idx + ')" title="Delete message"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>' +
-          '</div></div></div>';
+        html = '<div class="msg-group user" id="msg-' + idx + '"><div class="user-wrapper"><div class="glass-bubble">' + parseMessage(text) + '</div><div class="meta-time-row">' + msgCountLabel + '<svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.2 3.1.8-1.3-4.5-2.7z"/></svg><span>' + metaStr + '</span><button class="msg-action-btn" onclick="openEditModal(' + idx + ')" title="Edit message"><svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></button><button class="msg-action-btn delete-btn" onclick="deleteMessage(' + idx + ')" title="Delete message"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button></div></div></div>';
       } else {
-        var footerContent = '';
-        if (idx > 0) {
-          footerContent = '<div class="meta-time-row">' + msgCountLabel +
-            '<svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.2 3.1.8-1.3-4.5-2.7z"/></svg><span>' +
-            metaStr + '</span>' +
-            '<button class="msg-action-btn" onclick="regenerateMessage(' + idx + ')" title="Reroll message"><svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg></button>' +
-            '<button class="msg-action-btn" onclick="openEditModal(' + idx + ')" title="Edit message"><svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></button>' +
-            '<button class="msg-action-btn delete-btn" onclick="deleteMessage(' + idx + ')" title="Delete message"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>' +
-            '</div>';
-        } else {
-          footerContent = '<div class="meta-time-row">' + msgCountLabel + '</div>';
-        }
+        var footerContent = (idx > 0) 
+          ? '<div class="meta-time-row">' + msgCountLabel + '<svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.2 3.1.8-1.3-4.5-2.7z"/></svg><span>' + metaStr + '</span><button class="msg-action-btn" onclick="regenerateMessage(' + idx + ')" title="Reroll message"><svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg></button><button class="msg-action-btn" onclick="openEditModal(' + idx + ')" title="Edit message"><svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></button><button class="msg-action-btn delete-btn" onclick="deleteMessage(' + idx + ')" title="Delete message"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button></div>'
+          : '<div class="meta-time-row">' + msgCountLabel + '</div>';
 
-        html = '<div class="msg-group ashley" id="msg-' + idx + '"><div class="ashley-wrapper">' +
-          '<div class="bubble-wrapper"><div class="glass-bubble">' + parseMessage(text) + '</div>' + footerContent + '</div>' +
-          '<img class="ashley-msg-avatar" src="./ashley.png" onclick="openLightbox()" onerror="this.src=\'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80\'">' +
-          '</div></div>';
+        html = '<div class="msg-group ashley" id="msg-' + idx + '"><div class="ashley-wrapper"><div class="bubble-wrapper"><div class="glass-bubble">' + parseMessage(text) + '</div>' + footerContent + '</div><img class="ashley-msg-avatar" src="./ashley.png" onclick="openLightbox()" onerror="this.src=\'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80\'"></div></div>';
       }
       stream.insertAdjacentHTML('beforeend', html);
       stream.scrollTop = stream.scrollHeight;
     }
 
     function showTypingIndicator(statusText) {
-      var elem = document.getElementById('floating-thinking-row');
-      if (!elem) {
+      if (!document.getElementById('floating-thinking-row')) {
         var stream = document.getElementById('chat-stream');
-        var html = '<div class="thinking-row" id="floating-thinking-row">' +
-          '<div class="thinking-dots"><div class="thinking-dot"></div><div class="thinking-dot"></div><div class="thinking-dot"></div></div>' +
-          '<span class="thinking-status-text" id="thinking-status-label">' + (statusText || "Ashley is thinking...") + '</span>' +
-          '</div>';
-        stream.insertAdjacentHTML('beforeend', html);
+        stream.insertAdjacentHTML('beforeend', '<div class="thinking-row" id="floating-thinking-row"><div class="thinking-dots"><div class="thinking-dot"></div><div class="thinking-dot"></div><div class="thinking-dot"></div></div><span class="thinking-status-text" id="thinking-status-label">' + (statusText || "Ashley is thinking...") + '</span></div>');
         stream.scrollTop = stream.scrollHeight;
-      } else {
-        var label = document.getElementById('thinking-status-label');
-        if (label && statusText) label.innerText = statusText;
       }
     }
+    function removeTypingIndicator() { var e = document.getElementById('floating-thinking-row'); if(e) e.remove(); }
 
-    function removeTypingIndicator() {
-      var elem = document.getElementById('floating-thinking-row');
-      if (elem) elem.remove();
-    }
-
-    function getCurrentTimeContext() {
-      var d = new Date();
-      var dateStr = d.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' });
-      var timeStr = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-      return dateStr + ", " + timeStr;
-    }
+    function getCurrentTimeContext() { var d = new Date(); return d.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' }) + ", " + d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); }
 
     function buildOpenRouterMessages() {
       var systemPrompt = HARDCODED_SYSTEM + "\n\n" + HARDCODED_PERSONA + "\n\n" + HARDCODED_SCENARIO;
-
-      if (backgroundSummary) {
-        systemPrompt += "\n\n[Persistent History / Established Memory: " + backgroundSummary + "]";
-      }
-
+      if (backgroundSummary) systemPrompt += "\n\n[Persistent History / Established Memory: " + backgroundSummary + "]";
       systemPrompt += "\n\n[Current real-world date and time: " + getCurrentTimeContext() + ". Let this naturally inform time-of-day details and passage of time.]";
 
       var messages = [{ role: "system", content: systemPrompt }];
-
-      var recentSlice = chatHistory.slice(-20);
-      recentSlice.forEach(function(m) {
-        messages.push({
-          role: m.role === 'user' ? 'user' : 'assistant',
-          content: m.text
-        });
-      });
-
+      chatHistory.slice(-20).forEach(function(m) { messages.push({ role: m.role === 'user' ? 'user' : 'assistant', content: m.text }); });
       return messages;
     }
 
-    function handleActionClick() {
-      if (isGenerating) {
-        stopGeneration();
-      } else {
-        sendMessage();
-      }
-    }
-
+    function handleActionClick() { if (isGenerating) stopGeneration(); else sendMessage(); }
     function setStopButtonState(stopping) {
-      var btn = document.getElementById('actionBtn');
-      var icon = document.getElementById('actionIcon');
-      if (stopping) {
-        btn.classList.add('is-stopping');
-        icon.innerHTML = '<path d="M6 6h12v12H6z"/>';
-      } else {
-        btn.classList.remove('is-stopping');
-        icon.innerHTML = '<path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>';
-      }
+      var btn = document.getElementById('actionBtn'), icon = document.getElementById('actionIcon');
+      if (stopping) { btn.classList.add('is-stopping'); icon.innerHTML = '<path d="M6 6h12v12H6z"/>'; }
+      else { btn.classList.remove('is-stopping'); icon.innerHTML = '<path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>'; }
     }
-
-    function stopGeneration() {
-      if (abortController) {
-        abortController.abort();
-      }
-      isGenerating = false;
-      removeTypingIndicator();
-      setStopButtonState(false);
-    }
+    function stopGeneration() { if (abortController) abortController.abort(); isGenerating = false; removeTypingIndicator(); setStopButtonState(false); }
 
     async function sendMessage() {
       if (isGenerating) return;
-
-      var input = document.getElementById('promptInput');
-      var userText = input.value.trim();
+      var input = document.getElementById('promptInput'), userText = input.value.trim();
       if (!userText) return;
-
-      input.value = '';
-      input.style.height = '24px';
-      var userTime = formatTime();
-      chatHistory.push({ role: 'user', text: userText, time: userTime });
-      saveChatHistory();
-      renderFullChat();
-
+      input.value = ''; input.style.height = '24px';
+      chatHistory.push({ role: 'user', text: userText, time: formatTime() });
+      saveChatHistory(); renderFullChat();
       await triggerAIResponse();
     }
 
     async function triggerAIResponse() {
-      var apiKey = getApiKey();
-      if (!apiKey) {
-        alert("Please set your OpenRouter API key to continue.");
-        return;
-      }
-
-      isGenerating = true;
-      setStopButtonState(true);
-      showTypingIndicator("Ashley is thinking...");
-
-      generationStartTime = Date.now();
-      abortController = new AbortController();
-
-      var messagesPayload = buildOpenRouterMessages();
+      var apiKey = getApiKey(); if (!apiKey) { alert("Please set API key."); return; }
+      isGenerating = true; setStopButtonState(true); showTypingIndicator("Ashley is thinking...");
+      generationStartTime = Date.now(); abortController = new AbortController();
 
       try {
         var response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + apiKey,
-            "HTTP-Referer": "https://meowoccino.github.io",
-            "X-Title": "Ashley PWA"
-          },
+          method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + apiKey, "HTTP-Referer": "https://meowoccino.github.io", "X-Title": "Ashley PWA" },
           signal: abortController.signal,
           body: JSON.stringify({
-            model: OPENROUTER_MODEL,
-            messages: messagesPayload,
-            max_tokens: 600,
-            temperature: 0.75,         /* Lowered from 0.82 to keep her sane and grounded */
-            top_p: 0.9,                /* Lowered slightly to prevent hallucinations */
-            frequency_penalty: 0.25,   /* Lowered to let her use normal vocabulary again */
-            presence_penalty: 0.25     /* Gently encourages new topics safely */
-            /* repetition_penalty completely removed as it caused the **** formatting glitches */
+            model: OPENROUTER_MODEL, messages: buildOpenRouterMessages(), max_tokens: 600,
+            temperature: 0.75, top_p: 0.9, frequency_penalty: 0.25, presence_penalty: 0.25
           })
         });
-
-        if (!response.ok) {
-          var errData = await response.json().catch(function() { return {}; });
-          throw new Error(errData.error?.message || ("HTTP " + response.status));
-        }
-
+        if (!response.ok) throw new Error("HTTP " + response.status);
         var data = await response.json();
-        var generatedText = "";
-        if (data.choices && data.choices[0] && data.choices[0].message) {
-          generatedText = data.choices[0].message.content.trim();
-        }
-
+        var generatedText = (data.choices && data.choices[0] && data.choices[0].message) ? data.choices[0].message.content.trim() : "";
         generatedText = generatedText.replace(/<\|.*?\|>/g, '').replace(/~+/g, '').trim();
+        chatHistory.push({ role: 'char', text: generatedText, time: formatTime(), duration: Math.round((Date.now() - generationStartTime)/1000) + "s (OpenRouter)" });
+        saveChatHistory(); renderFullChat(); triggerBackgroundSummary();
+      } catch (err) { if (err.name !== 'AbortError') alert("Generation Error: " + err.message); }
 
-        var durationSec = Math.round((Date.now() - generationStartTime) / 1000) + "s (OpenRouter)";
-        chatHistory.push({ role: 'char', text: generatedText, time: formatTime(), duration: durationSec });
-        saveChatHistory();
-        renderFullChat();
-
-        triggerBackgroundSummary();
-
-      } catch (err) {
-        if (err.name !== 'AbortError') {
-          alert("OpenRouter Generation Error: " + err.message);
-        }
-      }
-
-      removeTypingIndicator();
-      isGenerating = false;
-      setStopButtonState(false);
-      abortController = null;
+      removeTypingIndicator(); isGenerating = false; setStopButtonState(false); abortController = null;
     }
 
     async function triggerBackgroundSummary() {
       if (chatHistory.length < 16 || chatHistory.length % 10 !== 0) return;
-
-      var apiKey = localStorage.getItem('openrouter_api_key');
-      if (!apiKey) return;
-
-      var olderSlice = chatHistory.slice(-16, -6);
-      var textToSummarize = olderSlice.map(function(m) { 
-        return (m.role === 'user' ? 'Mathew' : 'Ashley') + ': ' + m.text; 
-      }).join('\n');
-
-      var summaryInstruction = backgroundSummary
-        ? "Merge the existing summary with new permanent facts from this conversation chunk into 2-4 short bullet points total. Keep it compact.\n\nExisting summary: " + backgroundSummary + "\n\nNew chunk:\n" + textToSummarize
-        : "Summarize permanent facts, commitments, and changes from this conversation chunk in 2-3 short bullet points.\n\n" + textToSummarize;
-
+      var apiKey = localStorage.getItem('openrouter_api_key'); if (!apiKey) return;
+      var textToSummarize = chatHistory.slice(-16, -6).map(function(m) { return (m.role === 'user' ? 'Mathew' : 'Ashley') + ': ' + m.text; }).join('\n');
+      var summaryInstruction = backgroundSummary ? "Merge existing summary with new permanent facts into 2-4 short bullet points.\n\nExisting: " + backgroundSummary + "\n\nNew:\n" + textToSummarize : "Summarize facts in 2-3 short bullet points.\n\n" + textToSummarize;
       try {
         var res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + apiKey,
-            "HTTP-Referer": "https://meowoccino.github.io",
-            "X-Title": "Ashley PWA"
-          },
-          body: JSON.stringify({
-            model: OPENROUTER_SUMMARY_MODEL,
-            messages: [
-              { role: "system", content: "You write extremely concise factual bullet-point summaries. No commentary, just bullets." },
-              { role: "user", content: summaryInstruction }
-            ],
-            max_tokens: 150,
-            temperature: 0.3
-          })
+          method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + apiKey, "HTTP-Referer": "https://meowoccino.github.io", "X-Title": "Ashley PWA" },
+          body: JSON.stringify({ model: OPENROUTER_SUMMARY_MODEL, messages: [{ role: "system", content: "You write extremely concise factual bullet-point summaries. No commentary, just bullets." }, { role: "user", content: summaryInstruction }], max_tokens: 150, temperature: 0.3 })
         });
-
-        if (!res.ok) return;
         var data = await res.json();
-        if (data.choices && data.choices[0] && data.choices[0].message) {
-          backgroundSummary = data.choices[0].message.content.trim();
-          localStorage.setItem('ashley_bg_summary', backgroundSummary);
-        }
+        if (data.choices && data.choices[0] && data.choices[0].message) { backgroundSummary = data.choices[0].message.content.trim(); localStorage.setItem('ashley_bg_summary', backgroundSummary); }
       } catch (e) {}
     }
 
-    function deleteMessage(idx) {
-      if (isGenerating) return;
-      chatHistory.splice(idx, 1);
-      saveChatHistory();
-      renderFullChat();
-    }
+    function deleteMessage(idx) { if (isGenerating) return; chatHistory.splice(idx, 1); saveChatHistory(); renderFullChat(); }
+    async function regenerateMessage(idx) { if (isGenerating) return; chatHistory.splice(idx, 1); saveChatHistory(); renderFullChat(); await triggerAIResponse(); }
 
-    async function regenerateMessage(idx) {
-      if (isGenerating) return;
-      chatHistory.splice(idx, 1);
-      saveChatHistory();
-      renderFullChat();
-      await triggerAIResponse();
-    }
-
-    function openEditModal(idx) {
-      if (isGenerating) return;
-      editingMessageIndex = idx;
-      var msg = chatHistory[idx];
-      var titleText = msg.role === 'user' ? 'Edit Your Message' : "Edit Ashley's Message";
-      document.getElementById('edit-sheet-title').innerText = titleText;
-      document.getElementById('editMessageTextarea').value = msg.text;
-      document.getElementById('edit-sheet').style.display = 'flex';
-    }
-
-    function closeEditModal(e) {
-      if (e && e.target && e.target.id !== 'edit-sheet') return;
-      document.getElementById('edit-sheet').style.display = 'none';
-      editingMessageIndex = null;
-    }
-
+    function openEditModal(idx) { if (isGenerating) return; editingMessageIndex = idx; document.getElementById('edit-sheet-title').innerText = chatHistory[idx].role === 'user' ? 'Edit Your Message' : "Edit Ashley's Message"; document.getElementById('editMessageTextarea').value = chatHistory[idx].text; document.getElementById('edit-sheet').style.display = 'flex'; }
+    function closeEditModal(e) { if (e && e.target && e.target.id !== 'edit-sheet') return; document.getElementById('edit-sheet').style.display = 'none'; editingMessageIndex = null; }
+    
     async function saveEditedMessage() {
       if (editingMessageIndex === null || isGenerating) return;
-      var newText = document.getElementById('editMessageTextarea').value.trim();
-      if (!newText) return;
-
-      var targetRole = chatHistory[editingMessageIndex].role;
-      var targetIdx = editingMessageIndex;
-
-      document.getElementById('edit-sheet').style.display = 'none';
-      editingMessageIndex = null;
-
-      if (targetRole === 'user') {
-        chatHistory.splice(targetIdx);
-        chatHistory.push({ role: 'user', text: newText, time: formatTime() });
-        saveChatHistory();
-        renderFullChat();
-        await triggerAIResponse();
-      } else {
-        chatHistory[targetIdx].text = newText;
-        saveChatHistory();
-        renderFullChat();
-      }
+      var newText = document.getElementById('editMessageTextarea').value.trim(); if (!newText) return;
+      var targetRole = chatHistory[editingMessageIndex].role, targetIdx = editingMessageIndex;
+      document.getElementById('edit-sheet').style.display = 'none'; editingMessageIndex = null;
+      if (targetRole === 'user') { chatHistory.splice(targetIdx); chatHistory.push({ role: 'user', text: newText, time: formatTime() }); saveChatHistory(); renderFullChat(); await triggerAIResponse(); } 
+      else { chatHistory[targetIdx].text = newText; saveChatHistory(); renderFullChat(); }
     }
 
-    function openLightbox() {
-      document.getElementById('avatar-lightbox').style.display = 'flex';
-    }
+    function openLightbox() { document.getElementById('avatar-lightbox').style.display = 'flex'; }
+    function closeLightbox() { document.getElementById('avatar-lightbox').style.display = 'none'; }
 
-    function closeLightbox() {
-      document.getElementById('avatar-lightbox').style.display = 'none';
-    }
-
-    var appContainer = document.getElementById('app-container');
-    var promptInput = document.getElementById('promptInput');
-    var chatStream = document.getElementById('chat-stream');
-
-    function adjustViewport() {
-      if (window.visualViewport) {
-        appContainer.style.height = window.visualViewport.height + 'px';
-      } else {
-        appContainer.style.height = window.innerHeight + 'px';
-      }
-      chatStream.scrollTop = chatStream.scrollHeight;
-    }
-
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', adjustViewport);
-      window.visualViewport.addEventListener('scroll', adjustViewport);
-    } else {
-      window.addEventListener('resize', adjustViewport);
-    }
-
-    promptInput.addEventListener('focus', function() {
-      setTimeout(function() {
-        adjustViewport();
-        chatStream.scrollTop = chatStream.scrollHeight;
-      }, 250);
-    });
-
-    function insertActionWrapper() {
-      var start = promptInput.selectionStart;
-      var end = promptInput.selectionEnd;
-      var val = promptInput.value;
-      promptInput.value = val.substring(0, start) + "**" + val.substring(end);
-      promptInput.focus();
-      promptInput.setSelectionRange(start + 1, start + 1);
-      autoExpandTextarea(promptInput);
-    }
-
-    promptInput.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') {
-        setTimeout(function() {
-          autoExpandTextarea(promptInput);
-        }, 10);
-      }
-    });
+    var appContainer = document.getElementById('app-container'), promptInput = document.getElementById('promptInput'), chatStream = document.getElementById('chat-stream');
+    function adjustViewport() { appContainer.style.height = window.visualViewport ? window.visualViewport.height + 'px' : window.innerHeight + 'px'; chatStream.scrollTop = chatStream.scrollHeight; }
+    if (window.visualViewport) { window.visualViewport.addEventListener('resize', adjustViewport); window.visualViewport.addEventListener('scroll', adjustViewport); } else { window.addEventListener('resize', adjustViewport); }
+    promptInput.addEventListener('focus', function() { setTimeout(function() { adjustViewport(); chatStream.scrollTop = chatStream.scrollHeight; }, 250); });
+    function insertActionWrapper() { var start = promptInput.selectionStart, end = promptInput.selectionEnd, val = promptInput.value; promptInput.value = val.substring(0, start) + "**" + val.substring(end); promptInput.focus(); promptInput.setSelectionRange(start + 1, start + 1); autoExpandTextarea(promptInput); }
+    promptInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') { setTimeout(function() { autoExpandTextarea(promptInput); }, 10); } });
 
     window.addEventListener('DOMContentLoaded', init);
-
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=6').then(function(reg) {
-          reg.update();
-        }).catch(function() {});
-      });
-    }
+    if ('serviceWorker' in navigator) { window.addEventListener('load', function() { navigator.serviceWorker.register('./sw.js?v=7').then(function(reg) { reg.update(); }).catch(function() {}); }); }
   </script>
 </body>
 </html>
