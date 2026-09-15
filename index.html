@@ -533,7 +533,7 @@ I think that sounds perfect. Let's get cleaned up and get cozy in bed.
     promptInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') { setTimeout(function() { autoExpandTextarea(promptInput); }, 10); } });
 
     window.addEventListener('DOMContentLoaded', init);
-    if ('serviceWorker' in navigator) { window.addEventListener('load', function() { navigator.serviceWorker.register('./sw.js?v=12').then(function(reg) { reg.update(); }).catch(function() {}); }); }
+    if ('serviceWorker' in navigator) { window.addEventListener('load', function() { navigator.serviceWorker.register('./sw.js?v=13').then(function(reg) { reg.update(); }).catch(function() {}); }); }
   </script>
 </body>
 </html>
