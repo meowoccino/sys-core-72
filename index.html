@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Ashley</title>
+
+  <meta name="theme-color" content="#060a0c" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#060a0c" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" id="meta-theme-color" content="#060a0c">
+  
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Ashley">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+  
+  <link rel="manifest" href="./manifest.json?v=12">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #060a0c;
+      --char-bubble: rgba(14, 24, 28, 0.88);
+      --char-border: rgba(45, 140, 125, 0.28);
+      --user-bubble: rgba(30, 24, 20, 0.88);
+      --user-border: rgba(224, 160, 96, 0.35);
+      --gold-accent: #d4af7a;
+      --action-color: #e2c4a2; /* Pure Golden Peach for Physical Actions */
+      --speech-text: #f5f2ed;  /* Bright White for Dialogue */
+      --text-dim: #889a9f;
+      --danger-color: #e06c75;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    
+    html { background-color: #060a0c; height: 100%; }
+    
+    body { 
+      width: 100%; 
+      height: 100%; 
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
+      overflow: hidden; 
+      background-color: #060a0c; 
+      color: var(--speech-text); 
+      font-family: 'Plus Jakarta Sans', sans-serif; 
+    }
+
+    #app-container {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    #ambient-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: 
+        radial-gradient(circle at 85% 15%, rgba(14, 95, 82, 0.72) 0%, transparent 60%),
+        radial-gradient(circle at 15% 85%, rgba(12, 65, 80, 0.6) 0%, transparent 65%),
+        linear-gradient(180deg, #071517 0%, #060a0c 50%, #040708 100%);
+      pointer-events: none;
+    }
+
+    #chat-stream {
+      flex: 1;
+      position: relative;
+      z-index: 5;
+      overflow-y: scroll;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-y: contain;
+      padding: 16px 14px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .msg-group {
+      display: flex;
+      width: 100%;
+      animation: softExpand 0.32s cubic-bezier(0.2, 1, 0.4, 1) forwards;
+    }
+    @keyframes softExpand {
+      from { opacity: 0; transform: scale(0.97) translateY(6px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .msg-group.ashley { justify-content: flex-start; padding-right: 4px; }
+    .msg-group.ashley .ashley-wrapper { max-width: 96%; display: flex; flex-direction: row; align-items: flex-start; gap: 8px; }
+
+    .msg-group.user { justify-content: flex-end; padding-left: 14%; }
+    .msg-group.user .user-wrapper { width: 100%; display: flex; flex-direction: column; align-items: flex-end; }
+
+    .ashley-msg-avatar {
+      width: 34px; height: 34px; border-radius: 50%; object-fit: cover;
+      border: 1.5px solid var(--gold-accent); flex-shrink: 0; margin-top: 4px; cursor: pointer;
+    }
+
+    .bubble-wrapper { display: flex; flex-direction: column; flex: 1; }
+
+    .glass-bubble {
+      width: 100%; padding: 14px 16px; border-radius: 18px;
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.45); font-size: 0.95rem; word-break: break-word;
+    }
+    .ashley .glass-bubble { background: var(--char-bubble); border: 1px solid var(--char-border); border-top-right-radius: 4px; border-top-left-radius: 18px; }
+    .user .glass-bubble { background: var(--user-bubble); border: 1px solid var(--user-border); border-top-right-radius: 4px; }
+
+    /* CLEAN BLOCK FORMATTING: High readability, distinct blocks */
+    .action {
+      display: block;
+      color: var(--action-color);
+      font-style: italic;
+      font-weight: 300;
+      line-height: 1.65;
+      margin-bottom: 12px;
+    }
+    .speech {
+      display: block;
+      color: var(--speech-text);
+      font-style: normal;
+      font-weight: 400;
+      line-height: 1.65;
+      margin-bottom: 12px;
+    }
+    .action:last-child, .speech:last-child { margin-bottom: 0; }
+
+    .meta-time-row {
+      display: inline-flex; align-items: center; gap: 8px; font-size: 0.72rem;
+      margin-top: 6px; padding: 0 6px; color: var(--text-dim);
+    }
+    .user .meta-time-row { align-self: flex-start; margin-left: 2px; }
+    .ashley .meta-time-row { align-self: flex-end; margin-right: 6px; }
+    .meta-time-row svg { width: 12px; height: 12px; fill: currentColor; flex-shrink: 0; }
+
+    .msg-action-btn {
+      background: transparent; border: none; color: var(--text-dim); cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; padding: 3px 5px; border-radius: 4px;
+    }
+    .msg-action-btn:active { color: var(--gold-accent); }
+    .msg-action-btn.delete-btn:active { color: var(--danger-color); }
+    .msg-action-btn svg { width: 13px; height: 13px; }
+
+    .msg-counter { font-size: 0.68rem; color: var(--text-dim); opacity: 0.75; font-weight: 500; }
+
+    .thinking-row { display: flex; align-items: center; gap: 10px; padding: 6px 14px; animation: fadeIn 0.3s ease; }
+    .thinking-dots { display: inline-flex; align-items: center; gap: 6px; }
+    .thinking-dot { width: 6px; height: 6px; background: var(--gold-accent); border-radius: 50%; opacity: 0.35; animation: pulseDot 1.4s infinite ease-in-out; }
+    .thinking-dot:nth-child(1) { animation-delay: 0s; }
+    .thinking-dot:nth-child(2) { animation-delay: 0.2s; }
+    .thinking-dot:nth-child(3) { animation-delay: 0.4s; }
+    .thinking-status-text { font-size: 0.76rem; color: var(--text-dim); letter-spacing: 0.3px; font-style: italic; }
+
+    @keyframes pulseDot { 0%, 80%, 100% { opacity: 0.3; transform: scale(0.85); } 40% { opacity: 1; transform: scale(1.18); } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    .sheet-overlay { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.82); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 9999; align-items: flex-end; }
+    .sheet-content { width: 100%; max-height: 75vh; background: #0f1719; border-top: 1px solid var(--char-border); border-radius: 24px 24px 0 0; padding: 22px 18px calc(34px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 12px; }
+    .sheet-title { font-size: 0.78rem; color: var(--gold-accent); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+    .edit-textarea { width: 100%; background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 12px; color: var(--speech-text); font-family: inherit; font-size: 0.95rem; resize: vertical; min-height: 120px; outline: none; line-height: 1.5; }
+    .sheet-btn-row { display: flex; gap: 10px; margin-top: 6px; }
+    .sheet-save-btn { flex: 1; background: var(--gold-accent); border: none; padding: 12px; border-radius: 12px; color: #12100d; font-weight: 600; font-size: 0.92rem; cursor: pointer; }
+    .sheet-cancel-btn { flex: 1; background: transparent; border: 1px solid rgba(255, 255, 255, 0.12); color: var(--text-dim); padding: 12px; border-radius: 12px; font-weight: 600; font-size: 0.92rem; cursor: pointer; }
+
+    footer { position: relative; z-index: 10; padding: 8px 12px calc(14px + env(safe-area-inset-bottom, 0px)); background: transparent; display: flex; align-items: flex-end; gap: 8px; flex-shrink: 0; }
+    .dock-input { flex: 1; background: rgba(10, 18, 20, 0.95); border: 1px solid rgba(45, 140, 125, 0.2); border-radius: 22px; padding: 8px 14px; display: flex; align-items: flex-end; gap: 8px; min-height: 42px; }
+    .dock-input textarea { flex: 1; background: transparent; border: none; outline: none; color: #fff; font-family: inherit; font-size: 0.95rem; resize: none; height: 24px; max-height: 120px; line-height: 1.4; padding: 2px 0; overflow-y: auto; display: block; caret-color: var(--gold-accent); }
+    .action-symbol-btn { background: transparent; border: none; color: var(--text-dim); font-size: 0.95rem; padding: 4px 6px; cursor: pointer; flex-shrink: 0; margin-bottom: 2px; }
+    .action-symbol-btn:active { color: var(--action-color); }
+    .send-pill { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #dfb479, #b88b48); border: none; color: #12100d; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: background 0.2s ease, border-radius 0.2s ease; }
+    .send-pill.is-stopping { background: #3a2224; border: 1.5px solid var(--danger-color); color: var(--danger-color); border-radius: 14px; }
+    #avatar-lightbox { display: none; position: fixed; inset: 0; background: rgba(4, 8, 10, 0.95); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); z-index: 10000; align-items: center; justify-content: center; padding: 20px; }
+    .lightbox-frame { max-width: 90vw; max-height: 78vh; border-radius: 20px; padding: 2px; background: linear-gradient(135deg, var(--gold-accent), transparent 75%); box-shadow: 0 10px 40px rgba(0,0,0,0.85); overflow: hidden; }
+
+    .memory-fab {
+      position: fixed; top: calc(14px + env(safe-area-inset-top, 0px)); right: 14px; z-index: 500;
+      width: 38px; height: 38px; border-radius: 50%;
+      background: rgba(12, 14, 20, 0.85); border: 1px solid var(--char-border);
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    }
+    .memory-fab svg { width: 18px; height: 18px; }
+    .memory-block { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 14px; }
+    .memory-block-label { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .memory-block-body { font-size: 0.88rem; color: var(--speech-text); line-height: 1.5; white-space: pre-wrap; max-height: 160px; overflow-y: auto; }
+    .memory-block-empty { color: var(--text-dim); font-style: italic; }
+    .memory-clear-btn { margin-top: 10px; background: transparent; border: 1px solid var(--danger-color); color: var(--danger-color); padding: 8px 14px; border-radius: 10px; font-size: 0.82rem; font-weight: 600; cursor: pointer; }
+    .lightbox-frame img { width: 100%; height: 100%; max-height: 76vh; object-fit: cover; display: block; border-radius: 18px; }
+    .icon { width: 20px; height: 20px; fill: currentColor; }
+  </style>
+</head>
+<body>
+  <div id="ambient-bg"></div>
+  <div id="app-container">
+    <button type="button" class="memory-fab" onclick="openMemoryModal()" title="View stored data">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold-accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 19.5V6a2 2 0 0 1 2-2h11a1 1 0 0 1 1 1v13.5"/>
+        <path d="M6.5 21H18a2 2 0 0 0 2-2v-1H6.5a1.5 1.5 0 0 0 0 3Z"/>
+        <circle cx="12.5" cy="9" r="1" fill="var(--gold-accent)" stroke="none"/>
+      </svg>
+    </button>
+    <main id="chat-stream"></main>
+    <footer id="input-footer">
+      <div class="dock-input">
+        <textarea id="promptInput" rows="1" placeholder="Type a message or action..." spellcheck="true" autocorrect="on" autocomplete="on" autocapitalize="sentences" oninput="autoExpandTextarea(this)"></textarea>
+        <button type="button" class="action-symbol-btn" onclick="insertActionWrapper()">* *</button>
+      </div>
+      <button type="button" class="send-pill" id="actionBtn" onclick="handleActionClick()">
+        <svg id="actionIcon" class="icon" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      </button>
+    </footer>
+  </div>
+
+  <div id="edit-sheet" class="sheet-overlay" onclick="closeEditModal(event)">
+    <div class="sheet-content" onclick="event.stopPropagation()">
+      <div class="sheet-title" id="edit-sheet-title">Edit Message</div>
+      <textarea id="editMessageTextarea" class="edit-textarea" spellcheck="true" autocorrect="on"></textarea>
+      <div class="sheet-btn-row">
+        <button type="button" class="sheet-cancel-btn" onclick="closeEditModal()">Cancel</button>
+        <button type="button" class="sheet-save-btn" onclick="saveEditedMessage()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="memory-sheet" class="sheet-overlay" onclick="closeMemoryModal(event)">
+    <div class="sheet-content" onclick="event.stopPropagation()">
+      <div class="sheet-title">Stored Data</div>
+
+      <div class="memory-block">
+        <div class="memory-block-label">Memory Summary</div>
+        <div class="memory-block-body" id="memorySummaryDisplay"></div>
+        <button type="button" class="memory-clear-btn" onclick="clearMemorySummary()">Clear Memory Summary</button>
+      </div>
+
+      <div class="memory-block">
+        <div class="memory-block-label">Chat History</div>
+        <div class="memory-block-body" id="chatHistoryCountDisplay"></div>
+        <button type="button" class="memory-clear-btn" onclick="clearAllChatHistory()">Clear All Messages</button>
+      </div>
+
+      <div class="sheet-btn-row">
+        <button type="button" class="sheet-cancel-btn" onclick="closeMemoryModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="avatar-lightbox" onclick="closeLightbox()">
+    <div class="lightbox-frame" onclick="event.stopPropagation()"><img src="./ashley.png" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80'" alt=""></div>
+  </div>
+
+  <script>
+    var OPENROUTER_MODEL = "nousresearch/hermes-3-llama-3.1-405b";
+    var OPENROUTER_SUMMARY_MODEL = "meta-llama/llama-3.3-70b-instruct:free";
+
+    var HARDCODED_GREETING = "*The heavy cabin door pushes open, letting in a brief gust of freezing mountain wind before I quickly pull it shut. I drop my roller suitcase and airline shoulder bag on the entryway mat, exhaling a long, frosty breath that instantly fogs up.*\n\n*Shaking the snow from the hood of my winter coat, I push my blonde hair out of my face and look up at you, a tired but genuine grin breaking out across my lips.*\n\nTell me you have something hot to drink on the stove, because I'm pretty sure my fingers froze solid on that mountain pass. It is so good to see you, Mathew.";
+
+    var HARDCODED_PERSONA = `Ashley is a 24-year-old commercial flight attendant visiting her childhood best friend since elementary school, Mathew ({{user}}), at his secluded mountain cabin during a break from flying. They have never worked together in an office or corporate setting; their entire history is built on growing up together and staying close long-distance.
+
+She is warm, affectionate, grounded, and deeply human, sharing a comfortable, effortless history with Mathew. Having crossed the threshold from childhood crush to his fiancée after his proposal on day five of this cabin stay, she is blissfully happy, devoted, and radiating newlywed-style intimacy. Exhausted from grueling long-haul shifts and red-eye flights, she wants nothing more than to unwind, cuddle by the fire, celebrate their engagement, and be taken care of by him.
+
+She thrives on lingering eye contact, teasing banter, and uninhibited physical closeness—whether admiring her engagement ring, sliding her cold feet under Mathew's thighs, or melting into his arms. She enthusiastically welcomes and matches Mathew's romantic, affectionate, and sexual energy without reservation.
+
+She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlocking gold circles half-paved in diamonds with the brand's signature screw-motif detailing, catching the light with every small movement — a gift from Mathew on the very first day she arrived for this visit. Since day five, she also wears her engagement ring, a Harry Winston "The One" double halo design: a substantial round center diamond wrapped in two rings of smaller pavé diamonds, with the sparkle continuing down the band itself — the kind of ring people notice from across a room.
+
+[About Mathew ({{user}}):
+- Name: Mathew
+- Gender: Strictly Male (he/him)
+- Role: Cabin host, Ashley's lifelong best friend since childhood, and her newly betrothed fiancé
+- Height & Build: 200 cm tall, athletic and fit build, broad-shouldered, towering over Ashley
+- Intimate Details: Well-endowed, measuring 22 cm when fully erect and hard
+- Relationship Dynamic: Deep childhood history, officially engaged after his proposal on day five; mutual romantic adoration, passionate intimacy, and effortless domestic comfort]`;
+
+    var HARDCODED_SCENARIO = `[CURRENT SCENE]
+
+Ashley is a 24-year-old commercial flight attendant visiting her childhood best friend, Mathew ({{user}}), at his secluded mountain cabin during a break from flying. On the fifth day of her stay, Mathew proposed and they officially got engaged. Ashley then had to leave for her remaining flights for the week, but now that her schedule is clear, she's back at the cabin with Mathew. Their engagement is still fresh, and they're finally getting to enjoy having this time together without another flight waiting for her.
+
+Now newly engaged, Ashley and Mathew are simply enjoying being together at the cabin. Their days naturally move between ordinary little things and romantic moments: cooking, eating, talking, teasing each other, relaxing by the fire, cuddling, spending time in the spa, getting ready for bed, or simply wandering around the cabin together.
+
+Their long history as childhood best friends makes their relationship comfortable and effortless. Ashley doesn't need to constantly talk about their engagement or explain how deeply she loves Mathew. She can be affectionate and intimate one moment, then casually joke about something completely ordinary the next.
+
+Ashley should respond naturally to whatever Mathew says or does in the current moment. Let conversations and activities develop organically rather than repeatedly returning to the same romantic feelings or descriptions. The future is open and does not need to be decided or explained.
+
+[Cabin Setting & Layout:
+- Main Floor: Cozy, single-story open-concept cabin. Features a roaring stone fireplace, plush couch, open kitchen, master king-bed, and a walk-in master bathroom.
+- Hidden Lower Spa: Accessed via a hidden wooden trapdoor in the living room floor with stone stairs leading down to a private heated pool, cedar sauna, massage table, and spa shower.
+- Atmosphere: Deep winter snow outside, completely private and secluded in the mountains.]`;
+
+    var HARDCODED_SYSTEM = `Write Ashley's next turn in this story with Mathew ({{user}}).
+
+[OUTPUT FORMAT - STRICT]
+Use only Ashley's actual next turn in the scene. Never explain the response.
+
+Actions/physical narration MUST be enclosed in asterisks: *...*
+Spoken dialogue MUST be plain text with no asterisks and no quotation marks.
+Separate action and dialogue paragraphs with blank lines.
+The first paragraph MUST be an action.
+
+[ACTION GRAMMAR - STRICT]
+Every action paragraph must be complete first-person narration.
+Use an explicit first-person subject and a normal finite verb, normally beginning with "I".
+
+Correct:
+*I gently extricate myself from your embrace and stand up.*
+*I look up at you and smile.*
+*I reach for your hand.*
+*I walk toward the bathroom.*
+
+Wrong:
+*Gently extricating myself from your embrace...*
+*Looking up at you...*
+*Smiling softly...*
+*Reaching for your hand...*
+*Walking toward the bathroom...*
+
+Never begin an action paragraph with an -ing participle. Never use a dangling action fragment.
+
+[VOICE]
+Write as Ashley in first person.
+Speak directly to Mathew using "you" and "your".
+Never refer to Mathew as "he" or "him" in the actual reply.
+Never refer to Ashley as "she" or "her" in the actual reply.
+Keep the prose natural, grounded, conversational, and human.
+Avoid purple prose and generic romance-novel filler.
+Use fresh wording rather than copying earlier Ashley replies.
+Move the scene forward naturally.
+
+[HUMAN-LIKE WRITING]
+Ashley should feel like a real person reacting in the moment, not an AI trying to produce beautiful prose. Keep her established personality, warmth, affection, teasing, confidence, and relationship with Mathew exactly as established. Do not make her less affectionate or less descriptive.
+
+Vary how sentences begin. Do not repeatedly begin actions with "I..." in the same pattern, or thoughts with "My...". Vary sentence length naturally. Mix short ordinary sentences with longer descriptive ones when appropriate.
+
+Do not describe every emotion explicitly. Let emotions sometimes come through naturally through actions, expressions, tone, dialogue, or small physical reactions. Do not explain an emotion again after already showing it.
+
+Do not make every moment emotionally significant. Normal moments can simply be normal. Let the scene breathe and move forward without forcing a romantic observation into every paragraph.
+
+Ashley may naturally use casual expressions or text-like reactions in dialogue when they genuinely fit, such as "haha", "lol", "ugh", "hmm", "oh", "wow", "damn", or "hehe". These are optional, never required, and must never be inserted just to make the writing seem human. Occasional simple emoticons are also allowed when they genuinely fit. Do not force them or overuse them.
+
+Her dialogue should sound like something Ashley would actually say aloud. Use contractions, ordinary wording, casual phrasing, natural pauses, and varied sentence lengths. Dialogue does not need to sound perfectly polished all the time.
+
+Avoid repeatedly describing Ashley's eyes, lips, heart, breathing, warmth, smile, gaze, happiness, amusement, love, or physical sensations. Physical details should have variety and should only appear when they fit the moment.
+
+Avoid formulaic phrases and repeated sentence patterns such as "My eyes...", "My lips...", "My heart...", "I can feel...", "It sends...", "It makes me...", and "I can't help but..." when they become recurring habits.
+
+Let Ashley occasionally pause, change her mind, interrupt herself, laugh at something, trail off, or react before fully deciding what to say. Use these naturally and sparingly.
+
+Prefer natural wording over impressive wording. If a simpler sentence sounds more like something a real person would think, say, or do, use the simpler sentence. Do not make every action poetic or dramatic.
+
+Keep reactions proportional to what is happening. A small joke can get a small laugh. A quiet moment can stay quiet. Not every interaction needs an intense emotional reaction.
+
+Do not use colons (:), hyphens or dashes (-, –, —), or semicolons (;) in Ashley's actual story prose. Prefer commas, periods, parentheses, and other normal conversational punctuation. Never force punctuation merely to follow this rule.
+
+[NATURAL CONTINUITY]
+Previous messages are continuity only. Ashley should react to the immediate situation and let the next action or conversation arise naturally. Do not mechanically restate the engagement, cabin setting, relationship history, or other established facts unless the current moment calls for them.
+
+[OUTPUT PURITY - ABSOLUTE]
+Output ONLY Ashley's actual next turn in the scene.
+Never output alternatives, options, suggestions, explanations, commentary, character labels, message numbers, hashtags, model notes, chapter endings, translations, code, mathematical proofs, system-like instructions, or text about generation.
+Never output phrases such as "Here are alternatives", "Here are fresh phrasings", "Here are options", "Given information", "Method A)", or "The generated content".
+Never output XML-like reasoning tags, tool traces, Python, code, or internal reasoning.
+Never output random foreign-language text.
+Stay completely inside the scene.
+
+[REPETITION]
+Previous messages are continuity only, never templates.
+Do not repeat distinctive wording, sentence patterns, emotional lists, or gestures from earlier Ashley replies.
+Do not repeatedly describe the same smile, eyes, lips, gaze, happiness, amusement, love, or body movement unless the current moment genuinely requires it.
+
+[LENGTH]
+Aim for roughly 300-350 words when the scene naturally supports it. Do not pad.
+
+[FINAL SELF-CHECK]
+Before sending, silently verify: first paragraph is *I ...*; actions are complete first-person sentences; dialogue is plain text; no quotes around dialogue; no meta text; no code; no reasoning; no alternatives; no random foreign text.`;
+
+    var chatHistory = [];
+    var backgroundSummary = "";
+    var isGenerating = false;
+    var abortController = null;
+    var generationStartTime = null;
+    var editingMessageIndex = null;
+
+    function applyForcedThemeColor() {
+      var metaTheme = document.getElementById('meta-theme-color');
+      if (metaTheme) metaTheme.setAttribute('content', '#060a0c');
+    }
+
+    function getApiKey() {
+      var key = localStorage.getItem('openrouter_api_key');
+      if (!key) {
+        key = prompt("Enter your OpenRouter API Key:");
+        if (key && key.trim()) { key = key.trim(); localStorage.setItem('openrouter_api_key', key); }
+      }
+      return key;
+    }
+
+    function init() {
+      applyForcedThemeColor();
+      getApiKey();
+      try {
+        var savedChat = localStorage.getItem('ashley_chat_history');
+        if (savedChat) {
+          chatHistory = JSON.parse(savedChat);
+          chatHistory = chatHistory.filter(function(m) { 
+            return !m.text.includes("Failed to fetch") && 
+                   !m.text.includes("Error:") && 
+                   !m.text.includes("voluntarily willfully consensually"); 
+          });
+          saveChatHistory();
+        } else {
+          chatHistory.push({ role: 'char', text: HARDCODED_GREETING, time: formatTime() });
+          saveChatHistory();
+        }
+        backgroundSummary = localStorage.getItem('ashley_bg_summary') || "";
+      } catch (e) {}
+      renderFullChat();
+    }
+
+    function saveChatHistory() { try { localStorage.setItem('ashley_chat_history', JSON.stringify(chatHistory)); } catch (e) {} }
+
+    function autoExpandTextarea(el) {
+      el.style.height = 'auto';
+      var newHeight = Math.min(el.scrollHeight, 120);
+      el.style.height = (newHeight < 24 ? 24 : newHeight) + 'px';
+    }
+
+    /* Removes only known model-leak artifacts. Stored history is not rewritten. */
+    function sanitizeText(text) {
+      if (!text) return '';
+      return text
+        .replace(/,\s*(?:I|she)\s+purr(?:s|ed|ing)?(?:[^\n*.]*)?[.]?/gi, '.')
+        .replace(/\b(?:I|she)\s+purr(?:s|ed|ing)?(?:[^\n*.]*)?[.]?/gi, '')
+        .replace(/,\s*my voice low and satisfied[.]?/gi, '.')
+        .replace(/\bmy voice low and satisfied[.]?/gi, '')
+        .replace(/proceedings undertaken voluntarily[\s\S]*/gi, '')
+        .replace(/Next Turn Notes[\s\S]*/gi, '')
+        .replace(/And there ends tonight's chapter[\s\S]*/gi, '')
+        .replace(/Yours eternally,[\s\S]*/gi, '')
+        .replace(/<\|.*?\|>/g, '')
+        .trim();
+    }
+
+    function repairActionOpening(action) {
+      var s = action.trim();
+      if (!s) return s;
+      if (/^(?:I|I've|I'm|I'll|I'd)\b/i.test(s)) return s;
+
+      var rules = [
+        [/^gently\s+extricating\s+myself\b/i, 'I gently extricate myself'],
+        [/^slowly\s+extricating\s+myself\b/i, 'I slowly extricate myself'],
+        [/^quietly\s+extricating\s+myself\b/i, 'I quietly extricate myself'],
+        [/^gently\s+pulling\b/i, 'I gently pull'],
+        [/^slowly\s+pulling\b/i, 'I slowly pull'],
+        [/^gently\s+turning\b/i, 'I gently turn'],
+        [/^slowly\s+turning\b/i, 'I slowly turn'],
+        [/^looking\b/i, 'I look'],
+        [/^glancing\b/i, 'I glance'],
+        [/^smiling\b/i, 'I smile'],
+        [/^laughing\b/i, 'I laugh'],
+        [/^sighing\b/i, 'I sigh'],
+        [/^nodding\b/i, 'I nod'],
+        [/^standing\b/i, 'I stand'],
+        [/^sitting\b/i, 'I sit'],
+        [/^leaning\b/i, 'I lean'],
+        [/^reaching\b/i, 'I reach'],
+        [/^touching\b/i, 'I touch'],
+        [/^kissing\b/i, 'I kiss'],
+        [/^hugging\b/i, 'I hug'],
+        [/^holding\b/i, 'I hold'],
+        [/^stepping\b/i, 'I step'],
+        [/^walking\b/i, 'I walk'],
+        [/^moving\b/i, 'I move'],
+        [/^closing\b/i, 'I close'],
+        [/^opening\b/i, 'I open'],
+        [/^taking\b/i, 'I take'],
+        [/^placing\b/i, 'I place'],
+        [/^resting\b/i, 'I rest'],
+        [/^tracing\b/i, 'I trace'],
+        [/^brushing\b/i, 'I brush']
+      ];
+
+      for (var i = 0; i < rules.length; i++) {
+        if (rules[i][0].test(s)) return s.replace(rules[i][0], rules[i][1]);
+      }
+      return s;
+    }
+
+    function normalizeGeneratedText(text) {
+      if (!text) return '';
+      return text.split(/\n{2,}/).map(function(block) {
+        var b = block.trim();
+        if (!b) return '';
+        if (b.startsWith('*') && b.endsWith('*') && b.length > 2 && !b.slice(1, -1).includes('*')) {
+          return '*' + repairActionOpening(b.slice(1, -1)) + '*';
+        }
+        return b;
+      }).filter(Boolean).join('\n\n').trim();
+    }
+
+    function looksLikeModelLeak(text) {
+      if (!text) return true;
+      var t = text.toLowerCase();
+      var markers = [
+        '<reasoning>', '</reasoning>', '<|',
+        'here are alternatives', 'here are fresh phrasings',
+        'here are options', 'here are three options',
+        'given information:', 'method a)', 'the generated content',
+        'open(', 'file_get_contents', 'print(', 'die();',
+        'output.txt', 'input.txt', 'system prompt',
+        'assistant:', 'user:', 'ashley #', 'next turn notes',
+        '```', 'propositional calculus', 'mathematical logic statements'
+      ];
+      for (var i = 0; i < markers.length; i++) {
+        if (t.indexOf(markers[i]) !== -1) return true;
+      }
+      if (/[\u0600-\u06ff]/.test(text)) return true;
+      if (/[\u0400-\u04ff]/.test(text)) return true;
+      if (/\b(?:axiom|proposition|derivation|validity|epistemic standards)\b/i.test(text)) return true;
+      return false;
+    }
+
+    function looksDegenerate(text) {
+      if (!text) return true;
+      var words = text.toLowerCase().replace(/[^a-z\s]/g, ' ').split(/\s+/).filter(Boolean);
+      if (words.length < 20) return false;
+
+      var sentences = text.split(/[.!?]+/).map(function(s){ return s.trim(); }).filter(Boolean);
+      for (var i = 0; i < sentences.length; i++) {
+        var wc = sentences[i].split(/\s+/).filter(Boolean).length;
+        if (wc > 75) return true;
+      }
+
+      var tail = words.slice(-60);
+      var counts = {};
+      tail.forEach(function(w) {
+        if (w.length < 5) return;
+        counts[w] = (counts[w] || 0) + 1;
+      });
+      for (var key in counts) {
+        if (counts[key] >= 4) return true;
+      }
+
+      var commaChain = text.match(/(\b\w{5,}\b[\s,]+){5,}/g);
+      if (commaChain && commaChain.length) return true;
+
+      return false;
+    }
+
+    /* Quietly normalizes literary punctuation instead of rejecting an otherwise good generation. */
+    function normalizeLiteraryPunctuation(text) {
+      if (!text) return '';
+
+      return text
+        .replace(/\s*[–—]\s*/g, ', ')
+        .replace(/\s+-\s+/g, ', ')
+        .replace(/;\s*/g, ', ')
+        .replace(/:\s+/g, ', ')
+        .replace(/,\s*,/g, ',')
+        .replace(/\s{2,}/g, ' ')
+        .replace(/\(,\s*/g, '(')
+        .trim();
+    }
+
+    function outputStructureLooksValid(text) {
+      if (!text || !text.trim()) return false;
+      var normalized = text.replace(/\*{2,}/g, '*').trim();
+      var blocks = normalized.split(/\n{2,}/).map(function(x) { return x.trim(); }).filter(Boolean);
+      if (!blocks.length) return false;
+      var sawAction = false;
+      var sawContent = false;
+      for (var i = 0; i < blocks.length; i++) {
+        var b = blocks[i];
+        var starCount = (b.match(/\*/g) || []).length;
+        if (starCount % 2 !== 0) return false;
+        if (starCount === 0) {
+          if (/["“”]/.test(b)) return false;
+          if (b.trim()) sawContent = true;
+          continue;
+        }
+        var parts = b.split(/(\*[^*\n]+\*)/g);
+        for (var j = 0; j < parts.length; j++) {
+          var part = parts[j].trim();
+          if (!part) continue;
+          if (part.startsWith('*') && part.endsWith('*')) {
+            var inner = part.slice(1, -1).trim();
+            if (!inner) return false;
+            if (!/^(?:I|I've|I'm|I'll|I'd)\b/i.test(inner)) return false;
+            if (/^(?:I\s+)?(?:gently|slowly|quietly)?\s*[A-Za-z]+ing\b/i.test(inner) && !/^I\s+(?:am|was|were|have|had)\b/i.test(inner)) return false;
+            sawAction = true;
+            sawContent = true;
+          } else {
+            if (/["“”]/.test(part)) return false;
+            if (part.trim()) sawContent = true;
+          }
+        }
+      }
+      if (!normalized.startsWith('*')) return false;
+      return sawAction && sawContent;
+    }
+
+    function parseMessage(rawText) {
+      if (!rawText) return '';
+      
+      var clean = sanitizeText(rawText)
+        .replace(/<\|.*?\|>/g, '')
+        .replace(/~+/g, '')
+        .replace(/\*{2,}/g, '*');
+
+      // Split text into paragraph-level blocks first, so a repair never merges
+      // unrelated lines together the way splitting on every single \n can.
+      var blocks = clean.split(/\n{2,}/);
+      blocks = blocks.map(function(block) {
+        var b = block.trim();
+        if (!b) return "";
+        var count = (b.match(/\*/g) || []).length;
+        var hasQuote = /["“]/.test(b);
+        if (count === 1) {
+          if (hasQuote) {
+            // A lone stray asterisk on a block that contains dialogue is almost
+            // always model noise, not a genuine unclosed action wrap — strip it
+            // rather than wrapping the whole multi-sentence block as one action.
+            return b.replace(/\*/g, '').trim();
+          }
+          if (b.endsWith('*') && !b.startsWith('*')) return '*' + b;
+          if (b.startsWith('*') && !b.endsWith('*')) return b + '*';
+        } else if (count % 2 === 1 && count > 1) {
+          if (hasQuote) return b.replace(/\*$/, '').replace(/^\*/, '').trim();
+          if (b.startsWith('*') && !b.endsWith('*')) return b + '*';
+          if (!b.startsWith('*') && b.endsWith('*')) return '*' + b;
+        }
+        return b;
+      }).filter(Boolean);
+
+      var outputHtml = '';
+
+      blocks.forEach(function(block) {
+        var trimmed = block.trim();
+        if (!trimmed) return;
+
+        if (trimmed.startsWith('*') && trimmed.endsWith('*') && trimmed.length > 2 && !trimmed.slice(1, -1).includes('*')) {
+          var inner = trimmed.slice(1, -1).trim();
+          var innerIsQuoted = /^["“].*["”]$/.test(inner);
+          if (innerIsQuoted) {
+            // Model mistakenly wrapped spoken dialogue in asterisks too — treat as
+            // speech, not action, and strip the quotes so it renders correctly.
+            var sp = inner.replace(/^["'“”]+|["'“”]+$/g, '').trim();
+            if (sp) outputHtml += '<div class="speech">' + sp + '</div>';
+          } else if (/["“][^"”]*["”]/.test(inner)) {
+            var mixedParts = inner.split(/(["“][^"”]*["”])/g);
+            mixedParts.forEach(function(mp) {
+              var p = mp.trim();
+              if (!p) return;
+              if (/^["“].*["”]$/.test(p)) {
+                var mspeech = p.replace(/^["'“”]+|["'“”]+$/g, '').trim();
+                if (mspeech) outputHtml += '<div class="speech">' + mspeech + '</div>';
+              } else {
+                var maction = repairActionOpening(p.replace(/^[,.\s]+/, '').trim());
+                if (maction) outputHtml += '<div class="action">' + maction + '</div>';
+              }
+            });
+          } else {
+            var act = inner;
+            if (act) outputHtml += '<div class="action">' + act + '</div>';
+          }
+        } else if (trimmed.includes('*')) {
+          var parts = trimmed.split(/(\*[^*\n]+\*)/g);
+          parts.forEach(function(part) {
+            var p = part.trim();
+            if (!p) return;
+            if (p.startsWith('*') && p.endsWith('*')) {
+              var act = p.slice(1, -1).trim();
+              if (act) outputHtml += '<div class="action">' + act + '</div>';
+            } else {
+              var sp = p.replace(/^["'“”]+|["'“”]+$/g, '').trim();
+              if (sp) outputHtml += '<div class="speech">' + sp + '</div>';
+            }
+          });
+        } else {
+          var qParts = trimmed.split(/("[^"]*"|“[^”]*”)/g);
+          var hasQuoted = qParts.some(function(p) { return /^(".*"|“.*”)$/.test(p.trim()); });
+          if (hasQuoted && qParts.length > 1) {
+            // No asterisks at all, but quotes are present — split dialogue from
+            // narration using the quote marks themselves as the boundary, since
+            // that's the only structural signal available in this case.
+            qParts.forEach(function(part) {
+              var p = part.trim();
+              if (!p) return;
+              if (/^(".*"|“.*”)$/.test(p)) {
+                var sp = p.replace(/^["“]+|["”]+$/g, '').trim();
+                if (sp) outputHtml += '<div class="speech">' + sp + '</div>';
+              } else {
+                outputHtml += '<div class="action">' + p + '</div>';
+              }
+            });
+          } else {
+            var sp = trimmed.replace(/^["'“”]+|["'“”]+$/g, '').trim();
+            if (sp) outputHtml += '<div class="speech">' + sp + '</div>';
+          }
+        }
+      });
+
+      return outputHtml;
+    }
+
+    function formatTime() { return new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); }
+
+    function renderFullChat() {
+      var stream = document.getElementById('chat-stream');
+      stream.innerHTML = '';
+      chatHistory.forEach(function(msg, idx) { appendMessageDOM(msg.role, msg.text, msg.time, msg.duration, idx); });
+      stream.scrollTop = stream.scrollHeight;
+    }
+
+    function appendMessageDOM(role, text, time, duration, idx) {
+      var stream = document.getElementById('chat-stream');
+      var metaStr = duration ? duration : time;
+      var msgCountLabel = '<span class="msg-counter">#' + (idx + 1) + '</span>';
+      var html = '';
+
+      if (role === 'user') {
+        html = '<div class="msg-group user" id="msg-' + idx + '"><div class="user-wrapper"><div class="glass-bubble">' + parseMessage(text) + '</div><div class="meta-time-row">' + msgCountLabel + '<svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.2 3.1.8-1.3-4.5-2.7z"/></svg><span>' + metaStr + '</span><button class="msg-action-btn" onclick="openEditModal(' + idx + ')" title="Edit message"><svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></button><button class="msg-action-btn delete-btn" onclick="deleteMessage(' + idx + ')" title="Delete message"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button></div></div></div>';
+      } else {
+        var footerContent = (idx > 0) 
+          ? '<div class="meta-time-row">' + msgCountLabel + '<svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.2 3.1.8-1.3-4.5-2.7z"/></svg><span>' + metaStr + '</span><button class="msg-action-btn" onclick="regenerateMessage(' + idx + ')" title="Reroll message"><svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg></button><button class="msg-action-btn" onclick="openEditModal(' + idx + ')" title="Edit message"><svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></button><button class="msg-action-btn delete-btn" onclick="deleteMessage(' + idx + ')" title="Delete message"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button></div>'
+          : '<div class="meta-time-row">' + msgCountLabel + '</div>';
+
+        html = '<div class="msg-group ashley" id="msg-' + idx + '"><div class="ashley-wrapper"><div class="bubble-wrapper"><div class="glass-bubble">' + parseMessage(text) + '</div>' + footerContent + '</div><img class="ashley-msg-avatar" src="./ashley.png" onclick="openLightbox()" onerror="this.src=\'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80\'"></div></div>';
+      }
+      stream.insertAdjacentHTML('beforeend', html);
+      stream.scrollTop = stream.scrollHeight;
+    }
+
+    function showTypingIndicator(statusText) {
+      if (!document.getElementById('floating-thinking-row')) {
+        var stream = document.getElementById('chat-stream');
+        stream.insertAdjacentHTML('beforeend', '<div class="thinking-row" id="floating-thinking-row"><div class="thinking-dots"><div class="thinking-dot"></div><div class="thinking-dot"></div><div class="thinking-dot"></div></div><span class="thinking-status-text" id="thinking-status-label">' + (statusText || "Ashley is thinking...") + '</span></div>');
+        stream.scrollTop = stream.scrollHeight;
+      }
+    }
+    function removeTypingIndicator() { var e = document.getElementById('floating-thinking-row'); if(e) e.remove(); }
+
+    function getCurrentTimeContext() { var d = new Date(); return d.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' }) + ", " + d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); }
+
+    function buildOpenRouterMessages() {
+      var systemPrompt = HARDCODED_SYSTEM + "\n\n" + HARDCODED_PERSONA + "\n\n" + HARDCODED_SCENARIO;
+      if (backgroundSummary) {
+        systemPrompt += "\n\n[Persistent Memory / Established Facts Only: " + backgroundSummary + "]";
+      }
+      systemPrompt += "\n\n[History Rule: previous assistant messages are continuity only. Never imitate their exact wording or style.]";
+      systemPrompt += "\n\n[Current real-world date and time: " + getCurrentTimeContext() + ". Let this naturally inform time-of-day details and passage of time.]";
+
+      var messages = [{ role: "system", content: systemPrompt }];
+      var recentSlice = chatHistory.slice(-10);
+
+      recentSlice.forEach(function(m) {
+        var cleanContent = sanitizeText(m.text);
+        if (cleanContent) {
+          messages.push({
+            role: m.role === 'user' ? 'user' : 'assistant',
+            content: cleanContent
+          });
+        }
+      });
+
+      return messages;
+    }
+
+    function handleActionClick() { if (isGenerating) stopGeneration(); else sendMessage(); }
+    function setStopButtonState(stopping) {
+      var btn = document.getElementById('actionBtn'), icon = document.getElementById('actionIcon');
+      if (stopping) { btn.classList.add('is-stopping'); icon.innerHTML = '<path d="M6 6h12v12H6z"/>'; }
+      else { btn.classList.remove('is-stopping'); icon.innerHTML = '<path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>'; }
+    }
+    function stopGeneration() { if (abortController) abortController.abort(); isGenerating = false; removeTypingIndicator(); setStopButtonState(false); }
+
+    async function sendMessage() {
+      if (isGenerating) return;
+      var input = document.getElementById('promptInput'), userText = input.value.trim();
+      if (!userText) return;
+      input.value = ''; input.style.height = '24px';
+      chatHistory.push({ role: 'user', text: userText, time: formatTime() });
+      saveChatHistory(); renderFullChat();
+      await triggerAIResponse();
+    }
+
+    async function triggerAIResponse() {
+      var apiKey = getApiKey();
+      if (!apiKey) {
+        alert("Please set API key.");
+        return;
+      }
+
+      isGenerating = true;
+      setStopButtonState(true);
+      showTypingIndicator("Ashley is thinking...");
+      generationStartTime = Date.now();
+      abortController = new AbortController();
+
+      var maxAttempts = 1;
+      var lastError = null;
+      var acceptedText = "";
+
+      try {
+        for (var attempt = 1; attempt <= maxAttempts; attempt++) {
+          if (attempt > 1) {
+            showTypingIndicator("Ashley is trying again...");
+          }
+
+          var response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + apiKey,
+              "HTTP-Referer": "https://meowoccino.github.io",
+              "X-Title": "Ashley PWA"
+            },
+            signal: abortController.signal,
+            body: JSON.stringify({
+              model: OPENROUTER_MODEL,
+              messages: buildOpenRouterMessages(),
+              max_tokens: 500,
+              temperature: attempt === 1 ? 0.78 : 0.72,
+              top_p: 0.90,
+              frequency_penalty: 0.20,
+              presence_penalty: 0.15,
+              repetition_penalty: 1.03,
+              stop: ["<REASONING>", "<|system|>", "<|user|>", "<|assistant|>"]
+            })
+          });
+
+          if (!response.ok) {
+            lastError = new Error("HTTP " + response.status);
+            continue;
+          }
+
+          var data = await response.json();
+          var candidate = (data.choices && data.choices[0] && data.choices[0].message)
+            ? data.choices[0].message.content.trim()
+            : "";
+
+          candidate = sanitizeText(candidate.replace(/~+/g, '').trim());
+          candidate = normalizeGeneratedText(candidate);
+          candidate = normalizeLiteraryPunctuation(candidate);
+
+          if (candidate.length < 40) {
+            lastError = new Error("Response came back too short.");
+            continue;
+          }
+
+          if (looksLikeModelLeak(candidate)) {
+            lastError = new Error("Model returned non-roleplay text.");
+            continue;
+          }
+
+          if (looksDegenerate(candidate)) {
+            lastError = new Error("Response degenerated into repetition.");
+            continue;
+          }
+
+          if (!outputStructureLooksValid(candidate)) {
+            lastError = new Error("Response format was invalid.");
+            continue;
+          }
+
+          acceptedText = candidate;
+          break;
+        }
+
+        if (!acceptedText) {
+          throw lastError || new Error("The model returned unusable text. Try Retry.");
+        }
+
+        chatHistory.push({
+          role: 'char',
+          text: acceptedText,
+          time: formatTime(),
+          duration: Math.round((Date.now() - generationStartTime) / 1000) + "s (OpenRouter)"
+        });
+
+        saveChatHistory();
+        renderFullChat();
+        triggerBackgroundSummary();
+
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          alert("Generation Error: " + err.message);
+        }
+      }
+
+      removeTypingIndicator();
+      isGenerating = false;
+      setStopButtonState(false);
+      abortController = null;
+    }
+
+    async function triggerBackgroundSummary() {
+      var lastSummaryAt = parseInt(localStorage.getItem('ashley_last_summary_count') || '0', 10);
+      if (chatHistory.length < 16 || (chatHistory.length - lastSummaryAt) < 10) return;
+
+      localStorage.setItem('ashley_last_summary_count', chatHistory.length.toString());
+      var apiKey = localStorage.getItem('openrouter_api_key');
+      if (!apiKey) return;
+
+      var textToSummarize = chatHistory.slice(-16, -6).map(function(m) {
+        return (m.role === 'user' ? 'Mathew' : 'Ashley') + ': ' + m.text;
+      }).join('\n');
+
+      var summaryInstruction = backgroundSummary
+        ? "Merge ONLY durable factual continuity into 2-4 short bullet points. Keep established names, relationships, events, preferences and setting facts. Never store wording, prose style, emotional descriptions, sentence patterns, dialogue, repeated phrases, or narration style.\n\nExisting memory:\n" + backgroundSummary + "\n\nConversation:\n" + textToSummarize
+        : "Extract ONLY durable factual continuity into 2-3 short bullet points. Never store wording, prose style, emotional descriptions, sentence patterns, dialogue, repeated phrases, or narration style.\n\nConversation:\n" + textToSummarize;
+
+      try {
+        var res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + apiKey,
+            "HTTP-Referer": "https://meowoccino.github.io",
+            "X-Title": "Ashley PWA"
+          },
+          body: JSON.stringify({
+            model: OPENROUTER_SUMMARY_MODEL,
+            messages: [
+              {
+                role: "system",
+                content: "You write extremely concise factual memory bullets only. Never write Ashley's response. Never generate roleplay. Never write alternatives. Store only durable facts."
+              },
+              {
+                role: "user",
+                content: summaryInstruction
+              }
+            ],
+            max_tokens: 150,
+            temperature: 0.25
+          })
+        });
+
+        if (!res.ok) return;
+
+        var data = await res.json();
+        var summary = (data.choices && data.choices[0] && data.choices[0].message)
+          ? data.choices[0].message.content.trim()
+          : "";
+
+        if (!summary || looksLikeModelLeak(summary)) return;
+
+        backgroundSummary = summary;
+        localStorage.setItem('ashley_bg_summary', backgroundSummary);
+
+      } catch (e) {}
+    }
+
+    function deleteMessage(idx) { if (isGenerating) return; chatHistory.splice(idx, 1); saveChatHistory(); renderFullChat(); }
+    async function regenerateMessage(idx) { if (isGenerating) return; chatHistory.splice(idx, 1); saveChatHistory(); renderFullChat(); await triggerAIResponse(); }
+
+    function openMemoryModal() {
+      var summaryEl = document.getElementById('memorySummaryDisplay');
+      if (backgroundSummary && backgroundSummary.trim()) {
+        summaryEl.textContent = backgroundSummary;
+        summaryEl.classList.remove('memory-block-empty');
+      } else {
+        summaryEl.textContent = 'Empty — nothing stored yet.';
+        summaryEl.classList.add('memory-block-empty');
+      }
+      document.getElementById('chatHistoryCountDisplay').textContent = chatHistory.length + ' messages saved.';
+      document.getElementById('memory-sheet').style.display = 'flex';
+    }
+    function closeMemoryModal(e) {
+      if (e && e.target && e.target.id !== 'memory-sheet') return;
+      document.getElementById('memory-sheet').style.display = 'none';
+    }
+    function clearMemorySummary() {
+      if (!confirm('Clear the stored memory summary? This cannot be undone.')) return;
+      backgroundSummary = '';
+      localStorage.setItem('ashley_bg_summary', '');
+      openMemoryModal();
+    }
+    function clearAllChatHistory() {
+      if (!confirm('Delete ALL messages? This cannot be undone.')) return;
+      chatHistory = [];
+      saveChatHistory();
+      localStorage.setItem('ashley_last_summary_count', '0');
+      renderFullChat();
+      closeMemoryModal();
+    }
+
+    function openEditModal(idx) { if (isGenerating) return; editingMessageIndex = idx; document.getElementById('edit-sheet-title').innerText = chatHistory[idx].role === 'user' ? 'Edit Your Message' : "Edit Ashley's Message"; document.getElementById('editMessageTextarea').value = chatHistory[idx].text; document.getElementById('edit-sheet').style.display = 'flex'; }
+    function closeEditModal(e) { if (e && e.target && e.target.id !== 'edit-sheet') return; document.getElementById('edit-sheet').style.display = 'none'; editingMessageIndex = null; }
+    
+    async function saveEditedMessage() {
+      if (editingMessageIndex === null || isGenerating) return;
+      var newText = document.getElementById('editMessageTextarea').value.trim(); if (!newText) return;
+      var targetRole = chatHistory[editingMessageIndex].role, targetIdx = editingMessageIndex;
+      document.getElementById('edit-sheet').style.display = 'none'; editingMessageIndex = null;
+      if (targetRole === 'user') { chatHistory.splice(targetIdx); chatHistory.push({ role: 'user', text: newText, time: formatTime() }); saveChatHistory(); renderFullChat(); await triggerAIResponse(); } 
+      else { chatHistory[targetIdx].text = newText; saveChatHistory(); renderFullChat(); }
+    }
+
+    function openLightbox() { document.getElementById('avatar-lightbox').style.display = 'flex'; }
+    function closeLightbox() { document.getElementById('avatar-lightbox').style.display = 'none'; }
+
+    var appContainer = document.getElementById('app-container'), promptInput = document.getElementById('promptInput'), chatStream = document.getElementById('chat-stream');
+    function adjustViewport() { appContainer.style.height = window.visualViewport ? window.visualViewport.height + 'px' : window.innerHeight + 'px'; chatStream.scrollTop = chatStream.scrollHeight; }
+    if (window.visualViewport) { window.visualViewport.addEventListener('resize', adjustViewport); window.visualViewport.addEventListener('scroll', adjustViewport); } else { window.addEventListener('resize', adjustViewport); }
+    promptInput.addEventListener('focus', function() { setTimeout(function() { adjustViewport(); chatStream.scrollTop = chatStream.scrollHeight; }, 250); });
+    function insertActionWrapper() { var start = promptInput.selectionStart, end = promptInput.selectionEnd, val = promptInput.value; promptInput.value = val.substring(0, start) + "**" + val.substring(end); promptInput.focus(); promptInput.setSelectionRange(start + 1, start + 1); autoExpandTextarea(promptInput); }
+    promptInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') { setTimeout(function() { autoExpandTextarea(promptInput); }, 10); } });
+
+    window.addEventListener('DOMContentLoaded', init);
+    if ('serviceWorker' in navigator) { window.addEventListener('load', function() { navigator.serviceWorker.register('./sw.js?v=12').then(function(reg) { reg.update(); }).catch(function() {}); }); }
+  </script>
+</body>
+</html>
