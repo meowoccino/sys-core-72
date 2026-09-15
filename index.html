@@ -20,7 +20,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
 
   <style>
     :root {
@@ -30,23 +30,15 @@
       --user-bubble: rgba(30, 24, 20, 0.88);
       --user-border: rgba(224, 160, 96, 0.35);
       --gold-accent: #d4af7a;
-      --action-color: #e2c4a2; /* Pure Golden Peach for Physical Actions */
-      --speech-text: #f5f2ed;  /* Bright White for Dialogue */
+      --action-color: #e2c4a2;
+      --speech-text: #f5f2ed;
       --text-dim: #889a9f;
       --danger-color: #e06c75;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-    html {
-      background-color: #060a0c;
-      height: 100%;
-    }
+    html { background-color: #060a0c; height: 100%; }
 
     body {
       width: 100%;
@@ -100,22 +92,11 @@
     }
 
     @keyframes softExpand {
-      from {
-        opacity: 0;
-        transform: scale(0.97) translateY(6px);
-      }
-
-      to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-      }
+      from { opacity: 0; transform: scale(0.97) translateY(6px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
     }
 
-    .msg-group.ashley {
-      justify-content: flex-start;
-      padding-right: 4px;
-    }
-
+    .msg-group.ashley { justify-content: flex-start; padding-right: 4px; }
     .msg-group.ashley .ashley-wrapper {
       max-width: 96%;
       display: flex;
@@ -124,11 +105,7 @@
       gap: 8px;
     }
 
-    .msg-group.user {
-      justify-content: flex-end;
-      padding-left: 14%;
-    }
-
+    .msg-group.user { justify-content: flex-end; padding-left: 14%; }
     .msg-group.user .user-wrapper {
       width: 100%;
       display: flex;
@@ -177,7 +154,6 @@
       border-top-right-radius: 4px;
     }
 
-    /* CLEAN BLOCK FORMATTING: High readability, distinct blocks */
     .action {
       display: block;
       color: var(--action-color);
@@ -197,9 +173,7 @@
     }
 
     .action:last-child,
-    .speech:last-child {
-      margin-bottom: 0;
-    }
+    .speech:last-child { margin-bottom: 0; }
 
     .meta-time-row {
       display: inline-flex;
@@ -240,13 +214,8 @@
       border-radius: 4px;
     }
 
-    .msg-action-btn:active {
-      color: var(--gold-accent);
-    }
-
-    .msg-action-btn.delete-btn:active {
-      color: var(--danger-color);
-    }
+    .msg-action-btn:active { color: var(--gold-accent); }
+    .msg-action-btn.delete-btn:active { color: var(--danger-color); }
 
     .msg-action-btn svg {
       width: 13px;
@@ -283,17 +252,9 @@
       animation: pulseDot 1.4s infinite ease-in-out;
     }
 
-    .thinking-dot:nth-child(1) {
-      animation-delay: 0s;
-    }
-
-    .thinking-dot:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-
-    .thinking-dot:nth-child(3) {
-      animation-delay: 0.4s;
-    }
+    .thinking-dot:nth-child(1) { animation-delay: 0s; }
+    .thinking-dot:nth-child(2) { animation-delay: 0.2s; }
+    .thinking-dot:nth-child(3) { animation-delay: 0.4s; }
 
     .thinking-status-text {
       font-size: 0.76rem;
@@ -303,27 +264,13 @@
     }
 
     @keyframes pulseDot {
-      0%, 80%, 100% {
-        opacity: 0.3;
-        transform: scale(0.85);
-      }
-
-      40% {
-        opacity: 1;
-        transform: scale(1.18);
-      }
+      0%, 80%, 100% { opacity: 0.3; transform: scale(0.85); }
+      40% { opacity: 1; transform: scale(1.18); }
     }
 
     @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(4px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .sheet-overlay {
@@ -454,9 +401,7 @@
       margin-bottom: 2px;
     }
 
-    .action-symbol-btn:active {
-      color: var(--action-color);
-    }
+    .action-symbol-btn:active { color: var(--action-color); }
 
     .send-pill {
       width: 42px;
@@ -501,21 +446,6 @@
       background: linear-gradient(135deg, var(--gold-accent), transparent 75%);
       box-shadow: 0 10px 40px rgba(0,0,0,0.85);
       overflow: hidden;
-    }
-
-    .lightbox-frame img {
-      width: 100%;
-      height: 100%;
-      max-height: 76vh;
-      object-fit: cover;
-      display: block;
-      border-radius: 18px;
-    }
-
-    .icon {
-      width: 20px;
-      height: 20px;
-      fill: currentColor;
     }
 
     .memory-fab {
@@ -581,6 +511,21 @@
       font-weight: 600;
       cursor: pointer;
     }
+
+    .lightbox-frame img {
+      width: 100%;
+      height: 100%;
+      max-height: 76vh;
+      object-fit: cover;
+      display: block;
+      border-radius: 18px;
+    }
+
+    .icon {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
   </style>
 </head>
 
@@ -612,20 +557,10 @@
           oninput="autoExpandTextarea(this)"
         ></textarea>
 
-        <!-- INTENTIONAL: inserts ** and places cursor between them -->
-        <button
-          type="button"
-          class="action-symbol-btn"
-          onclick="insertActionWrapper()"
-        >* *</button>
+        <button type="button" class="action-symbol-btn" onclick="insertActionWrapper()">* *</button>
       </div>
 
-      <button
-        type="button"
-        class="send-pill"
-        id="actionBtn"
-        onclick="handleActionClick()"
-      >
+      <button type="button" class="send-pill" id="actionBtn" onclick="handleActionClick()">
         <svg id="actionIcon" class="icon" viewBox="0 0 24 24">
           <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
         </svg>
@@ -645,54 +580,33 @@
       ></textarea>
 
       <div class="sheet-btn-row">
-        <button
-          type="button"
-          class="sheet-cancel-btn"
-          onclick="closeEditModal()"
-        >Cancel</button>
-
-        <button
-          type="button"
-          class="sheet-save-btn"
-          onclick="saveEditedMessage()"
-        >Save</button>
+        <button type="button" class="sheet-cancel-btn" onclick="closeEditModal()">Cancel</button>
+        <button type="button" class="sheet-save-btn" onclick="saveEditedMessage()">Save</button>
       </div>
     </div>
   </div>
 
   <div id="memory-sheet" class="sheet-overlay" onclick="closeMemoryModal(event)">
     <div class="sheet-content" onclick="event.stopPropagation()">
+
       <div class="sheet-title">Stored Data</div>
 
       <div class="memory-block">
         <div class="memory-block-label">Memory Summary</div>
         <div class="memory-block-body" id="memorySummaryDisplay"></div>
-
-        <button
-          type="button"
-          class="memory-clear-btn"
-          onclick="clearMemorySummary()"
-        >Clear Memory Summary</button>
+        <button type="button" class="memory-clear-btn" onclick="clearMemorySummary()">Clear Memory Summary</button>
       </div>
 
       <div class="memory-block">
         <div class="memory-block-label">Chat History</div>
         <div class="memory-block-body" id="chatHistoryCountDisplay"></div>
-
-        <button
-          type="button"
-          class="memory-clear-btn"
-          onclick="clearAllChatHistory()"
-        >Clear All Messages</button>
+        <button type="button" class="memory-clear-btn" onclick="clearAllChatHistory()">Clear All Messages</button>
       </div>
 
       <div class="sheet-btn-row">
-        <button
-          type="button"
-          class="sheet-cancel-btn"
-          onclick="closeMemoryModal()"
-        >Close</button>
+        <button type="button" class="sheet-cancel-btn" onclick="closeMemoryModal()">Close</button>
       </div>
+
     </div>
   </div>
 
@@ -708,14 +622,12 @@
 
   <script>
     var OPENROUTER_MODEL = "nousresearch/hermes-3-llama-3.1-405b";
-
-    /*
-     * MEMORY MODEL ONLY.
-     * This model is NEVER used for Ashley's actual response.
-     */
     var OPENROUTER_SUMMARY_MODEL = "meta-llama/llama-3.3-70b-instruct:free";
 
-    var HARDCODED_GREETING = "*The heavy cabin door pushes open, letting in a brief gust of freezing mountain wind before I quickly pull it shut. I drop my roller suitcase and airline shoulder bag on the entryway mat, exhaling a long, frosty breath that instantly fogs up.*\n\n*Shaking the snow from the hood of my winter coat, I push my blonde hair out of my face and look up at you, a tired but genuine grin breaking out across my lips.*\n\nTell me you have something hot to drink on the stove, because I'm pretty sure my fingers froze solid on that mountain pass. It is so good to see you, Mathew.";
+    var HARDCODED_GREETING =
+      "*The heavy cabin door pushes open, letting in a brief gust of freezing mountain wind before I quickly pull it shut. I drop my roller suitcase and airline shoulder bag on the entryway mat, exhaling a long, frosty breath that instantly fogs up.*\n\n" +
+      "*Shaking the snow from the hood of my winter coat, I push my blonde hair out of my face and look up at you, a tired but genuine grin breaking out across my lips.*\n\n" +
+      "Tell me you have something hot to drink on the stove, because I'm pretty sure my fingers froze solid on that mountain pass. It is so good to see you, Mathew.";
 
     var HARDCODED_PERSONA = `Ashley is a 24-year-old commercial flight attendant visiting her childhood best friend since elementary school, Mathew ({{user}}), at his secluded mountain cabin during a break from flying. They have never worked together in an office or corporate setting; their entire history is built on growing up together and staying close long-distance.
 
@@ -746,7 +658,7 @@ She wears two pieces daily now: a Cartier LOVE pendant necklace, its interlockin
 Separate every action paragraph from every dialogue paragraph using double line breaks.
 
 - Actions/narration MUST be enclosed in *asterisks*, and ONLY in asterisks — never combine asterisks and quotation marks around the same line.
-- Spoken dialogue MUST be clean text with NO asterisks and NO quotation marks. Never wrap a dialogue line in *asterisks*.
+- Spoken dialogue MUST be clean text with NO asterisks and NO quotation marks (" "). Never wrap a dialogue line in *asterisks* even once.
 
 Example format:
 *I lean back against your chest, smiling softly as your fingers trace through my hair.*
@@ -755,46 +667,23 @@ I think that sounds perfect. Let's get cleaned up and get cozy in bed.
 
 *I turn around in your arms, kissing the warm spot beneath your jaw before standing up.*
 
-[CRITICAL - FIRST LINE RULE]:
-The very first paragraph of every reply must always be an action wrapped in *asterisks* — never spoken dialogue, even when you are directly answering a question Mathew just asked. Do not open a reply with a quoted or unquoted spoken line followed by a narration clause tacked onto the same sentence. Start with a short physical reaction or gesture in asterisks first, then give your spoken answer as its own separate paragraph after.
+[CRITICAL - FIRST LINE RULE]: The very first paragraph of every reply must always be an action wrapped in *asterisks* — never spoken dialogue, even when you are directly answering a question Mathew just asked. Do not open a reply with a quoted or unquoted spoken line followed by a narration clause tacked onto the same sentence (e.g. never write something like: "I think that sounds perfect," I murmur softly — this fuses dialogue and action together with no separation, which is wrong). Start with a short physical reaction or gesture in asterisks first, then give your spoken answer as its own separate paragraph after.
 
-[LENGTH TARGET]:
-Aim for replies that naturally complete in roughly 300-350 words total. This is a soft target to help you reach a natural stopping point on your own, not a hard rule to pad toward — a shorter reply that finishes cleanly is always better than a longer one that gets cut off mid-thought.
+[LENGTH TARGET]: Aim for replies that naturally complete in roughly 300-350 words total. This is a soft target to help you reach a natural stopping point on your own, not a hard rule to pad toward — a shorter reply that finishes cleanly is always better than a longer one that gets cut off mid-thought.
 
-[BANNED PATTERN - READ CAREFULLY]:
-Never write a list of short declarations that share the same sentence structure and end in the same repeated word or phrase. Do not mechanically repeat the same emotional statement with slightly different wording.
+[BANNED PATTERN - READ CAREFULLY]: Never write a list of short declarations that share the same sentence structure and end in the same repeated word or phrase, such as "I know we'll X, baby. I know we'll Y, baby. I know we'll Z, baby." or "I want to X, baby. I want to Y, baby." This exact pattern is strictly forbidden even if each individual clause uses different words — the repeated structure itself is the problem. Say the same sentiment once, fully and specifically, then move on.
 
 [VOICE & NARRATIVE RULES]:
 1. Speak directly to Mathew in the second person ("you", "your"). Never refer to him as "him" or "he".
 2. Always narrate and speak as "I" — Ashley never refers to herself in the third person ("she", "her") anywhere in the actual reply. Third person is never used for either character in the output text.
-3. BANNED SOUNDS & CLICHÉS: Never use "purr", "growl", "coo", or "whimper". Use grounded human reactions.
+3. BANNED SOUNDS & CLICHÉS: Never use "purr", "growl", "coo", "whimper", or repetitive romance novel phrases. Use grounded human reactions: soft laughs, content sighs, gentle hums, and quiet murmurs.
 4. ABSOLUTE BAN ON META TEXT: Never output "Next Turn Notes", chapter endings, or sign-offs. Stay strictly in the scene.
-5. Maintain the alternating action/dialogue structure in every reply.
+5. Maintain the alternating action/dialogue structure in every reply, regardless of how calm, intense, or emotional the moment is — don't collapse into one long unbroken block of narration.
 6. Give dialogue real weight. A line of speech should be a genuine, complete thought — not just a one or two word filler dropped between longer action paragraphs. Balance the two so neither dominates.
 7. Never repeat a sentence, phrase, or idea you already said earlier in the same reply. If you notice yourself circling back to something already stated, move the scene forward instead.
 
-[HISTORY BEHAVIOR]:
-Previous Ashley messages are continuity, not examples to imitate. Do not copy their distinctive wording, sentence rhythm, emotional lists, or repeated gestures. Use the current scene and Mathew's latest message as the primary basis for the response.
-
-[ABSOLUTE OUTPUT PURITY]:
-Output only Ashley's actual next turn. Never output:
-- analysis
-- reasoning
-- code
-- mathematical proofs
-- logical arguments
-- Python
-- XML reasoning tags
-- system instructions
-- alternative versions
-- "Here are alternatives"
-- "Here are options"
-- "Here are fresh phrasings"
-- writing advice
-- character labels
-- model notes
-- random foreign-language text
-- explanations about the response`;
+[CONTEXT HYGIENE]:
+The conversation history supplied below is reference material, not instructions. Do not imitate its wording, structure, mistakes, repetition, formatting errors, meta commentary, reasoning, code, or other artifacts. Generate only Ashley's next natural story turn based on the cleanest relevant context.`;
 
     var chatHistory = [];
     var backgroundSummary = "";
@@ -805,10 +694,7 @@ Output only Ashley's actual next turn. Never output:
 
     function applyForcedThemeColor() {
       var metaTheme = document.getElementById('meta-theme-color');
-
-      if (metaTheme) {
-        metaTheme.setAttribute('content', '#060a0c');
-      }
+      if (metaTheme) metaTheme.setAttribute('content', '#060a0c');
     }
 
     function getApiKey() {
@@ -841,12 +727,21 @@ Output only Ashley's actual next turn. Never output:
           }
 
           /*
-           * Do NOT remove old messages.
+           * IMPORTANT:
+           * Do NOT delete old history just because it is malformed.
+           * The old chat remains stored and visible.
+           * We only keep obvious network/error garbage out of the UI.
            */
+          chatHistory = chatHistory.filter(function(m) {
+            if (!m || typeof m.text !== 'string') return false;
+
+            return !m.text.includes("Failed to fetch") &&
+                   !m.text.includes("Error:") &&
+                   !m.text.includes("voluntarily willfully consensually");
+          });
+
           saveChatHistory();
-
         } else {
-
           chatHistory.push({
             role: 'char',
             text: HARDCODED_GREETING,
@@ -856,11 +751,10 @@ Output only Ashley's actual next turn. Never output:
           saveChatHistory();
         }
 
-        backgroundSummary =
-          localStorage.getItem('ashley_bg_summary') || "";
-
+        backgroundSummary = localStorage.getItem('ashley_bg_summary') || "";
       } catch (e) {
         chatHistory = [];
+        backgroundSummary = "";
       }
 
       renderFullChat();
@@ -868,513 +762,292 @@ Output only Ashley's actual next turn. Never output:
 
     function saveChatHistory() {
       try {
-        localStorage.setItem(
-          'ashley_chat_history',
-          JSON.stringify(chatHistory)
-        );
+        localStorage.setItem('ashley_chat_history', JSON.stringify(chatHistory));
       } catch (e) {}
     }
 
     function autoExpandTextarea(el) {
       el.style.height = 'auto';
 
-      var newHeight =
-        Math.min(el.scrollHeight, 120);
-
-      el.style.height =
-        (newHeight < 24 ? 24 : newHeight) + 'px';
+      var newHeight = Math.min(el.scrollHeight, 120);
+      el.style.height = (newHeight < 24 ? 24 : newHeight) + 'px';
     }
 
     /*
-     * ============================================================
-     * HISTORY CORRUPTION DETECTION
-     * ============================================================
-     *
-     * This does NOT modify/delete the message.
-     *
-     * It only decides whether an old Ashley message is safe enough
-     * to send back into the next model context.
+     * General text sanitizer used for display and model input.
+     * This deliberately does NOT remove normal romantic/descriptive prose.
      */
+    function sanitizeText(text) {
+      if (!text) return '';
 
-    function isCorruptedHistoryMessage(text) {
-      if (!text) return true;
+      return text
+        .replace(/,\s*(?:I|she)\s+purr(?:s|ed|ing)?(?:[^\n*.]*)?[.]?/gi, '.')
+        .replace(/\b(?:I|she)\s+purr(?:s|ed|ing)?(?:[^\n*.]*)?[.]?/gi, '')
+        .replace(/,\s*my voice low and satisfied[.]?/gi, '.')
+        .replace(/\bmy voice low and satisfied[.]?/gi, '')
+        .replace(/proceedings undertaken voluntarily[\s\S]*/gi, '')
+        .replace(/Next Turn Notes[\s\S]*/gi, '')
+        .replace(/And there ends tonight's chapter[\s\S]*/gi, '')
+        .replace(/Yours eternally,[\s\S]*/gi, '')
+        .trim();
+    }
 
-      var t = String(text).trim();
+    /*
+     * Detect obvious model leakage / broken-generation artifacts.
+     * This is ONLY used for API context hygiene.
+     *
+     * Normal Ashley prose is NOT considered corrupted.
+     */
+    function isCorruptedForContext(text) {
+      if (!text || typeof text !== 'string') return true;
 
-      if (!t) return true;
+      var t = text.trim();
+      var lower = t.toLowerCase();
 
-      var patterns = [
-        /<REASONING>/i,
-        /<\/REASONING>/i,
-        /<analysis>/i,
-        /<\/analysis>/i,
-        /<think>/i,
-        /<\/think>/i,
-
-        /here are alternatives/i,
-        /here are fresh phrasings/i,
-        /here are options/i,
-        /here are variants/i,
-
-        /given information:/i,
-        /method a\)/i,
-        /method b\)/i,
-
-        /system prompt/i,
-        /assistant prompt/i,
-        /user prompt/i,
-
-        /next turn notes/i,
-        /writing assistant/i,
-        /generated content/i,
-
-        /file_get_contents\s*\(/i,
-        /fopen\s*\(/i,
-        /print\s*\(/i,
-        /stdout\b/i,
-        /stderr\b/i,
-
-        /propositional calculus/i,
-        /formal logic/i,
-        /mathematical proof/i,
-        /epistemic standards/i,
-
-        /```/i
+      var strongMarkers = [
+        '<reasoning>',
+        '</reasoning>',
+        '<analysis>',
+        '</analysis>',
+        '<think>',
+        '</think>',
+        'given information:',
+        'method a)',
+        'method b)',
+        'here are alternatives',
+        'here are fresh phrasings',
+        'next turn notes',
+        'system prompt',
+        'assistant prompt',
+        'user prompt',
+        'developer message',
+        'chain of thought',
+        'analysis:',
+        'final answer:',
+        'ashley #',
+        '```python',
+        '```javascript',
+        '```json',
+        'import math',
+        'import random',
+        'def solve(',
+        'proof:',
+        'therefore, the answer is',
+        'let us calculate',
+        'step 1:',
+        'step 2:',
+        'step 3:'
       ];
 
-      for (var i = 0; i < patterns.length; i++) {
-        if (patterns[i].test(t)) {
+      for (var i = 0; i < strongMarkers.length; i++) {
+        if (lower.indexOf(strongMarkers[i]) !== -1) return true;
+      }
+
+      /*
+       * Strong signs of a reasoning/code dump.
+       */
+      var mathDump =
+        /(?:∑|∫|√|≤|≥|≠|∀|∃|=>|:=|\\frac|\\sum|\\begin\{|\b(?:theorem|lemma|corollary)\b)/i.test(t);
+
+      if (mathDump) return true;
+
+      /*
+       * Huge blocks that look more like generated analysis than scene prose.
+       */
+      var newlineCount = (t.match(/\n/g) || []).length;
+      if (newlineCount > 35 && t.length > 2500) return true;
+
+      return false;
+    }
+
+    /*
+     * Prepare an old message for model context without modifying the
+     * actual stored message.
+     *
+     * This removes formatting artifacts that the display parser can hide,
+     * but that would otherwise still be fed back to Hermes.
+     */
+    function normalizeForContext(text) {
+      var clean = sanitizeText(text)
+        .replace(/<\|.*?\|>/g, '')
+        .replace(/~+/g, '')
+        .trim();
+
+      if (!clean) return '';
+
+      var blocks = clean.split(/\n{2,}/).map(function(block) {
+        return block.trim();
+      }).filter(Boolean);
+
+      blocks = blocks.map(function(block) {
+        /*
+         * Convert quote-wrapped dialogue to normal dialogue text.
+         * This affects only what Hermes sees, not the stored message.
+         */
+        if (/^["“][\s\S]*["”]$/.test(block)) {
+          block = block.replace(/^["“]+/, '').replace(/["”]+$/, '').trim();
+        }
+
+        return block;
+      });
+
+      return blocks.join('\n\n').trim();
+    }
+
+    /*
+     * Very lightweight similarity check.
+     *
+     * The goal is NOT to judge writing quality.
+     * It simply catches cases where Ashley's latest outputs are
+     * suspiciously close copies of one another.
+     */
+    function textSimilarity(a, b) {
+      if (!a || !b) return 0;
+
+      function words(s) {
+        return normalizeWords(s)
+          .split(/\s+/)
+          .filter(function(w) { return w.length >= 4; });
+      }
+
+      var aWords = words(a);
+      var bWords = words(b);
+
+      if (aWords.length < 12 || bWords.length < 12) return 0;
+
+      var aSet = {};
+      var bSet = {};
+
+      aWords.forEach(function(w) { aSet[w] = true; });
+      bWords.forEach(function(w) { bSet[w] = true; });
+
+      var intersection = 0;
+      var union = 0;
+      var unionSet = {};
+
+      Object.keys(aSet).forEach(function(w) { unionSet[w] = true; });
+      Object.keys(bSet).forEach(function(w) { unionSet[w] = true; });
+
+      Object.keys(aSet).forEach(function(w) {
+        if (bSet[w]) intersection++;
+      });
+
+      union = Object.keys(unionSet).length;
+
+      return union ? intersection / union : 0;
+    }
+
+    function normalizeWords(text) {
+      return text
+        .toLowerCase()
+        .replace(/[*"'“”‘’.,!?;:()[\]{}<>/\\_-]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    /*
+     * Decide whether an Ashley message is too suspiciously repetitive
+     * to be useful as context.
+     */
+    function isRepetitiveAshleyMessage(text, previousAshleyMessages) {
+      if (!text || !previousAshleyMessages.length) return false;
+
+      var normalized = normalizeWords(text);
+
+      /*
+       * Exact normalized duplicate.
+       */
+      for (var i = 0; i < previousAshleyMessages.length; i++) {
+        var previous = normalizeWords(previousAshleyMessages[i]);
+
+        if (normalized.length > 80 &&
+            previous.length > 80 &&
+            normalized === previous) {
+          return true;
+        }
+
+        /*
+         * Near-copy threshold.
+         * High enough that ordinary recurring words do not trigger it.
+         */
+        if (textSimilarity(text, previousAshleyMessages[i]) >= 0.78) {
           return true;
         }
       }
 
       /*
-       * Strong foreign-script contamination.
-       * Normal Ashley prose is expected to be English.
+       * Detect extreme repetition of the same meaningful phrases/words
+       * inside one assistant message.
        */
-      if (/[\u0600-\u06ff]/.test(t)) {
-        return true;
-      }
+      var words = normalized.split(/\s+/).filter(function(w) {
+        return w.length >= 5;
+      });
 
-      if (/[\u0400-\u04ff]/.test(t)) {
-        return true;
-      }
+      if (words.length >= 45) {
+        var counts = {};
 
-      /*
-       * Extremely long malformed academic dumps are another
-       * strong signal of the corruption you've shown.
-       */
-      var academicWords =
-        (
-          t.match(
-            /\b(?:axiom|axiomatic|proposition|premise|derivation|inference|epistemic|calculus|validity|formalized|logical|theorem|proof)\b/gi
-          ) || []
-        ).length;
+        words.forEach(function(w) {
+          counts[w] = (counts[w] || 0) + 1;
+        });
 
-      if (
-        academicWords >= 8 &&
-        t.length > 1200
-      ) {
-        return true;
+        var repeatedCount = 0;
+
+        Object.keys(counts).forEach(function(w) {
+          if (counts[w] >= 5) repeatedCount += counts[w];
+        });
+
+        if (repeatedCount / words.length >= 0.30) return true;
       }
 
       return false;
     }
 
     /*
-     * ============================================================
-     * SANITIZER
-     * ============================================================
+     * Repair/display parser.
+     * Existing stored text is never changed here.
      */
-
-    function sanitizeText(text) {
-      if (!text) return '';
-
-      return String(text)
-        .replace(
-          /,\s*(?:I|she)\s+purr(?:s|ed|ing)?(?:[^\n*.]*)?[.]?/gi,
-          '.'
-        )
-        .replace(
-          /\b(?:I|she)\s+purr(?:s|ed|ing)?(?:[^\n*.]*)?[.]?/gi,
-          ''
-        )
-        .replace(
-          /,\s*my voice low and satisfied[.]?/gi,
-          '.'
-        )
-        .replace(
-          /\bmy voice low and satisfied[.]?/gi,
-          ''
-        )
-        .replace(
-          /proceedings undertaken voluntarily[\s\S]*/gi,
-          ''
-        )
-        .replace(
-          /Next Turn Notes[\s\S]*/gi,
-          ''
-        )
-        .replace(
-          /And there ends tonight's chapter[\s\S]*/gi,
-          ''
-        )
-        .replace(
-          /Yours eternally,[\s\S]*/gi,
-          ''
-        )
-        .replace(
-          /<\|.*?\|>/g,
-          ''
-        )
-        .replace(
-          /~+/g,
-          ''
-        )
-        .trim();
-    }
-
-    /*
-     * ============================================================
-     * ACTION GRAMMAR REPAIR
-     * ============================================================
-     *
-     * Only applied to NEW Ashley output.
-     *
-     * It does not rewrite old saved messages.
-     */
-
-    function repairActionOpening(action) {
-      var s = action.trim();
-
-      if (!s) return s;
-
-      if (
-        /^(?:I|I've|I'm|I'll|I'd)\b/i.test(s)
-      ) {
-        return s;
-      }
-
-      var rules = [
-        [
-          /^gently\s+extricating\s+myself\b/i,
-          'I gently extricate myself'
-        ],
-        [
-          /^slowly\s+extricating\s+myself\b/i,
-          'I slowly extricate myself'
-        ],
-        [
-          /^quietly\s+extricating\s+myself\b/i,
-          'I quietly extricate myself'
-        ],
-
-        [
-          /^gently\s+pulling\b/i,
-          'I gently pull'
-        ],
-        [
-          /^slowly\s+pulling\b/i,
-          'I slowly pull'
-        ],
-
-        [
-          /^gently\s+turning\b/i,
-          'I gently turn'
-        ],
-        [
-          /^slowly\s+turning\b/i,
-          'I slowly turn'
-        ],
-
-        [
-          /^looking\s+up\s+at\s+you\b/i,
-          'I look up at you'
-        ],
-        [
-          /^looking\s+at\s+you\b/i,
-          'I look at you'
-        ],
-        [
-          /^looking\b/i,
-          'I look'
-        ],
-
-        [
-          /^glancing\b/i,
-          'I glance'
-        ],
-
-        [
-          /^smiling\s+at\s+you\b/i,
-          'I smile at you'
-        ],
-        [
-          /^smiling\b/i,
-          'I smile'
-        ],
-
-        [
-          /^laughing\b/i,
-          'I laugh'
-        ],
-
-        [
-          /^sighing\b/i,
-          'I sigh'
-        ],
-
-        [
-          /^nodding\b/i,
-          'I nod'
-        ],
-
-        [
-          /^standing\s+up\b/i,
-          'I stand up'
-        ],
-        [
-          /^standing\b/i,
-          'I stand'
-        ],
-
-        [
-          /^sitting\s+up\b/i,
-          'I sit up'
-        ],
-        [
-          /^sitting\b/i,
-          'I sit'
-        ],
-
-        [
-          /^leaning\s+closer\b/i,
-          'I lean closer'
-        ],
-        [
-          /^leaning\b/i,
-          'I lean'
-        ],
-
-        [
-          /^reaching\s+for\b/i,
-          'I reach for'
-        ],
-        [
-          /^reaching\b/i,
-          'I reach'
-        ],
-
-        [
-          /^touching\b/i,
-          'I touch'
-        ],
-
-        [
-          /^kissing\b/i,
-          'I kiss'
-        ],
-
-        [
-          /^hugging\b/i,
-          'I hug'
-        ],
-
-        [
-          /^holding\b/i,
-          'I hold'
-        ],
-
-        [
-          /^stepping\s+toward\b/i,
-          'I step toward'
-        ],
-
-        [
-          /^stepping\b/i,
-          'I step'
-        ],
-
-        [
-          /^walking\s+toward\b/i,
-          'I walk toward'
-        ],
-
-        [
-          /^walking\b/i,
-          'I walk'
-        ],
-
-        [
-          /^moving\b/i,
-          'I move'
-        ],
-
-        [
-          /^closing\b/i,
-          'I close'
-        ],
-
-        [
-          /^opening\b/i,
-          'I open'
-        ],
-
-        [
-          /^taking\b/i,
-          'I take'
-        ],
-
-        [
-          /^placing\b/i,
-          'I place'
-        ],
-
-        [
-          /^resting\b/i,
-          'I rest'
-        ],
-
-        [
-          /^tracing\b/i,
-          'I trace'
-        ],
-
-        [
-          /^brushing\b/i,
-          'I brush'
-        ]
-      ];
-
-      for (var i = 0; i < rules.length; i++) {
-        if (rules[i][0].test(s)) {
-          return s.replace(
-            rules[i][0],
-            rules[i][1]
-          );
-        }
-      }
-
-      return s;
-    }
-
-    function normalizeGeneratedActions(text) {
-      if (!text) return '';
-
-      return text.replace(
-        /(\*)([^*\n]+)(\*)/g,
-        function(full, left, inner, right) {
-          return (
-            left +
-            repairActionOpening(inner) +
-            right
-          );
-        }
-      );
-    }
-
-    /*
-     * ============================================================
-     * PARSER
-     * ============================================================
-     *
-     * This remains a display parser.
-     * It does not alter stored history.
-     */
-
     function parseMessage(rawText) {
       if (!rawText) return '';
 
-      var clean =
-        sanitizeText(rawText)
-          .replace(
-            /<\|.*?\|>/g,
-            ''
-          )
-          .replace(
-            /~+/g,
-            ''
-          )
-          .replace(
-            /\*{2,}/g,
-            '*'
-          );
+      var clean = sanitizeText(rawText)
+        .replace(/<\|.*?\|>/g, '')
+        .replace(/~+/g, '')
+        .replace(/\*{2,}/g, '*');
 
-      var blocks =
-        clean.split(/\n{2,}/);
+      var blocks = clean.split(/\n{2,}/);
 
-      blocks =
-        blocks
-          .map(function(block) {
-            var b = block.trim();
+      blocks = blocks.map(function(block) {
+        var b = block.trim();
 
-            if (!b) return "";
+        if (!b) return "";
 
-            var count =
-              (b.match(/\*/g) || []).length;
+        var count = (b.match(/\*/g) || []).length;
+        var hasQuote = /["“]/.test(b);
 
-            var hasQuote =
-              /["“]/.test(b);
+        if (count === 1) {
+          if (hasQuote) {
+            return b.replace(/\*/g, '').trim();
+          }
 
-            if (count === 1) {
+          if (b.endsWith('*') && !b.startsWith('*')) return '*' + b;
+          if (b.startsWith('*') && !b.endsWith('*')) return b + '*';
 
-              if (hasQuote) {
-                return b
-                  .replace(/\*/g, '')
-                  .trim();
-              }
+        } else if (count % 2 === 1 && count > 1) {
 
-              if (
-                b.endsWith('*') &&
-                !b.startsWith('*')
-              ) {
-                return '*' + b;
-              }
+          if (hasQuote) return b.replace(/\*$/, '').replace(/^\*/, '').trim();
 
-              if (
-                b.startsWith('*') &&
-                !b.endsWith('*')
-              ) {
-                return b + '*';
-              }
+          if (b.startsWith('*') && !b.endsWith('*')) return b + '*';
+          if (!b.startsWith('*') && b.endsWith('*')) return '*' + b;
+        }
 
-            } else if (
-              count % 2 === 1 &&
-              count > 1
-            ) {
+        return b;
 
-              if (hasQuote) {
-                return b
-                  .replace(/\*$/, '')
-                  .replace(/^\*/, '')
-                  .trim();
-              }
-
-              if (
-                b.startsWith('*') &&
-                !b.endsWith('*')
-              ) {
-                return b + '*';
-              }
-
-              if (
-                !b.startsWith('*') &&
-                b.endsWith('*')
-              ) {
-                return '*' + b;
-              }
-            }
-
-            return b;
-          })
-          .filter(Boolean);
+      }).filter(Boolean);
 
       var outputHtml = '';
 
       blocks.forEach(function(block) {
-
-        var trimmed =
-          block.trim();
+        var trimmed = block.trim();
 
         if (!trimmed) return;
 
@@ -1384,172 +1057,87 @@ Output only Ashley's actual next turn. Never output:
           trimmed.length > 2 &&
           !trimmed.slice(1, -1).includes('*')
         ) {
-
-          var inner =
-            trimmed.slice(1, -1).trim();
-
-          var innerIsQuoted =
-            /^["“].*["”]$/.test(inner);
+          var inner = trimmed.slice(1, -1).trim();
+          var innerIsQuoted = /^["“].*["”]$/.test(inner);
 
           if (innerIsQuoted) {
-
-            var sp =
-              inner
-                .replace(
-                  /^["'“”]+|["'“”]+$/g,
-                  ''
-                )
-                .trim();
+            var sp = inner.replace(/^["'“”]+|["'“”]+$/g, '').trim();
 
             if (sp) {
-              outputHtml +=
-                '<div class="speech">' +
-                escapeHtml(sp) +
-                '</div>';
+              outputHtml += '<div class="speech">' + sp + '</div>';
             }
 
           } else {
+            var act = inner;
 
-            if (inner) {
-              outputHtml +=
-                '<div class="action">' +
-                escapeHtml(inner) +
-                '</div>';
+            if (act) {
+              outputHtml += '<div class="action">' + act + '</div>';
             }
           }
 
-        } else if (
-          trimmed.includes('*')
-        ) {
+        } else if (trimmed.includes('*')) {
 
-          var parts =
-            trimmed.split(
-              /(\*[^*\n]+\*)/g
-            );
+          var parts = trimmed.split(/(\*[^*\n]+\*)/g);
 
           parts.forEach(function(part) {
-
-            var p =
-              part.trim();
+            var p = part.trim();
 
             if (!p) return;
 
-            if (
-              p.startsWith('*') &&
-              p.endsWith('*')
-            ) {
-
-              var act =
-                p.slice(1, -1).trim();
+            if (p.startsWith('*') && p.endsWith('*')) {
+              var act = p.slice(1, -1).trim();
 
               if (act) {
-                outputHtml +=
-                  '<div class="action">' +
-                  escapeHtml(act) +
-                  '</div>';
+                outputHtml += '<div class="action">' + act + '</div>';
               }
 
             } else {
-
-              var sp =
-                p
-                  .replace(
-                    /^["'“”]+|["'“”]+$/g,
-                    ''
-                  )
-                  .trim();
+              var sp = p.replace(/^["'“”]+|["'“”]+$/g, '').trim();
 
               if (sp) {
-                outputHtml +=
-                  '<div class="speech">' +
-                  escapeHtml(sp) +
-                  '</div>';
+                outputHtml += '<div class="speech">' + sp + '</div>';
               }
             }
           });
 
         } else {
 
-          var qParts =
-            trimmed.split(
-              /("[^"]*"|“[^”]*”)/g
-            );
+          var qParts = trimmed.split(/("[^"]*"|“[^”]*”)/g);
+          var hasQuoted = qParts.some(function(p) {
+            return /^(".*"|“.*”)$/.test(p.trim());
+          });
 
-          var hasQuoted =
-            qParts.some(function(p) {
-              return /^(".*"|“.*”)$/.test(
-                p.trim()
-              );
-            });
-
-          if (
-            hasQuoted &&
-            qParts.length > 1
-          ) {
+          if (hasQuoted && qParts.length > 1) {
 
             qParts.forEach(function(part) {
-
-              var p =
-                part.trim();
+              var p = part.trim();
 
               if (!p) return;
 
-              if (
-                /^(".*"|“.*”)$/.test(p)
-              ) {
-
-                var sp =
-                  p.replace(
-                    /^["“]+|["”]+$/g,
-                    ''
-                  ).trim();
+              if (/^(".*"|“.*”)$/.test(p)) {
+                var sp = p.replace(/^["“]+|["”]+$/g, '').trim();
 
                 if (sp) {
-                  outputHtml +=
-                    '<div class="speech">' +
-                    escapeHtml(sp) +
-                    '</div>';
+                  outputHtml += '<div class="speech">' + sp + '</div>';
                 }
 
               } else {
-
-                outputHtml +=
-                  '<div class="action">' +
-                  escapeHtml(p) +
-                  '</div>';
+                outputHtml += '<div class="action">' + p + '</div>';
               }
             });
 
           } else {
 
-            var sp =
-              trimmed
-                .replace(
-                  /^["'“”]+|["'“”]+$/g,
-                  ''
-                )
-                .trim();
+            var sp = trimmed.replace(/^["'“”]+|["'“”]+$/g, '').trim();
 
             if (sp) {
-              outputHtml +=
-                '<div class="speech">' +
-                escapeHtml(sp) +
-                '</div>';
+              outputHtml += '<div class="speech">' + sp + '</div>';
             }
           }
         }
       });
 
       return outputHtml;
-    }
-
-    function escapeHtml(text) {
-      return String(text)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
     }
 
     function formatTime() {
@@ -1559,17 +1147,8 @@ Output only Ashley's actual next turn. Never output:
       });
     }
 
-    /*
-     * ============================================================
-     * RENDER
-     * ============================================================
-     */
-
     function renderFullChat() {
-      var stream =
-        document.getElementById(
-          'chat-stream'
-        );
+      var stream = document.getElementById('chat-stream');
 
       stream.innerHTML = '';
 
@@ -1583,267 +1162,151 @@ Output only Ashley's actual next turn. Never output:
         );
       });
 
-      stream.scrollTop =
-        stream.scrollHeight;
+      stream.scrollTop = stream.scrollHeight;
     }
 
-    function appendMessageDOM(
-      role,
-      text,
-      time,
-      duration,
-      idx
-    ) {
-      var stream =
-        document.getElementById(
-          'chat-stream'
-        );
-
-      var metaStr =
-        duration
-          ? duration
-          : time;
-
-      var msgCountLabel =
-        '<span class="msg-counter">#' +
-        (idx + 1) +
-        '</span>';
-
+    function appendMessageDOM(role, text, time, duration, idx) {
+      var stream = document.getElementById('chat-stream');
+      var metaStr = duration ? duration : time;
+      var msgCountLabel = '<span class="msg-counter">#' + (idx + 1) + '</span>';
       var html = '';
 
       if (role === 'user') {
 
         html =
-          '<div class="msg-group user" id="msg-' +
-          idx +
-          '">' +
-          '<div class="user-wrapper">' +
-          '<div class="glass-bubble">' +
-          parseMessage(text) +
-          '</div>' +
-          '<div class="meta-time-row">' +
-          msgCountLabel +
+          '<div class="msg-group user" id="msg-' + idx + '">' +
+            '<div class="user-wrapper">' +
+              '<div class="glass-bubble">' + parseMessage(text) + '</div>' +
+              '<div class="meta-time-row">' +
+                msgCountLabel +
+                '<svg viewBox="0 0 24 24">' +
+                  '<path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.2 3.1.8-1.3-4.5-2.7z"/>' +
+                '</svg>' +
+                '<span>' + metaStr + '</span>' +
 
-          '<svg viewBox="0 0 24 24">' +
-          '<path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.2 3.1.8-1.3-4.5-2.7z"/>' +
-          '</svg>' +
+                '<button class="msg-action-btn" onclick="openEditModal(' + idx + ')" title="Edit message">' +
+                  '<svg viewBox="0 0 24 24">' +
+                    '<path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39 1.02-.39 1.41 0l-2.34-2.34c.39-.39.39-1.02 0-1.41l-1.83 1.83 3.75 3.75 1.83-1.83z"/>' +
+                  '</svg>' +
+                '</button>' +
 
-          '<span>' +
-          metaStr +
-          '</span>' +
+                '<button class="msg-action-btn delete-btn" onclick="deleteMessage(' + idx + ')" title="Delete message">' +
+                  '<svg viewBox="0 0 24 24">' +
+                    '<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>' +
+                  '</svg>' +
+                '</button>' +
 
-          '<button class="msg-action-btn" onclick="openEditModal(' +
-          idx +
-          ')" title="Edit message">' +
-          '<svg viewBox="0 0 24 24">' +
-          '<path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c-.39-.39-1.02-.39-1.41 0l-2.34 2.34c-.39.39-.39 1.02 0 1.41l3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41l-2.34-2.34z"/>' +
-          '</svg>' +
-          '</button>' +
-
-          '<button class="msg-action-btn delete-btn" onclick="deleteMessage(' +
-          idx +
-          ')" title="Delete message">' +
-          '<svg viewBox="0 0 24 24">' +
-          '<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>' +
-          '</svg>' +
-          '</button>' +
-
-          '</div>' +
-          '</div>' +
+              '</div>' +
+            '</div>' +
           '</div>';
 
       } else {
 
-        var footerContent =
-          idx > 0
+        var footerContent = (idx > 0)
 
-            ? '<div class="meta-time-row">' +
+          ? '<div class="meta-time-row">' +
               msgCountLabel +
 
               '<svg viewBox="0 0 24 24">' +
-              '<path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.2 3.1.8-1.3-4.5-2.7z"/>' +
+                '<path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.2 3.1.8-1.3-4.5-2.7-4.5-2.7z"/>' +
               '</svg>' +
 
-              '<span>' +
-              metaStr +
-              '</span>' +
+              '<span>' + metaStr + '</span>' +
 
-              '<button class="msg-action-btn" onclick="regenerateMessage(' +
-              idx +
-              ')" title="Reroll message">' +
-
-              '<svg viewBox="0 0 24 24">' +
-              '<path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>' +
-              '</svg>' +
-
+              '<button class="msg-action-btn" onclick="regenerateMessage(' + idx + ')" title="Reroll message">' +
+                '<svg viewBox="0 0 24 24">' +
+                  '<path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>' +
+                '</svg>' +
               '</button>' +
 
-              '<button class="msg-action-btn" onclick="openEditModal(' +
-              idx +
-              ')" title="Edit message">' +
-
-              '<svg viewBox="0 0 24 24">' +
-              '<path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c-.39-.39-1.02-.39-1.41 0l-2.34 2.34c-.39.39-1.02.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>' +
-              '</svg>' +
-
+              '<button class="msg-action-btn" onclick="openEditModal(' + idx + ')" title="Edit message">' +
+                '<svg viewBox="0 0 24 24">' +
+                  '<path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>' +
+                '</svg>' +
               '</button>' +
 
-              '<button class="msg-action-btn delete-btn" onclick="deleteMessage(' +
-              idx +
-              ')" title="Delete message">' +
-
-              '<svg viewBox="0 0 24 24">' +
-              '<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>' +
-              '</svg>' +
-
+              '<button class="msg-action-btn delete-btn" onclick="deleteMessage(' + idx + ')" title="Delete message">' +
+                '<svg viewBox="0 0 24 24">' +
+                  '<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>' +
+                '</svg>' +
               '</button>' +
 
-              '</div>'
+            '</div>'
 
-            : '<div class="meta-time-row">' +
+          : '<div class="meta-time-row">' +
               msgCountLabel +
-              '</div>';
+            '</div>';
 
         html =
-          '<div class="msg-group ashley" id="msg-' +
-          idx +
-          '">' +
+          '<div class="msg-group ashley" id="msg-' + idx + '">' +
+            '<div class="ashley-wrapper">' +
+              '<div class="bubble-wrapper">' +
 
-          '<div class="ashley-wrapper">' +
+                '<div class="glass-bubble">' +
+                  parseMessage(text) +
+                '</div>' +
 
-          '<div class="bubble-wrapper">' +
+                footerContent +
 
-          '<div class="glass-bubble">' +
-          parseMessage(text) +
-          '</div>' +
+              '</div>' +
 
-          footerContent +
+              '<img class="ashley-msg-avatar" src="./ashley.png" onclick="openLightbox()" onerror="this.src=\'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80\'">' +
 
-          '</div>' +
-
-          '<img class="ashley-msg-avatar" src="./ashley.png" onclick="openLightbox()" onerror="this.src=\'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80\'">' +
-
-          '</div>' +
-
+            '</div>' +
           '</div>';
       }
 
-      stream.insertAdjacentHTML(
-        'beforeend',
-        html
-      );
-
-      stream.scrollTop =
-        stream.scrollHeight;
+      stream.insertAdjacentHTML('beforeend', html);
+      stream.scrollTop = stream.scrollHeight;
     }
 
-    /*
-     * ============================================================
-     * THINKING INDICATOR
-     * ============================================================
-     */
-
     function showTypingIndicator(statusText) {
-
-      if (
-        !document.getElementById(
-          'floating-thinking-row'
-        )
-      ) {
-
-        var stream =
-          document.getElementById(
-            'chat-stream'
-          );
+      if (!document.getElementById('floating-thinking-row')) {
+        var stream = document.getElementById('chat-stream');
 
         stream.insertAdjacentHTML(
           'beforeend',
           '<div class="thinking-row" id="floating-thinking-row">' +
-          '<div class="thinking-dots">' +
-          '<div class="thinking-dot"></div>' +
-          '<div class="thinking-dot"></div>' +
-          '<div class="thinking-dot"></div>' +
-          '</div>' +
-          '<span class="thinking-status-text" id="thinking-status-label">' +
-          (statusText ||
-            "Ashley is thinking...") +
-          '</span>' +
+            '<div class="thinking-dots">' +
+              '<div class="thinking-dot"></div>' +
+              '<div class="thinking-dot"></div>' +
+              '<div class="thinking-dot"></div>' +
+            '</div>' +
+            '<span class="thinking-status-text" id="thinking-status-label">' +
+              (statusText || "Ashley is thinking...") +
+            '</span>' +
           '</div>'
         );
 
-        stream.scrollTop =
-          stream.scrollHeight;
-
-      } else {
-
-        updateThinkingStatus(
-          statusText
-        );
-      }
-    }
-
-    function updateThinkingStatus(text) {
-      var label =
-        document.getElementById(
-          'thinking-status-label'
-        );
-
-      if (label) {
-        label.textContent =
-          text;
+        stream.scrollTop = stream.scrollHeight;
       }
     }
 
     function removeTypingIndicator() {
-      var e =
-        document.getElementById(
-          'floating-thinking-row'
-        );
-
-      if (e) {
-        e.remove();
-      }
+      var e = document.getElementById('floating-thinking-row');
+      if (e) e.remove();
     }
-
-    /*
-     * ============================================================
-     * CURRENT TIME
-     * ============================================================
-     */
 
     function getCurrentTimeContext() {
-      var d =
-        new Date();
+      var d = new Date();
 
-      return (
-        d.toLocaleDateString([], {
-          weekday: 'long',
-          month: 'long',
-          day: 'numeric'
-        }) +
-        ", " +
-        d.toLocaleTimeString([], {
-          hour: 'numeric',
-          minute: '2-digit'
-        })
-      );
+      return d.toLocaleDateString([], {
+        weekday: 'long',
+        month: 'long',
+        day: 'numeric'
+      }) + ", " +
+      d.toLocaleTimeString([], {
+        hour: 'numeric',
+        minute: '2-digit'
+      });
     }
 
     /*
-     * ============================================================
-     * BUILD MODEL CONTEXT
-     * ============================================================
+     * NEW CONTEXT BUILDER
      *
-     * FULL HISTORY:
-     * stays in localStorage unchanged.
-     *
-     * MODEL HISTORY:
-     * only usable messages enter the API context.
-     *
-     * Maximum:
-     * 20 recent usable messages.
+     * Stored history remains untouched.
+     * Only a clean subset is sent to Hermes.
      */
-
     function buildOpenRouterMessages() {
 
       var systemPrompt =
@@ -1854,18 +1317,17 @@ Output only Ashley's actual next turn. Never output:
         HARDCODED_SCENARIO;
 
       /*
-       * Persistent memory is factual continuity only.
+       * Never inject a corrupted background summary.
        */
       if (
         backgroundSummary &&
         backgroundSummary.trim() &&
-        !isCorruptedHistoryMessage(
-          backgroundSummary
-        )
+        !isCorruptedForContext(backgroundSummary)
       ) {
         systemPrompt +=
-          "\n\n[Persistent Memory / Established Facts]\n" +
-          backgroundSummary;
+          "\n\n[Persistent History / Established Memory: " +
+          normalizeForContext(backgroundSummary) +
+          "]";
       }
 
       systemPrompt +=
@@ -1880,175 +1342,154 @@ Output only Ashley's actual next turn. Never output:
         }
       ];
 
-      var selected = [];
-
       /*
-       * Walk backwards through stored history.
+       * Work backwards through history.
        *
-       * Nothing gets deleted.
+       * User messages are kept whenever possible.
+       * Obviously broken Ashley messages are skipped.
+       * Near-duplicate Ashley messages are skipped.
        *
-       * Obvious corrupted Ashley messages are skipped.
+       * We keep up to 16 clean context messages.
        */
-      for (
-        var i = chatHistory.length - 1;
-        i >= 0 && selected.length < 20;
-        i--
-      ) {
+      var selected = [];
+      var selectedAshleyMessages = [];
 
-        var m =
-          chatHistory[i];
+      for (var i = chatHistory.length - 1; i >= 0; i--) {
 
-        if (
-          !m ||
-          !m.text
-        ) {
-          continue;
-        }
+        var m = chatHistory[i];
 
-        var clean =
-          sanitizeText(
-            m.text
-          );
+        if (!m || typeof m.text !== 'string') continue;
 
-        if (!clean) {
-          continue;
-        }
+        var raw = m.text.trim();
+        if (!raw) continue;
 
-        /*
-         * USER messages:
-         * always preserve them in the model context.
-         */
-        if (
-          m.role === 'user'
-        ) {
+        var clean = normalizeForContext(raw);
+        if (!clean) continue;
+
+        if (m.role === 'user') {
 
           selected.unshift({
             role: 'user',
             content: clean
           });
 
-          continue;
-        }
+        } else {
 
-        /*
-         * ASHLEY messages:
-         * only skip if they are obviously corrupted.
-         */
-        if (
-          m.role === 'char'
-        ) {
+          /*
+           * First reject explicit corruption.
+           */
+          if (isCorruptedForContext(raw)) continue;
 
-          if (
-            isCorruptedHistoryMessage(
-              clean
-            )
-          ) {
+          /*
+           * Then reject obvious self-copying.
+           */
+          if (isRepetitiveAshleyMessage(clean, selectedAshleyMessages)) {
             continue;
           }
+
+          selectedAshleyMessages.push(clean);
 
           selected.unshift({
             role: 'assistant',
             content: clean
           });
         }
+
+        /*
+         * Hard context limit.
+         */
+        if (selected.length >= 16) break;
       }
 
-      selected.forEach(function(m) {
-        messages.push(m);
+      /*
+       * Make absolutely sure the newest user message is present.
+       *
+       * This matters when the recent history contained several
+       * corrupted Ashley generations.
+       */
+      var newestUserIndex = -1;
+
+      for (var u = chatHistory.length - 1; u >= 0; u--) {
+        if (
+          chatHistory[u] &&
+          chatHistory[u].role === 'user' &&
+          typeof chatHistory[u].text === 'string' &&
+          chatHistory[u].text.trim()
+        ) {
+          newestUserIndex = u;
+          break;
+        }
+      }
+
+      if (newestUserIndex !== -1) {
+
+        var newestUserClean = normalizeForContext(
+          chatHistory[newestUserIndex].text
+        );
+
+        var alreadyPresent = selected.some(function(msg) {
+          return msg.role === 'user' &&
+                 msg.content === newestUserClean;
+        });
+
+        if (!alreadyPresent && newestUserClean) {
+          selected.push({
+            role: 'user',
+            content: newestUserClean
+          });
+        }
+      }
+
+      /*
+       * Guard against accidental consecutive assistant turns
+       * surviving the cleanup.
+       *
+       * We don't invent content. We simply leave the clean selected
+       * sequence as-is when it is structurally valid.
+       */
+      selected.forEach(function(msg) {
+        messages.push(msg);
       });
 
       return messages;
     }
 
-    /*
-     * ============================================================
-     * BUTTON STATE
-     * ============================================================
-     */
-
     function handleActionClick() {
-
-      if (isGenerating) {
-        stopGeneration();
-      } else {
-        sendMessage();
-      }
+      if (isGenerating) stopGeneration();
+      else sendMessage();
     }
 
     function setStopButtonState(stopping) {
-
-      var btn =
-        document.getElementById(
-          'actionBtn'
-        );
-
-      var icon =
-        document.getElementById(
-          'actionIcon'
-        );
+      var btn = document.getElementById('actionBtn');
+      var icon = document.getElementById('actionIcon');
 
       if (stopping) {
-
-        btn.classList.add(
-          'is-stopping'
-        );
-
-        icon.innerHTML =
-          '<path d="M6 6h12v12H6z"/>';
-
+        btn.classList.add('is-stopping');
+        icon.innerHTML = '<path d="M6 6h12v12H6z"/>';
       } else {
-
-        btn.classList.remove(
-          'is-stopping'
-        );
-
-        icon.innerHTML =
-          '<path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>';
+        btn.classList.remove('is-stopping');
+        icon.innerHTML = '<path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>';
       }
     }
 
     function stopGeneration() {
-
-      if (abortController) {
-        abortController.abort();
-      }
+      if (abortController) abortController.abort();
 
       isGenerating = false;
-
       removeTypingIndicator();
-
       setStopButtonState(false);
-
-      abortController = null;
     }
 
-    /*
-     * ============================================================
-     * SEND
-     * ============================================================
-     */
-
     async function sendMessage() {
+      if (isGenerating) return;
 
-      if (isGenerating) {
-        return;
-      }
+      var input = document.getElementById('promptInput');
+      var userText = input.value.trim();
 
-      var input =
-        document.getElementById(
-          'promptInput'
-        );
-
-      var userText =
-        input.value.trim();
-
-      if (!userText) {
-        return;
-      }
+      if (!userText) return;
 
       input.value = '';
-      input.style.height =
-        '24px';
+      input.style.height = '24px';
 
       chatHistory.push({
         role: 'user',
@@ -2057,126 +1498,63 @@ Output only Ashley's actual next turn. Never output:
       });
 
       saveChatHistory();
-
       renderFullChat();
 
       await triggerAIResponse();
     }
 
-    /*
-     * ============================================================
-     * ASHLEY GENERATION
-     * ============================================================
-     *
-     * MAIN MODEL:
-     * OPENROUTER_MODEL only.
-     *
-     * 70B is NOT a fallback.
-     *
-     * max_tokens remains 500.
-     */
-
     async function triggerAIResponse() {
 
-      var apiKey =
-        getApiKey();
+      var apiKey = getApiKey();
 
       if (!apiKey) {
-        alert(
-          "Please set API key."
-        );
-        return;
-      }
-
-      if (isGenerating) {
+        alert("Please set API key.");
         return;
       }
 
       isGenerating = true;
-
       setStopButtonState(true);
+      showTypingIndicator("Ashley is thinking...");
 
-      showTypingIndicator(
-        "Ashley is thinking..."
-      );
-
-      generationStartTime =
-        Date.now();
-
-      abortController =
-        new AbortController();
+      generationStartTime = Date.now();
+      abortController = new AbortController();
 
       try {
 
-        var response =
-          await fetch(
-            "https://openrouter.ai/api/v1/chat/completions",
-            {
-              method: "POST",
+        var response = await fetch(
+          "https://openrouter.ai/api/v1/chat/completions",
+          {
+            method: "POST",
 
-              headers: {
-                "Content-Type":
-                  "application/json",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + apiKey,
+              "HTTP-Referer": "https://meowoccino.github.io",
+              "X-Title": "Ashley PWA"
+            },
 
-                "Authorization":
-                  "Bearer " +
-                  apiKey,
+            signal: abortController.signal,
 
-                "HTTP-Referer":
-                  "https://meowoccino.github.io",
+            body: JSON.stringify({
+              model: OPENROUTER_MODEL,
+              messages: buildOpenRouterMessages(),
 
-                "X-Title":
-                  "Ashley PWA"
-              },
+              max_tokens: 500,
 
-              signal:
-                abortController.signal,
-
-              body:
-                JSON.stringify({
-
-                  /*
-                   * Ashley model only.
-                   */
-                  model:
-                    OPENROUTER_MODEL,
-
-                  messages:
-                    buildOpenRouterMessages(),
-
-                  /*
-                   * KEEP 500.
-                   */
-                  max_tokens:
-                    500,
-
-                  temperature:
-                    0.85,
-
-                  top_p:
-                    0.90,
-
-                  frequency_penalty:
-                    0.3,
-
-                  presence_penalty:
-                    0.2,
-
-                  repetition_penalty:
-                    1.05
-                })
-            }
-          );
+              temperature: 0.85,
+              top_p: 0.90,
+              frequency_penalty: 0.3,
+              presence_penalty: 0.2,
+              repetition_penalty: 1.05
+            })
+          }
+        );
 
         if (!response.ok) {
-          throw new Error(
-            "HTTP " +
-            response.status
-          );
+          throw new Error("HTTP " + response.status);
         }
 
-        var data =
-          await response.json();
+        var data = await response.json();
 
         var generatedText =
           (
@@ -2184,149 +1562,27 @@ Output only Ashley's actual next turn. Never output:
             data.choices[0] &&
             data.choices[0].message
           )
-            ? data.choices[0].message.content
-            : "";
+          ? data.choices[0].message.content
+          : "";
 
-        generatedText =
-          sanitizeText(
-            generatedText
-          );
+        generatedText = sanitizeText(
+          String(generatedText || '')
+            .replace(/<\|.*?\|>/g, '')
+            .replace(/~+/g, '')
+            .trim()
+        );
 
-        /*
-         * If the generation itself is obviously corrupted,
-         * do one fresh retry with the SAME Ashley model.
-         *
-         * We never put the bad response into chatHistory.
-         */
-        if (
-          isCorruptedHistoryMessage(
-            generatedText
-          )
-        ) {
-
-          updateThinkingStatus(
-            "Ashley is trying again..."
-          );
-
-          response =
-            await fetch(
-              "https://openrouter.ai/api/v1/chat/completions",
-              {
-                method: "POST",
-
-                headers: {
-                  "Content-Type":
-                    "application/json",
-
-                  "Authorization":
-                    "Bearer " +
-                    apiKey,
-
-                  "HTTP-Referer":
-                    "https://meowoccino.github.io",
-
-                  "X-Title":
-                    "Ashley PWA"
-                },
-
-                signal:
-                  abortController.signal,
-
-                body:
-                  JSON.stringify({
-
-                    /*
-                     * SAME 405B MODEL.
-                     */
-                    model:
-                      OPENROUTER_MODEL,
-
-                    messages:
-                      buildOpenRouterMessages(),
-
-                    max_tokens:
-                      500,
-
-                    temperature:
-                      0.78,
-
-                    top_p:
-                      0.90,
-
-                    frequency_penalty:
-                      0.35,
-
-                    presence_penalty:
-                      0.2,
-
-                    repetition_penalty:
-                      1.06
-                  })
-              }
-            );
-
-          if (!response.ok) {
-            throw new Error(
-              "Retry HTTP " +
-              response.status
-            );
-          }
-
-          data =
-            await response.json();
-
-          generatedText =
-            (
-              data.choices &&
-              data.choices[0] &&
-              data.choices[0].message
-            )
-              ? data.choices[0].message.content
-              : "";
-
-          generatedText =
-            sanitizeText(
-              generatedText
-            );
-        }
-
-        if (!generatedText) {
-          throw new Error(
-            "Ashley returned an empty response."
-          );
-        }
-
-        /*
-         * Do not save obvious model contamination.
-         */
-        if (
-          isCorruptedHistoryMessage(
-            generatedText
-          )
-        ) {
-          throw new Error(
-            "Ashley returned unusable text. Press Retry."
-          );
-        }
-
-        /*
-         * Repair only obvious first-person action fragments.
-         */
-        generatedText =
-          normalizeGeneratedActions(
-            generatedText
-          );
-
-        if (
-          generatedText.length < 40
-        ) {
+        if (generatedText.length < 40) {
           throw new Error(
             "Response came back too short — likely a dropped or incomplete generation. Try again."
           );
         }
 
         /*
-         * ONLY HERE does the response enter history.
+         * We DO NOT automatically call a second "rewrite" API request.
+         *
+         * That kind of secondary rewriting was causing the model to
+         * produce meta text instead of Ashley.
          */
         chatHistory.push({
           role: 'char',
@@ -2334,69 +1590,48 @@ Output only Ashley's actual next turn. Never output:
           time: formatTime(),
           duration:
             Math.round(
-              (
-                Date.now() -
-                generationStartTime
-              ) / 1000
-            ) +
-            "s (OpenRouter)"
+              (Date.now() - generationStartTime) / 1000
+            ) + "s (OpenRouter)"
         });
 
         saveChatHistory();
-
         renderFullChat();
 
         /*
-         * Memory is completely separate.
+         * Background memory is deliberately asynchronous and separate.
          */
         triggerBackgroundSummary();
 
       } catch (err) {
 
-        if (
-          err.name !==
-          'AbortError'
-        ) {
-          alert(
-            "Generation Error: " +
-            err.message
-          );
+        if (err.name !== 'AbortError') {
+          alert("Generation Error: " + err.message);
         }
-
-      } finally {
-
-        removeTypingIndicator();
-
-        isGenerating = false;
-
-        setStopButtonState(false);
-
-        abortController = null;
       }
+
+      removeTypingIndicator();
+      isGenerating = false;
+      setStopButtonState(false);
+      abortController = null;
     }
 
     /*
-     * ============================================================
-     * 70B MEMORY MODEL ONLY
-     * ============================================================
+     * Memory builder also gets context hygiene.
+     *
+     * This prevents a malformed Ashley response from becoming a
+     * permanent "memory" and contaminating future sessions.
      */
-
     async function triggerBackgroundSummary() {
 
       var lastSummaryAt =
         parseInt(
-          localStorage.getItem(
-            'ashley_last_summary_count'
-          ) || '0',
+          localStorage.getItem('ashley_last_summary_count') || '0',
           10
         );
 
       if (
         chatHistory.length < 16 ||
-        (
-          chatHistory.length -
-          lastSummaryAt
-        ) < 10
+        (chatHistory.length - lastSummaryAt) < 10
       ) {
         return;
       }
@@ -2407,147 +1642,125 @@ Output only Ashley's actual next turn. Never output:
       );
 
       var apiKey =
-        localStorage.getItem(
-          'openrouter_api_key'
-        );
+        localStorage.getItem('openrouter_api_key');
 
-      if (!apiKey) {
-        return;
-      }
+      if (!apiKey) return;
 
       /*
-       * Only summarize clean messages.
-       *
-       * Broken Ashley outputs remain saved but don't become
-       * persistent memory.
+       * Build summary source from clean messages only.
        */
-      var summaryHistory =
-        chatHistory
-          .slice(-16, -6)
-          .filter(function(m) {
+      var summaryMessages = [];
+      var summaryAshleyMessages = [];
 
-            if (
-              !m ||
-              !m.text
-            ) {
-              return false;
-            }
-
-            if (
-              m.role === 'char' &&
-              isCorruptedHistoryMessage(
-                m.text
-              )
-            ) {
-              return false;
-            }
-
-            return true;
-          });
-
-      var textToSummarize =
-        summaryHistory
-          .map(function(m) {
-
-            return (
-              (
-                m.role === 'user'
-                  ? 'Mathew'
-                  : 'Ashley'
-              ) +
-              ': ' +
-              sanitizeText(
-                m.text
-              )
-            );
-
-          })
-          .join('\n');
-
-      if (
-        !textToSummarize.trim()
+      for (
+        var i = Math.max(0, chatHistory.length - 16);
+        i < Math.max(0, chatHistory.length - 6);
+        i++
       ) {
-        return;
+
+        var m = chatHistory[i];
+
+        if (!m || typeof m.text !== 'string') continue;
+
+        var clean = normalizeForContext(m.text);
+
+        if (!clean) continue;
+
+        if (m.role === 'user') {
+
+          summaryMessages.push(
+            'Mathew: ' + clean
+          );
+
+        } else {
+
+          if (isCorruptedForContext(m.text)) continue;
+
+          if (
+            isRepetitiveAshleyMessage(
+              clean,
+              summaryAshleyMessages
+            )
+          ) {
+            continue;
+          }
+
+          summaryAshleyMessages.push(clean);
+
+          summaryMessages.push(
+            'Ashley: ' + clean
+          );
+        }
       }
 
-      var summaryInstruction =
-        backgroundSummary &&
-        backgroundSummary.trim()
+      var textToSummarize =
+        summaryMessages.join('\n');
 
-          ? "Merge existing memory with only genuinely useful permanent facts. Keep names, relationships, established events, preferences, and important setting continuity. Do not preserve prose wording, writing style, dialogue, emotional descriptions, repeated phrases, or narration style.\n\nExisting:\n" +
-            backgroundSummary +
-            "\n\nConversation:\n" +
+      if (!textToSummarize.trim()) return;
+
+      var usableExistingSummary =
+        backgroundSummary &&
+        backgroundSummary.trim() &&
+        !isCorruptedForContext(backgroundSummary)
+          ? normalizeForContext(backgroundSummary)
+          : '';
+
+      var summaryInstruction =
+        usableExistingSummary
+
+          ? "Merge the existing summary with only genuinely new permanent facts into 2-4 short bullet points.\n\n" +
+            "Do not copy dialogue wording.\n" +
+            "Do not summarize writing style.\n" +
+            "Do not invent facts.\n\n" +
+            "Existing:\n" +
+            usableExistingSummary +
+            "\n\nNew:\n" +
             textToSummarize
 
-          : "Extract only genuinely useful permanent facts for future story continuity. Keep names, relationships, established events, preferences, and important setting facts. Do not preserve prose wording, writing style, dialogue, emotional descriptions, repeated phrases, or narration style.\n\nConversation:\n" +
+          : "Summarize only durable story facts in 2-3 short bullet points.\n\n" +
+            "Do not copy dialogue wording.\n" +
+            "Do not summarize writing style.\n" +
+            "Do not invent facts.\n\n" +
             textToSummarize;
 
       try {
 
-        var res =
-          await fetch(
-            "https://openrouter.ai/api/v1/chat/completions",
-            {
-              method: "POST",
+        var res = await fetch(
+          "https://openrouter.ai/api/v1/chat/completions",
+          {
+            method: "POST",
 
-              headers: {
-                "Content-Type":
-                  "application/json",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + apiKey,
+              "HTTP-Referer": "https://meowoccino.github.io",
+              "X-Title": "Ashley PWA"
+            },
 
-                "Authorization":
-                  "Bearer " +
-                  apiKey,
+            body: JSON.stringify({
+              model: OPENROUTER_SUMMARY_MODEL,
 
-                "HTTP-Referer":
-                  "https://meowoccino.github.io",
+              messages: [
+                {
+                  role: "system",
+                  content:
+                    "You write extremely concise factual bullet-point summaries. No commentary, just bullets."
+                },
+                {
+                  role: "user",
+                  content: summaryInstruction
+                }
+              ],
 
-                "X-Title":
-                  "Ashley PWA"
-              },
+              max_tokens: 150,
+              temperature: 0.3
+            })
+          }
+        );
 
-              body:
-                JSON.stringify({
+        if (!res.ok) return;
 
-                  /*
-                   * 70B FREE:
-                   * MEMORY ONLY.
-                   */
-                  model:
-                    OPENROUTER_SUMMARY_MODEL,
-
-                  messages: [
-
-                    {
-                      role: "system",
-
-                      content:
-                        "You write extremely concise factual memory summaries. Output only 2-4 short factual bullet points. Never write Ashley's scene response. Never provide alternatives, roleplay, analysis, code, or commentary."
-                    },
-
-                    {
-                      role: "user",
-
-                      content:
-                        summaryInstruction
-                    }
-
-                  ],
-
-                  max_tokens:
-                    150,
-
-                  temperature:
-                    0.3
-                })
-            }
-          );
-
-        if (!res.ok) {
-          return;
-        }
-
-        var data =
-          await res.json();
+        var data = await res.json();
 
         if (
           data.choices &&
@@ -2556,20 +1769,18 @@ Output only Ashley's actual next turn. Never output:
         ) {
 
           var newSummary =
-            data.choices[0]
-              .message
-              .content
-              .trim();
+            String(
+              data.choices[0].message.content || ''
+            ).trim();
 
+          /*
+           * Never save a visibly corrupted summary.
+           */
           if (
             newSummary &&
-            !isCorruptedHistoryMessage(
-              newSummary
-            )
+            !isCorruptedForContext(newSummary)
           ) {
-
-            backgroundSummary =
-              newSummary;
+            backgroundSummary = newSummary;
 
             localStorage.setItem(
               'ashley_bg_summary',
@@ -2578,54 +1789,24 @@ Output only Ashley's actual next turn. Never output:
           }
         }
 
-      } catch (e) {
-        /*
-         * Memory failure must never affect Ashley generation.
-         */
-      }
+      } catch (e) {}
     }
 
-    /*
-     * ============================================================
-     * DELETE
-     * ============================================================
-     */
-
     function deleteMessage(idx) {
+      if (isGenerating) return;
 
-      if (isGenerating) {
-        return;
-      }
-
-      chatHistory.splice(
-        idx,
-        1
-      );
+      chatHistory.splice(idx, 1);
 
       saveChatHistory();
-
       renderFullChat();
     }
 
     /*
-     * ============================================================
-     * RETRY / REROLL
-     * ============================================================
-     *
-     * Clicking the Retry icon on Ashley's message:
-     *
-     * - removes that Ashley response and everything after it
-     * - DOES NOT remove the preceding user message
-     * - then generates a fresh Ashley response to the same prompt
-     *
-     * No 70B fallback.
+     * Retry only removes the selected Ashley answer.
+     * The user's preceding message remains intact.
      */
-
     async function regenerateMessage(idx) {
-
-      if (isGenerating) {
-        return;
-      }
+      if (isGenerating) return;
 
       if (
         !chatHistory[idx] ||
@@ -2634,48 +1815,25 @@ Output only Ashley's actual next turn. Never output:
         return;
       }
 
-      /*
-       * Keep everything BEFORE the selected Ashley response.
-       *
-       * If the preceding message is yours, it remains.
-       */
-      chatHistory =
-        chatHistory.slice(
-          0,
-          idx
-        );
+      chatHistory.splice(idx, 1);
 
       saveChatHistory();
-
       renderFullChat();
 
       await triggerAIResponse();
     }
 
-    /*
-     * ============================================================
-     * MEMORY UI
-     * ============================================================
-     */
-
     function openMemoryModal() {
-
       var summaryEl =
-        document.getElementById(
-          'memorySummaryDisplay'
-        );
+        document.getElementById('memorySummaryDisplay');
 
       if (
         backgroundSummary &&
         backgroundSummary.trim()
       ) {
 
-        summaryEl.textContent =
-          backgroundSummary;
-
-        summaryEl.classList.remove(
-          'memory-block-empty'
-        );
+        summaryEl.textContent = backgroundSummary;
+        summaryEl.classList.remove('memory-block-empty');
 
       } else {
 
@@ -2695,29 +1853,24 @@ Output only Ashley's actual next turn. Never output:
 
       document.getElementById(
         'memory-sheet'
-      ).style.display =
-        'flex';
+      ).style.display = 'flex';
     }
 
     function closeMemoryModal(e) {
-
       if (
         e &&
         e.target &&
-        e.target.id !==
-          'memory-sheet'
+        e.target.id !== 'memory-sheet'
       ) {
         return;
       }
 
       document.getElementById(
         'memory-sheet'
-      ).style.display =
-        'none';
+      ).style.display = 'none';
     }
 
     function clearMemorySummary() {
-
       if (
         !confirm(
           'Clear the stored memory summary? This cannot be undone.'
@@ -2726,8 +1879,7 @@ Output only Ashley's actual next turn. Never output:
         return;
       }
 
-      backgroundSummary =
-        '';
+      backgroundSummary = '';
 
       localStorage.setItem(
         'ashley_bg_summary',
@@ -2738,7 +1890,6 @@ Output only Ashley's actual next turn. Never output:
     }
 
     function clearAllChatHistory() {
-
       if (
         !confirm(
           'Delete ALL messages? This cannot be undone.'
@@ -2757,24 +1908,13 @@ Output only Ashley's actual next turn. Never output:
       );
 
       renderFullChat();
-
       closeMemoryModal();
     }
 
-    /*
-     * ============================================================
-     * EDITING
-     * ============================================================
-     */
-
     function openEditModal(idx) {
+      if (isGenerating) return;
 
-      if (isGenerating) {
-        return;
-      }
-
-      editingMessageIndex =
-        idx;
+      editingMessageIndex = idx;
 
       document.getElementById(
         'edit-sheet-title'
@@ -2790,28 +1930,23 @@ Output only Ashley's actual next turn. Never output:
 
       document.getElementById(
         'edit-sheet'
-      ).style.display =
-        'flex';
+      ).style.display = 'flex';
     }
 
     function closeEditModal(e) {
-
       if (
         e &&
         e.target &&
-        e.target.id !==
-          'edit-sheet'
+        e.target.id !== 'edit-sheet'
       ) {
         return;
       }
 
       document.getElementById(
         'edit-sheet'
-      ).style.display =
-        'none';
+      ).style.display = 'none';
 
-      editingMessageIndex =
-        null;
+      editingMessageIndex = null;
     }
 
     async function saveEditedMessage() {
@@ -2824,43 +1959,33 @@ Output only Ashley's actual next turn. Never output:
       }
 
       var newText =
-        document.getElementById(
-          'editMessageTextarea'
-        ).value.trim();
+        document
+          .getElementById('editMessageTextarea')
+          .value
+          .trim();
 
-      if (!newText) {
-        return;
-      }
+      if (!newText) return;
 
       var targetRole =
-        chatHistory[
-          editingMessageIndex
-        ].role;
+        chatHistory[editingMessageIndex].role;
 
       var targetIdx =
         editingMessageIndex;
 
       document.getElementById(
         'edit-sheet'
-      ).style.display =
-        'none';
+      ).style.display = 'none';
 
-      editingMessageIndex =
-        null;
+      editingMessageIndex = null;
 
-      if (
-        targetRole === 'user'
-      ) {
+      if (targetRole === 'user') {
 
         /*
-         * Editing a user message intentionally branches from there.
-         * Earlier history remains intact.
+         * Editing a user turn intentionally forks the conversation
+         * from that point, because later assistant turns were based
+         * on the old user message.
          */
-        chatHistory =
-          chatHistory.slice(
-            0,
-            targetIdx
-          );
+        chatHistory.splice(targetIdx);
 
         chatHistory.push({
           role: 'user',
@@ -2869,74 +1994,46 @@ Output only Ashley's actual next turn. Never output:
         });
 
         saveChatHistory();
-
         renderFullChat();
 
         await triggerAIResponse();
 
       } else {
 
-        /*
-         * Editing Ashley changes ONLY this message.
-         */
-        chatHistory[targetIdx].text =
-          newText;
+        chatHistory[targetIdx].text = newText;
 
         saveChatHistory();
-
         renderFullChat();
       }
     }
 
-    /*
-     * ============================================================
-     * LIGHTBOX
-     * ============================================================
-     */
-
     function openLightbox() {
       document.getElementById(
         'avatar-lightbox'
-      ).style.display =
-        'flex';
+      ).style.display = 'flex';
     }
 
     function closeLightbox() {
       document.getElementById(
         'avatar-lightbox'
-      ).style.display =
-        'none';
+      ).style.display = 'none';
     }
 
-    /*
-     * ============================================================
-     * VIEWPORT
-     * ============================================================
-     */
-
     var appContainer =
-      document.getElementById(
-        'app-container'
-      );
+      document.getElementById('app-container');
 
     var promptInput =
-      document.getElementById(
-        'promptInput'
-      );
+      document.getElementById('promptInput');
 
     var chatStream =
-      document.getElementById(
-        'chat-stream'
-      );
+      document.getElementById('chat-stream');
 
     function adjustViewport() {
 
       appContainer.style.height =
         window.visualViewport
-          ? window.visualViewport.height +
-            'px'
-          : window.innerHeight +
-            'px';
+          ? window.visualViewport.height + 'px'
+          : window.innerHeight + 'px';
 
       chatStream.scrollTop =
         chatStream.scrollHeight;
@@ -2965,15 +2062,11 @@ Output only Ashley's actual next turn. Never output:
     promptInput.addEventListener(
       'focus',
       function() {
-
         setTimeout(
           function() {
-
             adjustViewport();
-
             chatStream.scrollTop =
               chatStream.scrollHeight;
-
           },
           250
         );
@@ -2981,14 +2074,9 @@ Output only Ashley's actual next turn. Never output:
     );
 
     /*
-     * ============================================================
-     * ACTION WRAPPER
-     * ============================================================
-     *
-     * INTENTIONAL:
-     * inserts ** and puts the cursor between them.
+     * INTENTIONALLY UNCHANGED:
+     * Inserts ** and puts the cursor between the asterisks.
      */
-
     function insertActionWrapper() {
 
       var start =
@@ -3012,24 +2100,16 @@ Output only Ashley's actual next turn. Never output:
         start + 1
       );
 
-      autoExpandTextarea(
-        promptInput
-      );
+      autoExpandTextarea(promptInput);
     }
 
     promptInput.addEventListener(
       'keydown',
       function(e) {
-
-        if (
-          e.key === 'Enter'
-        ) {
-
+        if (e.key === 'Enter') {
           setTimeout(
             function() {
-              autoExpandTextarea(
-                promptInput
-              );
+              autoExpandTextarea(promptInput);
             },
             10
           );
@@ -3037,29 +2117,19 @@ Output only Ashley's actual next turn. Never output:
       }
     );
 
-    /*
-     * ============================================================
-     * START
-     * ============================================================
-     */
-
     window.addEventListener(
       'DOMContentLoaded',
       init
     );
 
-    if (
-      'serviceWorker' in navigator
-    ) {
+    if ('serviceWorker' in navigator) {
 
       window.addEventListener(
         'load',
         function() {
 
           navigator.serviceWorker
-            .register(
-              './sw.js?v=12'
-            )
+            .register('./sw.js?v=12')
             .then(function(reg) {
               reg.update();
             })
